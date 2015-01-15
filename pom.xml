@@ -9,7 +9,7 @@
     <artifactId>results-build</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>[${project.artifactId} - results root build.</name>
+    <name>[${project.artifactId}] - results root build.</name>
 
     <modules>
        <module>project</module>
