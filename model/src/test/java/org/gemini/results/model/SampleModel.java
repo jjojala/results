@@ -32,6 +32,7 @@ public class SampleModel {
                         new CompetitorList(makeCompetitors("D35", 100)))));
 
             final Competition competition = new Competition(
+                    UUID.randomUUID().toString(),
                     time("2015-01-15T19:00:00.000+02:00"),
                     "Just local race", "Pirkkala Athletic Club",
                     new StartGroupList(Arrays.asList(

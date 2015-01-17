@@ -12,7 +12,9 @@
     <name>[${project.artifactId}] - results root build.</name>
 
     <modules>
-       <module>project</module>
-       <module>model</module>
+        <module>project</module>
+        <module>model</module>
+        <module>rest</module>
+        <module>server</module>
     </modules>
 </project>

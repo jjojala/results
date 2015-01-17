@@ -3,6 +3,7 @@
  */
 package org.gemini.results.model;
 
+import java.util.UUID;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -15,6 +16,9 @@ import javax.xml.datatype.XMLGregorianCalendar;
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType
 public class Competition {
+
+    @XmlAttribute
+    private String id;
 
     /**
      * Official start time of the competition. This is typically the
@@ -38,12 +42,49 @@ public class Competition {
     protected Competition() {
     }
 
-    public Competition(final XMLGregorianCalendar time,
+    public Competition(final String id,
+            final XMLGregorianCalendar time,
             final String name, final String organizer,
             final StartGroupList startGroups) {
-        this.time = time;
+        this.id = id == null ? UUID.randomUUID().toString() : id;
+        this.time = time == null ? null 
+                : ModelUtils.getDatatypeFactory().newXMLGregorianCalendar(
+                    time.toXMLFormat());
         this.name = name;
         this.organizer = organizer;
         this.startGroups = startGroups;
+    }
+
+    public void setId(final String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return this.id;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setTime(final XMLGregorianCalendar time) {
+        this.time = ModelUtils.getDatatypeFactory().newXMLGregorianCalendar(
+                time.toXMLFormat());
+    }
+
+    public XMLGregorianCalendar getTime() {
+        return this.time;
+    }
+
+    public void setOrganizer(final String organizer) {
+        this.organizer = organizer;
+    }
+
+    public String getOrganizer() {
+        return this.organizer;
     }
 }
