@@ -4,6 +4,8 @@
 package org.gemini.results.rest;
 
 import java.util.UUID;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -23,16 +25,19 @@ import org.gemini.results.model.Competition;
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class CompetitionResource {
 
+    private ReadWriteLock lock_ = new ReentrantReadWriteLock();
     private Competition competition;
 
     @GET
-    @Path("{id}")
-    public Response get(@PathParam("id") final String id) {
+    @PathParam("id")
+    public Response get() {
         return Response.ok(this.competition).build();
     }
 
     @POST
+    @Path("{id}")
     public Response create(@Context final UriInfo ui,
+            @PathParam("id") final String id,
             final Competition competition) {
         if (competition.getId() == null ||
                 competition.getId().isEmpty())
@@ -40,7 +45,7 @@ public class CompetitionResource {
 
         this.competition = competition;
 
-        return Response.created(UriBuilder.fromUri(ui.getRequestUri())
-                .build(competition.getId())).build();
+        return Response.created(UriBuilder.fromUri(ui.getRequestUri()).build())
+                .build();
     }
 }

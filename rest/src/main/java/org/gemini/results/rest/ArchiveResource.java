@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -23,10 +24,11 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import org.gemini.results.model.Competition;
 
+@Singleton
 @Path("archive")
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-public class CompetitionArchiveResource {
+public class ArchiveResource {
 
     private ReadWriteLock lock_ = new ReentrantReadWriteLock();
     private Map<String, Competition> competitions_ = new HashMap<>();
@@ -83,7 +85,7 @@ public class CompetitionArchiveResource {
             competitions_.put(id, competition);
 
             return Response.created(UriBuilder.fromUri(
-                    ui.getRequestUri()).path(id).build()).build();
+                    ui.getRequestUri()).build()).build();
         }
 
         finally {
