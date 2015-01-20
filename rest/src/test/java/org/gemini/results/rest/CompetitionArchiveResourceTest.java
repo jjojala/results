@@ -14,11 +14,11 @@ import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class ArchiveResourceTest extends JerseyTest {
+public class CompetitionArchiveResourceTest extends JerseyTest {
 
     @Override
     protected Application configure() {
-        return new ResourceConfig(ArchiveResource.class);
+        return new ResourceConfig(CompetitionArchiveResource.class);
     }
 
     @Test

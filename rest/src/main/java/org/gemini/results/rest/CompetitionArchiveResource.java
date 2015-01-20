@@ -28,7 +28,7 @@ import org.gemini.results.model.Competition;
 @Path("archive")
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-public class ArchiveResource {
+public class CompetitionArchiveResource {
 
     private ReadWriteLock lock_ = new ReentrantReadWriteLock();
     private Map<String, Competition> competitions_ = new HashMap<>();
