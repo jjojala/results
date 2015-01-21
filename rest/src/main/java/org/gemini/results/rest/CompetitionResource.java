@@ -5,13 +5,13 @@ package org.gemini.results.rest;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -22,25 +22,32 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
+import javax.xml.datatype.XMLGregorianCalendar;
 import org.gemini.results.model.Competition;
 
 
 @Singleton
 @Path("competition")
-@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-public class CompetitionManagerResource {
+@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+public class CompetitionResource {
 
     private ReadWriteLock lock_ = new ReentrantReadWriteLock();
     private Map<String, Competition> competitions = new HashMap<>();
 
-    
+    private final Competition getNoLock(final String id) {
+        final Competition competition = competitions.get(id);
+        if (competition == null)
+            throw new NotFoundException();
+
+        return competition;
+    }
+
     @GET
-    @PathParam("id")
+    @Path("{id}")
     public Response get(@PathParam("id") final String id) {
         try {
             lock_.readLock().lock();
-
             final Competition competition = competitions.get(id);
             if (competition != null)
                 return Response.ok(competition).build();
@@ -74,16 +81,17 @@ public class CompetitionManagerResource {
 
     @POST
     @Path("{id}")
-    public Response create(@Context final UriInfo ui,
+    public Response create(@Context final UriInfo ui, 
             @PathParam("id") final String id,
             final Competition competition) {
         try {
-            lock_.writeLock().unlock();
-
+            lock_.writeLock().lock();
             if (competitions.containsKey(id))
                 return Response.status(Response.Status.CONFLICT).build();
 
+            competition.setId(id);
             competitions.put(id, competition);
+
             return Response.created(UriBuilder.fromUri(
                     ui.getRequestUri()).build()).build();
         }
@@ -103,6 +111,90 @@ public class CompetitionManagerResource {
                 return Response.ok().build();
 
             return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        finally {
+            lock_.writeLock().unlock();
+        }
+    }
+
+    @GET
+    @Path("{id}#name")
+    public Response getName(@PathParam("id") final String id) {
+        try {
+            lock_.readLock().lock();
+            return Response.ok(getNoLock(id).getName()).build();
+        }
+
+        finally {
+            lock_.readLock().unlock();
+        }
+    }
+
+    @PUT
+    @Path("{id}#name")
+    public Response setName(@PathParam("id") final String id,
+            final String name) {
+        try {
+            lock_.writeLock().lock();
+            getNoLock(id).setName(name);
+            return Response.ok().build();
+        }
+
+        finally {
+            lock_.writeLock().unlock();
+        }
+    }
+
+    @GET
+    @Path("{id}#time")
+    public Response getTime(@PathParam("id") final String id) {
+        try {
+            lock_.readLock().lock();
+            return Response.ok(getNoLock(id).getTime()).build();
+        }
+
+        finally {
+            lock_.readLock().unlock();
+        }
+    }
+
+    @PUT
+    @Path("{id}#time")
+    public Response setTime(@PathParam("id") final String id,
+            final XMLGregorianCalendar time) {
+        try {
+            lock_.writeLock().lock();
+            getNoLock(id).setTime(time);
+            return Response.ok().build();
+        }
+
+        finally {
+            lock_.writeLock().unlock();
+        }
+    }
+
+    @GET
+    @Path("{id}#organizer")
+    public Response getOrganizer(@PathParam("id") final String id) {
+        try {
+            lock_.readLock().lock();
+            return Response.ok(getNoLock(id).getOrganizer()).build();
+        }
+
+        finally {
+            lock_.readLock().unlock();
+        }
+    }
+
+    @PUT
+    @Path("{id}#organizer")
+    public Response setOrganizer(@PathParam("id") final String id,
+            final String organizer) {
+        try {
+            lock_.writeLock().lock();
+            getNoLock(id).setOrganizer(organizer);
+            return Response.ok().build();
         }
 
         finally {
