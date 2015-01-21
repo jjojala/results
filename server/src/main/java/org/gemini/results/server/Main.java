@@ -5,7 +5,7 @@ package org.gemini.results.server;
 
 import java.net.URI;
 import javax.ws.rs.core.UriBuilder;
-import org.gemini.results.rest.ArchiveResource;
+import org.gemini.results.rest.CompetitionArchiveResource;
 import org.gemini.results.rest.CompetitionResource;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
@@ -21,7 +21,7 @@ public class Main {
 
             final ResourceConfig config = new ResourceConfig()
                     .register(CompetitionResource.class)
-                    .register(ArchiveResource.class)
+                    .register(CompetitionArchiveResource.class)
                     .register(MoxyJsonFeature.class);
 
             final HttpServer server =
