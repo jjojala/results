@@ -3,6 +3,7 @@
  */
 package org.gemini.results.model;
 
+import java.util.List;
 import java.util.UUID;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -37,7 +38,7 @@ public class Competition {
     private String organizer;
 
     @XmlElement(name = "startGroup")
-    private StartGroupList startGroups;
+    private StartGroupList startGroups = new StartGroupList();
 
     protected Competition() {
     }
@@ -52,7 +53,8 @@ public class Competition {
                     time.toXMLFormat());
         this.name = name;
         this.organizer = organizer;
-        this.startGroups = startGroups;
+        this.startGroups = startGroups == null
+                ? new StartGroupList() : startGroups;
     }
 
     public void setId(final String id) {
@@ -86,5 +88,9 @@ public class Competition {
 
     public String getOrganizer() {
         return this.organizer;
+    }
+
+    public List<StartGroup> getStartGroups() {
+        return startGroups;
     }
 }

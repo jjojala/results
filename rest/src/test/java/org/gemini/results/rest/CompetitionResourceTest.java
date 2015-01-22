@@ -10,6 +10,7 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
 import org.gemini.results.model.Competition;
 import org.gemini.results.model.ModelUtils;
+import org.gemini.results.model.StartGroup;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Assert;
@@ -74,5 +75,82 @@ public class CompetitionResourceTest extends JerseyTest {
             Assert.assertEquals("my-new-competition-name",
                     response.readEntity(String.class));
         }
+    }
+
+    @Test
+    public void testStartGroup() {
+        final String competitionId = UUID.randomUUID().toString();
+        final String startGroupId = UUID.randomUUID().toString();
+
+        {
+            final Competition competition = new Competition("my-id-overriden",
+                    ModelUtils.getDatatypeFactory().newXMLGregorianCalendar(
+                    "2015-01-19T22:45:15.000+02:00"),
+                    "my-test-competition", "my-athletic-club", null);
+
+            final WebTarget manager = target(String.format(
+                    "competition/%s", competitionId));
+
+            final Response response = manager.request().post(
+                    Entity.xml(competition));
+
+            Assert.assertEquals(201, response.getStatus());
+            Assert.assertEquals(manager.getUri().toASCIIString(),
+                    response.getHeaderString("Location"));
+        }
+
+        {
+            final StartGroup group = new StartGroup(startGroupId,
+                    "my-start-group-name", (short)-1, (short)-1,
+                    ModelUtils.getDatatypeFactory().newDuration(0),
+                    null);
+
+            final WebTarget manager = target(String.format(
+                    "competition/%s/startGroup/%s",
+                    competitionId, startGroupId));
+
+            final Response response = manager.request().post(
+                    Entity.xml(group));
+
+            Assert.assertEquals(201, response.getStatus());
+            Assert.assertEquals(manager.getUri().toASCIIString(),
+                    response.getHeaderString("Location"));
+        }
+
+        {
+            final WebTarget manager = target(String.format(
+                    "competition/%s/startGroup/%s#name",
+                    competitionId, startGroupId));
+
+            final Response response = manager.request().get();
+
+            Assert.assertEquals(200, response.getStatus());
+            Assert.assertEquals("my-start-group-name",
+                    response.readEntity(String.class));
+        }
+
+        {
+            final WebTarget manager = target(String.format(
+                    "competition/%s/startGroup/%s#name",
+                    competitionId, startGroupId));
+
+            final Response response = manager.request().put(
+                    Entity.xml("my-new-start-group-name"));
+
+            Assert.assertEquals(200, response.getStatus());
+        }
+
+        {
+            final WebTarget manager = target(String.format(
+                    "competition/%s/startGroup/%s#name",
+                    competitionId, startGroupId));
+
+            final Response response = manager.request().get();
+
+            Assert.assertEquals(200, response.getStatus());
+            Assert.assertEquals("my-new-start-group-name",
+                    response.readEntity(String.class));
+        }
+
     }
 }

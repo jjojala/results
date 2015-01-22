@@ -47,4 +47,20 @@ public class StartGroup {
         this.offset = offset;
         this.classes = classes;
     }
+
+    public void setId(final String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return this.id;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return this.name;
+    }
 }

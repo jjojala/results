@@ -37,10 +37,11 @@ public class CompetitionResource {
 
     private final Competition getNoLock(final String id) {
         final Competition competition = competitions.get(id);
-        if (competition == null)
-            throw new NotFoundException();
+        if (competition != null)
+            return competition;
 
-        return competition;
+        System.out.println("Competition " + id + " not found!");
+        throw new NotFoundException();
     }
 
     @GET
@@ -199,6 +200,23 @@ public class CompetitionResource {
 
         finally {
             lock_.writeLock().unlock();
+        }
+    }
+
+    @Path("{id}/startGroup")
+    public StartGroupResource getStartGroupResource(
+            @PathParam("id") final String id) {
+        try {
+            lock_.readLock().lock();
+            final Competition competition = competitions.get(id);
+            if (competition != null)
+                return new StartGroupResource(lock_, competition);
+
+            throw new NotFoundException();
+        }
+
+        finally {
+            lock_.readLock().unlock();
         }
     }
 }
