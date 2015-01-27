@@ -1,1 +1,3 @@
-# results
+# results - web-based timing and scoring software for ski- and running races
+
+Yep, ... ever-lasting project now in the github for everybody to blame. Let's see if publishing this will make me to complete this at some point. ... doubt it...
