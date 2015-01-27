@@ -3,6 +3,7 @@
  */
 package org.gemini.results.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -32,22 +33,17 @@ public class StartGroup {
     @XmlAttribute
     private Duration offset;
 
-    @XmlElement(name = "class")
-    private ClazzList classes;
-
     protected StartGroup() {
-        classes = new ClazzList();
     }
 
     public StartGroup(final String id, final String name, 
             final short minNumber, final short maxNumber,
-            final Duration offset, final ClazzList classes) {
+            final Duration offset, final List<String> classIds) {
         this.id = id;
         this.name = name;
         this.minNumber = minNumber;
         this.maxNumber = maxNumber;
         this.offset = offset;
-        this.classes = classes == null ? new ClazzList() : classes;
     }
 
     public void setId(final String id) {
@@ -64,9 +60,5 @@ public class StartGroup {
 
     public String getName() {
         return this.name;
-    }
-
-    public List<Clazz> getClasses() {
-        return this.classes;
     }
 }

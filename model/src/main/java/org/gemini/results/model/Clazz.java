@@ -30,21 +30,15 @@ public class Clazz {
     @XmlAttribute
     private String startGroupId;
 
-    @XmlElement(name = "competitor")
-    private CompetitorList competitors;
-
     protected Clazz() {
-        this.competitors = new CompetitorList();
     }
 
     public Clazz(final String id, final String name, final Duration offset,
-            final String startGroupId, final CompetitorList competitors) {
+            final String startGroupId) {
         this.id = id;
         this.name = name;
         this.offset = offset;
         this.startGroupId = startGroupId;
-        this.competitors = competitors == null
-                ? new CompetitorList() : competitors;
     }
 
     public void setId(final String id) {
@@ -77,9 +71,5 @@ public class Clazz {
 
     public String getStartGroupId() {
         return this.startGroupId;
-    }
-
-    public List<Competitor> getCompetitors() {
-        return competitors;
     }
 }

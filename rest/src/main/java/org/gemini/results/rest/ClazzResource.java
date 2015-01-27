@@ -42,36 +42,20 @@ public class ClazzResource {
     }
 
     private Clazz getNoLock(final String id) {
-        for (final StartGroup group: competition_.getStartGroups()) {
-            for (final Clazz clazz: group.getClasses())
-                if (clazz.getId().equals(id))
-                    return clazz;
-        }
+        for (final Clazz clazz: competition_.getClasses())
+            if (clazz.getId().equals(id))
+                return clazz;
 
         return null;
     }
 
     private StartGroup getStartGroupNoLock(final String id) {
-        for (final StartGroup group: competition_.getStartGroups()) {
+        for (final StartGroup group: competition_.getGroups()) {
             if (group.getId().equals(id))
                 return group;
         }
 
         return null;
-    }
-
-    private StartGroup getDefaultStartGroupNoLock() {
-        final StartGroup group = getStartGroupNoLock(DEFAULT_START_GROUP_ID);
-        if (group != null)
-            return group;
-
-        final StartGroup newGroup = new StartGroup(
-                DEFAULT_START_GROUP_ID, null, (short)-1, (short)-1,
-                ModelUtils.getDatatypeFactory().newDuration(0),
-                null);
-
-        competition_.getStartGroups().add(newGroup);
-        return newGroup;
     }
 
     @POST
@@ -89,12 +73,6 @@ public class ClazzResource {
                         getStartGroupNoLock(clazz.getStartGroupId());
                 if (group == null)
                     return Response.status(Response.Status.NOT_FOUND).build();
-
-                group.getClasses().add(clazz);
-            } else {
-                final StartGroup defaultGroup = getDefaultStartGroupNoLock();
-                clazz.setStartGroupId(defaultGroup.getId());
-                defaultGroup.getClasses().add(clazz);
             }
 
             clazz.setId(id);
@@ -134,9 +112,7 @@ public class ClazzResource {
             if (clazz == null)
                 return Response.status(Response.Status.NOT_FOUND).build();
 
-            final StartGroup group = this.getStartGroupNoLock(
-                    clazz.getStartGroupId());
-            group.getClasses().remove(clazz);
+            competition_.getClasses().remove(clazz);
 
             return Response.ok().build();
         }
@@ -251,11 +227,6 @@ public class ClazzResource {
             if (newGroup == null)
                 return Response.status(Response.Status.NOT_FOUND).build();
 
-            if (clazz.getStartGroupId() != null)
-                getStartGroupNoLock(clazz.getStartGroupId()).getClasses()
-                        .remove(clazz);
-
-            newGroup.getClasses().add(clazz);
             clazz.setStartGroupId(startGroupId);
 
             return Response.ok().build();

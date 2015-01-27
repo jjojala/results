@@ -27,7 +27,7 @@ public class CompetitionArchiveResourceTest extends JerseyTest {
             final Competition competition = new Competition("my-id-overriden",
                     ModelUtils.getDatatypeFactory().newXMLGregorianCalendar(
                         "2015-01-19T22:45:15.000+02:00"),
-                    "my-test-competition", "my-athletic-club", null);
+                    "my-test-competition", "my-athletic-club", null, null, null);
 
             final WebTarget archive = target("archive/my-id");
             final Response response = archive.request().post(
@@ -48,7 +48,7 @@ public class CompetitionArchiveResourceTest extends JerseyTest {
 
         {
             final Competition competition = new Competition(null,
-                    null, null, null, null);
+                    null, null, null, null, null, null);
             final WebTarget archive = target("archive/my-id");
             final Response response = archive.request().post(
                     Entity.xml(competition));

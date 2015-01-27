@@ -42,7 +42,7 @@ public class CompetitionArchiveResource {
             for (final Competition competition: competitions_.values()) {
                 competitions.add(new Competition(competition.getId(),
                         competition.getTime(), competition.getName(),
-                        competition.getOrganizer(), null));
+                        competition.getOrganizer(), null, null, null));
             }
 
             return Response.ok(competitions).build();

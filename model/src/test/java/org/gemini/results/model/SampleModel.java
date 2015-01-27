@@ -15,36 +15,36 @@ public class SampleModel {
 
     public static void main(final String[] args) {
         try {
-            final ClazzList elite = new ClazzList(Arrays.asList(
-                    new Clazz(UUID.randomUUID().toString(), 
-                        "H21", duration("P0M"), null,
-                        new CompetitorList(makeCompetitors("H21", 14))),
-                    new Clazz(UUID.randomUUID().toString(),
-                        "D21", duration("P30M"), null,
-                        new CompetitorList(makeCompetitors("D21", 14)))));
+            final Clazz
+                    h21 = new Clazz(UUID.randomUUID().toString(),
+                        "H21", duration("P0M"), null),
+                    d21 = new Clazz(UUID.randomUUID().toString(),
+                        "D21", duration("P30M"), null),
+                    h35 = new Clazz(UUID.randomUUID().toString(),
+                        "H35", duration("P15M"), null),
+                    d35 = new Clazz(UUID.randomUUID().toString(),
+                        "D35", duration("P45M"), null);
 
-            final ClazzList national = new ClazzList(Arrays.asList(
-                    new Clazz(UUID.randomUUID().toString(),
-                        "H35", duration("P15M"), null,
-                        new CompetitorList(makeCompetitors("H35", 14))),
-                    new Clazz(UUID.randomUUID().toString(),
-                        "D35", duration("P45M"), null,
-                        new CompetitorList(makeCompetitors("D35", 100)))));
+            final List<Competitor> competitors = new ArrayList<>();
+            competitors.addAll(makeCompetitors("H21", 14));
+            competitors.addAll(makeCompetitors("D21", 14));
+            competitors.addAll(makeCompetitors("H35", 14));
+            competitors.addAll(makeCompetitors("D35", 100));
+
+            final List<StartGroup> startGroups = Arrays.asList(
+                    new StartGroup(UUID.randomUUID().toString(),
+                        "elite", (short)1, (short)99, duration("P0M"),
+                        Arrays.asList(h21.getId(), d21.getId())),
+                    new StartGroup(UUID.randomUUID().toString(),
+                        "national", (short)100, (short)500, duration("P30M"),
+                        Arrays.asList(h35.getId(), d35.getId())));
 
             final Competition competition = new Competition(
                     UUID.randomUUID().toString(),
                     time("2015-01-15T19:00:00.000+02:00"),
                     "Just local race", "Pirkkala Athletic Club",
-                    new StartGroupList(Arrays.asList(
-                        new StartGroup(
-                            UUID.randomUUID().toString(),
-                            "elite", (short)1, (short)99,
-                            duration("P0M"), elite),
-                        new StartGroup(
-                            UUID.randomUUID().toString(),
-                            "national", (short)100, (short)500,
-                            duration("P30M"), national)
-                    )));
+                    startGroups, Arrays.asList(h21, d21, h35, d35),
+                    competitors);
 
             final Marshaller marshaller =
                     ModelUtils.getJaxbContext().createMarshaller();

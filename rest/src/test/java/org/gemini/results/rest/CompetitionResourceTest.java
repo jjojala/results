@@ -31,7 +31,7 @@ public class CompetitionResourceTest extends JerseyTest {
             final Competition competition = new Competition("my-id-overriden",
                     ModelUtils.getDatatypeFactory().newXMLGregorianCalendar(
                         "2015-01-19T22:45:15.000+02:00"),
-                    "my-test-competition", "my-athletic-club", null);
+                    "my-test-competition", "my-athletic-club", null, null, null);
 
             final WebTarget manager = target(String.format(
                     "competition/%s", id));
@@ -86,7 +86,7 @@ public class CompetitionResourceTest extends JerseyTest {
             final Competition competition = new Competition("my-id-overriden",
                     ModelUtils.getDatatypeFactory().newXMLGregorianCalendar(
                     "2015-01-19T22:45:15.000+02:00"),
-                    "my-test-competition", "my-athletic-club", null);
+                    "my-test-competition", "my-athletic-club", null, null, null);
 
             final WebTarget manager = target(String.format(
                     "competition/%s", competitionId));

@@ -36,7 +36,7 @@ public class StartGroupResource {
     }
 
     private StartGroup getNoLock(final String id) {
-        for (final StartGroup group: competition_.getStartGroups())
+        for (final StartGroup group: competition_.getGroups())
             if (group.getId().equals(id))
                 return group;
 
@@ -55,7 +55,7 @@ public class StartGroupResource {
                 return Response.status(Response.Status.CONFLICT).build();
 
             group.setId(id);
-            competition_.getStartGroups().add(group);
+            competition_.getGroups().add(group);
             return Response.created(UriBuilder.fromUri(
                     ui.getRequestUri()).build()).build();
         }
@@ -91,7 +91,7 @@ public class StartGroupResource {
             if (group == null)
                 return Response.status(Response.Status.NOT_FOUND).build();
 
-            competition_.getStartGroups().remove(group);
+            competition_.getGroups().remove(group);
             return Response.ok().build();
         }
 

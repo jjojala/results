@@ -3,6 +3,7 @@
  */
 package org.gemini.results.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -37,24 +38,38 @@ public class Competition {
     @XmlAttribute
     private String organizer;
 
-    @XmlElement(name = "startGroup")
-    private StartGroupList startGroups = new StartGroupList();
+    @XmlElement(name = "group")
+    private List<StartGroup> group;
+
+    @XmlElement(name = "class")
+    private List<Clazz> clazzes;
+
+    @XmlElement(name = "competitor")
+    private List<Competitor> competitors;
 
     protected Competition() {
+        group = new StartGroupList();
+        clazzes = new ClazzList();
+        competitors = new ArrayList<>();
     }
 
     public Competition(final String id,
             final XMLGregorianCalendar time,
             final String name, final String organizer,
-            final StartGroupList startGroups) {
+            final List<StartGroup> startGroups,
+            final List<Clazz> clazzes,
+            final List<Competitor> competitors) {
         this.id = id == null ? UUID.randomUUID().toString() : id;
         this.time = time == null ? null 
                 : ModelUtils.getDatatypeFactory().newXMLGregorianCalendar(
                     time.toXMLFormat());
         this.name = name;
         this.organizer = organizer;
-        this.startGroups = startGroups == null
+        this.group = startGroups == null
                 ? new StartGroupList() : startGroups;
+        this.clazzes = clazzes == null ? new ClazzList() : clazzes;
+        this.competitors = competitors == null
+                ? new ArrayList<Competitor>() : competitors;
     }
 
     public void setId(final String id) {
@@ -90,7 +105,15 @@ public class Competition {
         return this.organizer;
     }
 
-    public List<StartGroup> getStartGroups() {
-        return startGroups;
+    public List<StartGroup> getGroups() {
+        return group;
+    }
+
+    public List<Clazz> getClasses() {
+        return clazzes;
+    }
+
+    public List<Competitor> getCompetitors() {
+        return this.competitors;
     }
 }
