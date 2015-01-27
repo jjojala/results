@@ -17,18 +17,18 @@ public class SampleModel {
         try {
             final ClazzList elite = new ClazzList(Arrays.asList(
                     new Clazz(UUID.randomUUID().toString(), 
-                        "H21", duration("P0M"),
+                        "H21", duration("P0M"), null,
                         new CompetitorList(makeCompetitors("H21", 14))),
                     new Clazz(UUID.randomUUID().toString(),
-                        "D21", duration("P30M"),
+                        "D21", duration("P30M"), null,
                         new CompetitorList(makeCompetitors("D21", 14)))));
 
             final ClazzList national = new ClazzList(Arrays.asList(
                     new Clazz(UUID.randomUUID().toString(),
-                        "H35", duration("P15M"),
+                        "H35", duration("P15M"), null,
                         new CompetitorList(makeCompetitors("H35", 14))),
                     new Clazz(UUID.randomUUID().toString(),
-                        "D35", duration("P45M"),
+                        "D35", duration("P45M"), null,
                         new CompetitorList(makeCompetitors("D35", 100)))));
 
             final Competition competition = new Competition(

@@ -15,6 +15,7 @@
         <module>project</module>
         <module>model</module>
         <module>rest</module>
+        <module>data</module>
         <module>server</module>
     </modules>
 </project>

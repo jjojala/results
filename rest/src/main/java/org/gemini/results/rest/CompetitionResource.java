@@ -219,4 +219,18 @@ public class CompetitionResource {
             lock_.readLock().unlock();
         }
     }
+
+    @Path("{id}/class")
+    public ClazzResource getClazzResource(
+            @PathParam("id") final String id) {
+        try {
+            lock_.readLock().lock();
+
+            throw new NotFoundException();
+        }
+
+        finally {
+            lock_.readLock().unlock();
+        }
+    }
 }

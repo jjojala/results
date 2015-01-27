@@ -3,6 +3,7 @@
  */
 package org.gemini.results.model;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,18 +27,24 @@ public class Clazz {
     @XmlAttribute
     private Duration offset;
 
+    @XmlAttribute
+    private String startGroupId;
+
     @XmlElement(name = "competitor")
     private CompetitorList competitors;
 
     protected Clazz() {
+        this.competitors = new CompetitorList();
     }
 
     public Clazz(final String id, final String name, final Duration offset,
-            final CompetitorList competitors) {
+            final String startGroupId, final CompetitorList competitors) {
         this.id = id;
         this.name = name;
         this.offset = offset;
-        this.competitors = competitors;
+        this.startGroupId = startGroupId;
+        this.competitors = competitors == null
+                ? new CompetitorList() : competitors;
     }
 
     public void setId(final String id) {
@@ -54,5 +61,25 @@ public class Clazz {
 
     public String getName() {
         return this.name;
+    }
+
+    public void setOffset(final Duration offset) {
+        this.offset = offset;
+    }
+
+    public Duration getOffset() {
+        return this.offset;
+    }
+
+    public void setStartGroupId(final String startGroupId) {
+        this.startGroupId = startGroupId;
+    }
+
+    public String getStartGroupId() {
+        return this.startGroupId;
+    }
+
+    public List<Competitor> getCompetitors() {
+        return competitors;
     }
 }
