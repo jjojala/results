@@ -203,8 +203,8 @@ public class CompetitionResource {
         }
     }
 
-    @Path("{id}/startGroup")
-    public StartGroupResource getStartGroupResource(
+    @Path("{id}/group")
+    public StartGroupResource getGroupResource(
             @PathParam("id") final String id) {
         try {
             lock_.readLock().lock();

@@ -10,7 +10,7 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
 import org.gemini.results.model.Competition;
 import org.gemini.results.model.ModelUtils;
-import org.gemini.results.model.StartGroup;
+import org.gemini.results.model.Group;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Assert;
@@ -100,13 +100,13 @@ public class CompetitionResourceTest extends JerseyTest {
         }
 
         {
-            final StartGroup group = new StartGroup(startGroupId,
+            final Group group = new Group(startGroupId,
                     "my-start-group-name", (short)-1, (short)-1,
                     ModelUtils.getDatatypeFactory().newDuration(0),
                     null);
 
             final WebTarget manager = target(String.format(
-                    "competition/%s/startGroup/%s",
+                    "competition/%s/group/%s",
                     competitionId, startGroupId));
 
             final Response response = manager.request().post(
@@ -119,7 +119,7 @@ public class CompetitionResourceTest extends JerseyTest {
 
         {
             final WebTarget manager = target(String.format(
-                    "competition/%s/startGroup/%s#name",
+                    "competition/%s/group/%s#name",
                     competitionId, startGroupId));
 
             final Response response = manager.request().get();
@@ -131,7 +131,7 @@ public class CompetitionResourceTest extends JerseyTest {
 
         {
             final WebTarget manager = target(String.format(
-                    "competition/%s/startGroup/%s#name",
+                    "competition/%s/group/%s#name",
                     competitionId, startGroupId));
 
             final Response response = manager.request().put(
@@ -142,7 +142,7 @@ public class CompetitionResourceTest extends JerseyTest {
 
         {
             final WebTarget manager = target(String.format(
-                    "competition/%s/startGroup/%s#name",
+                    "competition/%s/group/%s#name",
                     competitionId, startGroupId));
 
             final Response response = manager.request().get();

@@ -31,11 +31,11 @@ public class SampleModel {
             competitors.addAll(makeCompetitors("H35", 14));
             competitors.addAll(makeCompetitors("D35", 100));
 
-            final List<StartGroup> startGroups = Arrays.asList(
-                    new StartGroup(UUID.randomUUID().toString(),
+            final List<Group> startGroups = Arrays.asList(
+                    new Group(UUID.randomUUID().toString(),
                         "elite", (short)1, (short)99, duration("P0M"),
                         Arrays.asList(h21.getId(), d21.getId())),
-                    new StartGroup(UUID.randomUUID().toString(),
+                    new Group(UUID.randomUUID().toString(),
                         "national", (short)100, (short)500, duration("P30M"),
                         Arrays.asList(h35.getId(), d35.getId())));
 

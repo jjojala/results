@@ -15,20 +15,20 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(namespace = ModelUtils.NAMESPACE)
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType
-public class StartGroupList extends AbstractList<StartGroup> {
+public class StartGroupList extends AbstractList<Group> {
 
     @XmlElement(name = "startGroup")
-    private List<StartGroup> competitors = new ArrayList<>();
+    private List<Group> competitors = new ArrayList<>();
 
     protected StartGroupList() {
     }
 
-    public StartGroupList(final List<StartGroup> items) {
+    public StartGroupList(final List<Group> items) {
         this.competitors.addAll(items);
     }
 
     @Override
-    public StartGroup get(int index) {
+    public Group get(int index) {
         return this.competitors.get(index);
     }
 
@@ -38,17 +38,17 @@ public class StartGroupList extends AbstractList<StartGroup> {
     }
 
     @Override
-    public StartGroup set(int index, StartGroup element) {
+    public Group set(int index, Group element) {
         return this.competitors.set(index, element);
     }
 
     @Override
-    public void add(int index, StartGroup element) {
+    public void add(int index, Group element) {
         this.competitors.add(index, element);
     }
 
     @Override
-    public StartGroup remove(int index) {
+    public Group remove(int index) {
         return this.competitors.remove(index);
     }
 }

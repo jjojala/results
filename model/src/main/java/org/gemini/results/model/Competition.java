@@ -39,7 +39,7 @@ public class Competition {
     private String organizer;
 
     @XmlElement(name = "group")
-    private List<StartGroup> group;
+    private List<Group> group;
 
     @XmlElement(name = "class")
     private List<Clazz> clazzes;
@@ -56,7 +56,7 @@ public class Competition {
     public Competition(final String id,
             final XMLGregorianCalendar time,
             final String name, final String organizer,
-            final List<StartGroup> startGroups,
+            final List<Group> startGroups,
             final List<Clazz> clazzes,
             final List<Competitor> competitors) {
         this.id = id == null ? UUID.randomUUID().toString() : id;
@@ -105,7 +105,7 @@ public class Competition {
         return this.organizer;
     }
 
-    public List<StartGroup> getGroups() {
+    public List<Group> getGroups() {
         return group;
     }
 

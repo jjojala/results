@@ -16,7 +16,7 @@ import javax.xml.datatype.Duration;
 @XmlRootElement(namespace = ModelUtils.NAMESPACE)
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType
-public class StartGroup {
+public class Group {
 
     @XmlAttribute
     private String id;
@@ -33,10 +33,10 @@ public class StartGroup {
     @XmlAttribute
     private Duration offset;
 
-    protected StartGroup() {
+    protected Group() {
     }
 
-    public StartGroup(final String id, final String name, 
+    public Group(final String id, final String name, 
             final short minNumber, final short maxNumber,
             final Duration offset, final List<String> classIds) {
         this.id = id;

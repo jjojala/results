@@ -23,7 +23,7 @@ import javax.xml.datatype.Duration;
 import org.gemini.results.model.Clazz;
 import org.gemini.results.model.Competition;
 import org.gemini.results.model.ModelUtils;
-import org.gemini.results.model.StartGroup;
+import org.gemini.results.model.Group;
 
 @Singleton
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
@@ -49,8 +49,8 @@ public class ClazzResource {
         return null;
     }
 
-    private StartGroup getStartGroupNoLock(final String id) {
-        for (final StartGroup group: competition_.getGroups()) {
+    private Group getStartGroupNoLock(final String id) {
+        for (final Group group: competition_.getGroups()) {
             if (group.getId().equals(id))
                 return group;
         }
@@ -69,7 +69,7 @@ public class ClazzResource {
                 return Response.status(Response.Status.CONFLICT).build();
 
             if (clazz.getStartGroupId() != null) {
-                final StartGroup group =
+                final Group group =
                         getStartGroupNoLock(clazz.getStartGroupId());
                 if (group == null)
                     return Response.status(Response.Status.NOT_FOUND).build();
@@ -223,7 +223,7 @@ public class ClazzResource {
 
             final Clazz clazz = getNoLock(id);
 
-            final StartGroup newGroup = getStartGroupNoLock(startGroupId);
+            final Group newGroup = getStartGroupNoLock(startGroupId);
             if (newGroup == null)
                 return Response.status(Response.Status.NOT_FOUND).build();
 

@@ -19,7 +19,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import org.gemini.results.model.Competition;
-import org.gemini.results.model.StartGroup;
+import org.gemini.results.model.Group;
 
 @Singleton
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
@@ -35,8 +35,8 @@ public class StartGroupResource {
         competition_ = competition;
     }
 
-    private StartGroup getNoLock(final String id) {
-        for (final StartGroup group: competition_.getGroups())
+    private Group getNoLock(final String id) {
+        for (final Group group: competition_.getGroups())
             if (group.getId().equals(id))
                 return group;
 
@@ -48,7 +48,7 @@ public class StartGroupResource {
     @Path("{id}")
     public Response create(@Context UriInfo ui,
             @PathParam("id") final String id,
-            final StartGroup group) {
+            final Group group) {
         try {
             lock_.writeLock().lock();
             if (getNoLock(id) != null)
@@ -70,7 +70,7 @@ public class StartGroupResource {
     public Response get(@PathParam("id") final String id) {
         try {
             lock_.readLock().lock();
-            final StartGroup group = getNoLock(id);
+            final Group group = getNoLock(id);
             if (group != null)
                 return Response.ok(group).build();
 
@@ -87,7 +87,7 @@ public class StartGroupResource {
     public Response remove(@PathParam("id") final String id) {
         try {
             lock_.writeLock().lock();
-            final StartGroup group = getNoLock(id);
+            final Group group = getNoLock(id);
             if (group == null)
                 return Response.status(Response.Status.NOT_FOUND).build();
 
@@ -105,7 +105,7 @@ public class StartGroupResource {
     public Response getName(@PathParam("id") final String id) {
         try {
             lock_.readLock().lock();
-            final StartGroup group = getNoLock(id);
+            final Group group = getNoLock(id);
             if (group == null)
                 return Response.status(Response.Status.NOT_FOUND).build();
 
@@ -123,7 +123,7 @@ public class StartGroupResource {
             final String name) {
         try {
             lock_.writeLock().lock();
-            final StartGroup group = getNoLock(id);
+            final Group group = getNoLock(id);
             if (group == null)
                 return Response.status(Response.Status.NOT_FOUND).build();
 
