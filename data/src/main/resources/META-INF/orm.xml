@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<entity-mappings xmlns="http://xmlns.jcp.org/xml/ns/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence/orm
+        http://xmlns.jcp.org/xml/ns/persistence/orm_2_1.xsd" version="2.1">
+    <!--
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm 
+                    http://java.sun.com/xml/ns/persistence/orm_2_1.xsd"
+                 version="1.0">
+-->
+    <description>Mappings for results-data.</description>
+    <!--
+    <package>org.gemini.results.model</package>
+    -->
+
+    <entity class="org.gemini.results.model.Competition"
+            name="Competition">
+        <table name="COMPETITION"/>
+        <convert converter="org.gemini.results.data.XMLGregorianCalendarConverter"
+                attribute-name="time"/>
+
+        <attributes>
+            <id name="id"></id>
+            <basic name="name"></basic>
+            <basic name="organizer"></basic>
+            <basic name="time"/>
+            <transient name="groups"/>
+            <transient name="classes"/>
+            <transient name="competitors"/>
+        </attributes>
+    </entity>
+
+    <entity class="org.gemini.results.model.Clazz" name="Clazz">
+        <table name="CLASS"></table>
+        <convert converter="org.gemini.results.data.DurationConverter"
+                attribute-name="offset"/>
+
+        <attributes>
+            <id name="id"></id>
+        </attributes>
+    </entity>
+
+</entity-mappings>
