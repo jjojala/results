@@ -19,10 +19,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.datatype.Duration;
 import org.gemini.results.model.Clazz;
 import org.gemini.results.model.Competition;
-import org.gemini.results.model.ModelUtils;
 import org.gemini.results.model.Group;
 
 @Singleton
@@ -181,7 +179,7 @@ public class ClazzResource {
     @PUT
     @Path("{id}#offset")
     public Response setOffset(@PathParam("id") final String id,
-            final Duration offset) {
+            final Long offset) {
         try {
             lock_.writeLock().lock();
             final Clazz clazz = getNoLock(id);

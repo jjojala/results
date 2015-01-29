@@ -41,9 +41,6 @@
     <entity class="org.gemini.results.model.Group" name="Group">
         <table name="B_GROUP"/>
 
-        <convert converter="org.gemini.results.data.DurationConverter"
-                 attribute-name="offset"/>
-
         <attributes>
             <id name="id"></id>
             <basic name="competitionId">
@@ -57,9 +54,6 @@
 
     <entity class="org.gemini.results.model.Clazz" name="Clazz">
         <table name="C_CLASS"></table>
-
-        <convert converter="org.gemini.results.data.DurationConverter"
-                attribute-name="offset"/>
 
         <attributes>
             <id name="id"></id>
@@ -80,10 +74,6 @@
 
     <entity class="org.gemini.results.model.Competitor" name="Competitor">
         <table name="D_COMPETITOR"></table>
-        <convert converter="org.gemini.results.data.DurationConverter"
-                 attribute-name="offset"/>
-        <convert converter="org.gemini.results.data.DurationConverter"
-                 attribute-name="result"/>
 
         <attributes>
             <id name="id"></id>

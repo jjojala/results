@@ -8,7 +8,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.datatype.Duration;
 
 @XmlRootElement(namespace = ModelUtils.NAMESPACE)
 @XmlAccessorType(XmlAccessType.NONE)
@@ -24,9 +23,9 @@ public class Clazz {
     @XmlAttribute(required = true)
     private String name;
 
-    /** Start offset comparing to competition's time.*/
+    /** Time offset in milliseconds for the starting time of this class. */
     @XmlAttribute
-    private Duration offset;
+    private Long offset;
 
     @XmlAttribute
     private String groupId;
@@ -35,7 +34,7 @@ public class Clazz {
     }
 
     public Clazz(final String id, final String competitionId,
-            final String name, final Duration offset,
+            final String name, final Long offset,
             final String groupId) {
         this.id = id;
         this.competitionId = competitionId;
@@ -68,11 +67,11 @@ public class Clazz {
         return this.name;
     }
 
-    public void setOffset(final Duration offset) {
+    public void setOffset(final Long offset) {
         this.offset = offset;
     }
 
-    public Duration getOffset() {
+    public Long getOffset() {
         return this.offset;
     }
 

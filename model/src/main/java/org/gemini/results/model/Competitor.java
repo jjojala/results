@@ -8,7 +8,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.datatype.Duration;
 
 @XmlRootElement(namespace = ModelUtils.NAMESPACE)
 @XmlAccessorType(XmlAccessType.NONE)
@@ -31,17 +30,17 @@ public class Competitor {
     private short number;
 
     @XmlAttribute
-    private Duration offset;
+    private Long offset;
 
     @XmlAttribute
-    private Duration result;
+    private Long result;
 
     protected Competitor() {
     }
 
     public Competitor(final String id, final String competitionId,
             final String name, final String clazzId, final short number,
-            final Duration offset, final Duration result) {
+            final Long offset, final Long result) {
         this.id = id;
         this.competitionId = competitionId;
         this.name = name;
@@ -51,11 +50,11 @@ public class Competitor {
         this.result = result;
     }
 
-    public final void setId(final String id) {
+    public void setId(final String id) {
         this.id = id;
     }
 
-    public final String getId() {
+    public String getId() {
         return this.id;
     }
 
@@ -67,43 +66,43 @@ public class Competitor {
         return this.competitionId;
     }
 
-    public final void setName(final String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
-    public final String getName() {
+    public String getName() {
         return this.name;
     }
 
-    public final void setClassId(final String clazzId) {
+    public void setClassId(final String clazzId) {
         this.clazzId = clazzId;
     }
 
-    public final String getClassId() {
+    public String getClassId() {
         return this.clazzId;
     }
 
-    public final void setNumber(final short number) {
+    public void setNumber(final short number) {
         this.number = number;
     }
 
-    public final short getNumber() {
+    public short getNumber() {
         return this.number;
     }
 
-    public final void setOffset(final Duration offset) {
+    public void setOffset(final Long offset) {
         this.offset = offset;
     }
 
-    public final Duration getOffset() {
+    public Long getOffset() {
         return this.offset;
     }
 
-    public final void setResult(final Duration result) {
+    public void setResult(final Long result) {
         this.result = result;
     }
 
-    public final Duration getResult() {
+    public Long getResult() {
         return this.result;
     }
 }

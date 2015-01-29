@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import javax.xml.bind.Marshaller;
-import javax.xml.datatype.Duration;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 public class SampleModel {
@@ -17,13 +16,13 @@ public class SampleModel {
         try {
             final Clazz
                     h21 = new Clazz(UUID.randomUUID().toString(), null,
-                        "H21", duration("P0M"), null),
+                        "H21", 0L, null),
                     d21 = new Clazz(UUID.randomUUID().toString(), null,
-                        "D21", duration("P30M"), null),
+                        "D21", 1000L*30*60 /* 30 minutes */, null),
                     h35 = new Clazz(UUID.randomUUID().toString(), null,
-                        "H35", duration("P15M"), null),
+                        "H35", 1000L*15*60 /* 15 minutes */, null),
                     d35 = new Clazz(UUID.randomUUID().toString(), null,
-                        "D35", duration("P45M"), null);
+                        "D35", 1000L*45*60 /* 45 minutes */, null);
 
             final List<Competitor> competitors = new ArrayList<>();
             competitors.addAll(makeCompetitors("H21", 14));
@@ -33,9 +32,10 @@ public class SampleModel {
 
             final List<Group> startGroups = Arrays.asList(
                     new Group(UUID.randomUUID().toString(), null,
-                        "elite", (short)1, (short)99, duration("P0M")),
+                        "elite", (short)1, (short)99, 0L),
                     new Group(UUID.randomUUID().toString(), null,
-                        "national", (short)100, (short)500, duration("P30M")));
+                        "national", (short)100, (short)500,
+                        1000L*30*60 /* 60 mins */));
 
             final Competition competition = new Competition(
                     UUID.randomUUID().toString(),
@@ -59,10 +59,6 @@ public class SampleModel {
 
     public static XMLGregorianCalendar time(final String str) {
         return ModelUtils.getDatatypeFactory().newXMLGregorianCalendar(str);
-    }
-
-    public static Duration duration(final String str) {
-        return ModelUtils.getDatatypeFactory().newDuration(str);
     }
 
     public static List<Competitor> makeCompetitors(

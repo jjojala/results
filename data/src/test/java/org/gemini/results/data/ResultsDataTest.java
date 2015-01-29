@@ -31,18 +31,15 @@ public class ResultsDataTest {
 
             final Group group = new Group(
                     UUID.randomUUID().toString(), competition.getId(),
-                    "group", (short)-1, (short)-1,
-                    ModelUtils.getDatatypeFactory().newDuration(0));
+                    "group", (short)-1, (short)-1, 0L);
 
             final Clazz assignedClazz = new Clazz(
                     UUID.randomUUID().toString(), competition.getId(), "H21",
-                    ModelUtils.getDatatypeFactory().newDuration("P1M"),
-                    group.getId());
+                    1000L*60*1 /* 1 minute */, group.getId());
 
             final Clazz unassignedClazz = new Clazz(
                     UUID.randomUUID().toString(), competition.getId(), "H21",
-                    ModelUtils.getDatatypeFactory().newDuration("P1M"),
-                    null /* groupId */);
+                    1000L*60*1 /* 1 minute */, null /* groupId */);
 
             final Competitor competitor = new Competitor(
                     UUID.randomUUID().toString(), competition.getId(),

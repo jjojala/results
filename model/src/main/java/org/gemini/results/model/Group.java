@@ -8,7 +8,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.datatype.Duration;
 
 @XmlRootElement(namespace = ModelUtils.NAMESPACE)
 @XmlAccessorType(XmlAccessType.NONE)
@@ -31,7 +30,7 @@ public class Group {
     private short maxNumber;
 
     @XmlAttribute
-    private Duration offset;
+    private Long offset;
 
     protected Group() {
     }
@@ -39,7 +38,7 @@ public class Group {
     public Group(final String id, final String competitionId,
             final String name, 
             final short minNumber, final short maxNumber,
-            final Duration offset) {
+            final Long offset) {
         this.id = id;
         this.competitionId = competitionId;
         this.name = name;
@@ -84,11 +83,11 @@ public class Group {
         this.maxNumber = maxNumber;
     }
 
-    public void setOffset(final Duration offset) {
+    public void setOffset(final Long offset) {
         this.offset = offset;
     }
 
-    public Duration getOffset() {
+    public Long getOffset() {
         return this.offset;
     }
 }
