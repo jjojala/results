@@ -15,10 +15,13 @@ import javax.xml.datatype.Duration;
 @XmlType
 public class Competitor {
 
-    @XmlAttribute
+    @XmlAttribute(required = true)
     private String id;
 
-    @XmlAttribute
+    @XmlAttribute(required = true)
+    private String competitionId;
+
+    @XmlAttribute(required = true)
     private String name;
 
     @XmlAttribute
@@ -36,11 +39,16 @@ public class Competitor {
     protected Competitor() {
     }
 
-    public Competitor(final String id, final String name, final String clazzId,
-            final short number, final Duration offset, final Duration result) {
+    public Competitor(final String id, final String competitionId,
+            final String name, final String clazzId, final short number,
+            final Duration offset, final Duration result) {
         this.id = id;
+        this.competitionId = competitionId;
         this.name = name;
         this.clazzId = clazzId;
+        this.number = number;
+        this.offset = offset;
+        this.result = result;
     }
 
     public final void setId(final String id) {
@@ -49,6 +57,14 @@ public class Competitor {
 
     public final String getId() {
         return this.id;
+    }
+
+    public void setCompetitionId(final String competitionId) {
+        this.competitionId = competitionId;
+    }
+
+    public String getCompetitionId() {
+        return this.competitionId;
     }
 
     public final void setName(final String name) {

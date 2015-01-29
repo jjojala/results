@@ -8,7 +8,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
-import javax.xml.datatype.Duration;
 import org.gemini.results.model.Clazz;
 import org.gemini.results.model.Competition;
 import org.gemini.results.model.Competitor;
@@ -31,23 +30,24 @@ public class ResultsDataTest {
                     "Testikisa", "Meidän poppoo", null, null, null);
 
             final Group group = new Group(
-                    UUID.randomUUID().toString(),
+                    UUID.randomUUID().toString(), competition.getId(),
                     "group", (short)-1, (short)-1,
                     ModelUtils.getDatatypeFactory().newDuration(0));
 
             final Clazz assignedClazz = new Clazz(
-                    UUID.randomUUID().toString(), "H21",
+                    UUID.randomUUID().toString(), competition.getId(), "H21",
                     ModelUtils.getDatatypeFactory().newDuration("P1M"),
                     group.getId());
 
             final Clazz unassignedClazz = new Clazz(
-                    UUID.randomUUID().toString(), "H21",
+                    UUID.randomUUID().toString(), competition.getId(), "H21",
                     ModelUtils.getDatatypeFactory().newDuration("P1M"),
                     null /* groupId */);
 
             final Competitor competitor = new Competitor(
-                    UUID.randomUUID().toString(), "Trump Donald",
-                    assignedClazz.getId(), (short)0, null, null);
+                    UUID.randomUUID().toString(), competition.getId(),
+                    "Trump Donald", assignedClazz.getId(),
+                    (short)0, null, null);
 
             EntityTransaction trx = em.getTransaction();
             trx.begin();

@@ -19,7 +19,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 @XmlType
 public class Competition {
 
-    @XmlAttribute
+    @XmlAttribute(required = true)
     private String id;
 
     /**
@@ -29,17 +29,17 @@ public class Competition {
      * are represents as offsets to this time. This makes the system
      * tolerant for late delays. 
      */
-    @XmlAttribute
+    @XmlAttribute(required = true)
     private XMLGregorianCalendar time;
 
-    @XmlAttribute
+    @XmlAttribute(required = true)
     private String name;
 
     @XmlAttribute
     private String organizer;
 
     @XmlElement(name = "group")
-    private List<Group> group;
+    private List<Group> groups;
 
     @XmlElement(name = "class")
     private List<Clazz> clazzes;
@@ -48,7 +48,7 @@ public class Competition {
     private List<Competitor> competitors;
 
     protected Competition() {
-        group = new StartGroupList();
+        groups = new StartGroupList();
         clazzes = new ClazzList();
         competitors = new ArrayList<>();
     }
@@ -59,13 +59,13 @@ public class Competition {
             final List<Group> startGroups,
             final List<Clazz> clazzes,
             final List<Competitor> competitors) {
-        this.id = id == null ? UUID.randomUUID().toString() : id;
+        this.id = id;
         this.time = time == null ? null 
                 : ModelUtils.getDatatypeFactory().newXMLGregorianCalendar(
                     time.toXMLFormat());
         this.name = name;
         this.organizer = organizer;
-        this.group = startGroups == null
+        this.groups = startGroups == null
                 ? new StartGroupList() : startGroups;
         this.clazzes = clazzes == null ? new ClazzList() : clazzes;
         this.competitors = competitors == null
@@ -106,7 +106,7 @@ public class Competition {
     }
 
     public List<Group> getGroups() {
-        return group;
+        return groups;
     }
 
     public List<Clazz> getClasses() {

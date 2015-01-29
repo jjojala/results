@@ -15,8 +15,11 @@ import javax.xml.datatype.Duration;
 @XmlType
 public class Group {
 
-    @XmlAttribute
+    @XmlAttribute(required = true)
     private String id;
+
+    @XmlAttribute(required = true)
+    private String competitionId;
 
     @XmlAttribute
     private String name;
@@ -33,10 +36,12 @@ public class Group {
     protected Group() {
     }
 
-    public Group(final String id, final String name, 
+    public Group(final String id, final String competitionId,
+            final String name, 
             final short minNumber, final short maxNumber,
             final Duration offset) {
         this.id = id;
+        this.competitionId = competitionId;
         this.name = name;
         this.minNumber = minNumber;
         this.maxNumber = maxNumber;
@@ -49,6 +54,14 @@ public class Group {
 
     public String getId() {
         return this.id;
+    }
+
+    public void setCompetitionId(final String competitionId) {
+        this.competitionId = competitionId;
+    }
+
+    public String getCompetitionId() {
+        return this.competitionId;
     }
 
     public void setName(final String name) {

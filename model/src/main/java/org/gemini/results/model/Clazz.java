@@ -15,10 +15,13 @@ import javax.xml.datatype.Duration;
 @XmlType
 public class Clazz {
 
-    @XmlAttribute
+    @XmlAttribute(required = true)
     private String id;
 
-    @XmlAttribute
+    @XmlAttribute(required = true)
+    private String competitionId;
+
+    @XmlAttribute(required = true)
     private String name;
 
     /** Start offset comparing to competition's time.*/
@@ -31,9 +34,11 @@ public class Clazz {
     protected Clazz() {
     }
 
-    public Clazz(final String id, final String name, final Duration offset,
+    public Clazz(final String id, final String competitionId,
+            final String name, final Duration offset,
             final String groupId) {
         this.id = id;
+        this.competitionId = competitionId;
         this.name = name;
         this.offset = offset;
         this.groupId = groupId;
@@ -45,6 +50,14 @@ public class Clazz {
 
     public String getId() {
         return this.id;
+    }
+
+    public void setCompetitionId(final String competitionId) {
+        this.competitionId = competitionId;
+    }
+
+    public String getCompetitionId() {
+        return this.competitionId;
     }
 
     public void setName(final String name) {

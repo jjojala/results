@@ -16,13 +16,13 @@ public class SampleModel {
     public static void main(final String[] args) {
         try {
             final Clazz
-                    h21 = new Clazz(UUID.randomUUID().toString(),
+                    h21 = new Clazz(UUID.randomUUID().toString(), null,
                         "H21", duration("P0M"), null),
-                    d21 = new Clazz(UUID.randomUUID().toString(),
+                    d21 = new Clazz(UUID.randomUUID().toString(), null,
                         "D21", duration("P30M"), null),
-                    h35 = new Clazz(UUID.randomUUID().toString(),
+                    h35 = new Clazz(UUID.randomUUID().toString(), null,
                         "H35", duration("P15M"), null),
-                    d35 = new Clazz(UUID.randomUUID().toString(),
+                    d35 = new Clazz(UUID.randomUUID().toString(), null,
                         "D35", duration("P45M"), null);
 
             final List<Competitor> competitors = new ArrayList<>();
@@ -32,9 +32,9 @@ public class SampleModel {
             competitors.addAll(makeCompetitors("D35", 100));
 
             final List<Group> startGroups = Arrays.asList(
-                    new Group(UUID.randomUUID().toString(),
+                    new Group(UUID.randomUUID().toString(), null,
                         "elite", (short)1, (short)99, duration("P0M")),
-                    new Group(UUID.randomUUID().toString(),
+                    new Group(UUID.randomUUID().toString(), null,
                         "national", (short)100, (short)500, duration("P30M")));
 
             final Competition competition = new Competition(
@@ -70,7 +70,7 @@ public class SampleModel {
         final List<Competitor> result = new ArrayList<>();
 
         for (int i = 0; i < count; ++i) {
-            result.add(new Competitor(UUID.randomUUID().toString(),
+            result.add(new Competitor(UUID.randomUUID().toString(), null,
                     String.format("Family-%s-%d Given-%d", clazzName, i, i),
                     null, (short)-1, null, null));
         }

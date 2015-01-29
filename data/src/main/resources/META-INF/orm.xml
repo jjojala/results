@@ -30,6 +30,8 @@
         <attributes>
             <id name="id"></id>
 
+            <!-- These fields are used only in exported XML format - not
+                 really realized in the database model. -->
             <transient name="groups"/>
             <transient name="classes"/>
             <transient name="competitors"/>
@@ -44,6 +46,12 @@
 
         <attributes>
             <id name="id"></id>
+            <basic name="competitionId">
+                <column column-definition="
+                    VARCHAR(255) CONSTRAINT group_competitionId_fk
+                        FOREIGN KEY REFERENCES PUBLIC.A_COMPETITION(id)
+                        ON DELETE SET NULL"/>
+            </basic>
         </attributes>
     </entity>
 
@@ -55,6 +63,12 @@
 
         <attributes>
             <id name="id"></id>
+            <basic name="competitionId">
+                <column column-definition="
+                    VARCHAR(255) CONSTRAINT class_competitionId_fk
+                        FOREIGN KEY REFERENCES PUBLIC.A_COMPETITION(id)
+                        ON DELETE SET NULL"/>
+            </basic>
             <basic name="groupId">
                 <column column-definition="
                     VARCHAR(255) CONSTRAINT groupId_fk
@@ -73,6 +87,12 @@
 
         <attributes>
             <id name="id"></id>
+            <basic name="competitionId">
+                <column column-definition="
+                    VARCHAR(255) CONSTRAINT competitor_competitionId_fk
+                        FOREIGN KEY REFERENCES PUBLIC.A_COMPETITION(id)
+                        ON DELETE SET NULL"/>
+            </basic>
             <basic name="classId">
                 <column column-definition="
                     VARCHAR(255) CONSTRAINT classId_fk
