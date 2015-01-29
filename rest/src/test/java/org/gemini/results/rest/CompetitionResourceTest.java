@@ -102,8 +102,7 @@ public class CompetitionResourceTest extends JerseyTest {
         {
             final Group group = new Group(startGroupId,
                     "my-start-group-name", (short)-1, (short)-1,
-                    ModelUtils.getDatatypeFactory().newDuration(0),
-                    null);
+                    ModelUtils.getDatatypeFactory().newDuration(0));
 
             final WebTarget manager = target(String.format(
                     "competition/%s/group/%s",

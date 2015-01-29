@@ -8,18 +8,21 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import javax.xml.datatype.Duration;
+import org.gemini.results.model.Clazz;
 import org.gemini.results.model.Competition;
+import org.gemini.results.model.Competitor;
+import org.gemini.results.model.Group;
 import org.gemini.results.model.ModelUtils;
 
 public class ResultsDataTest {
 
     public static void main(final String[] args) {
-        EntityTransaction trx = null;
-        try {
-            final EntityManagerFactory emf =
-                    Persistence.createEntityManagerFactory("results-data");
+        final EntityManagerFactory emf =
+                Persistence.createEntityManagerFactory("results-data");
 
-            final EntityManager em = emf.createEntityManager();
+        try {
+            EntityManager em = emf.createEntityManager();
 
             final Competition competition = new Competition(
                     UUID.randomUUID().toString(),
@@ -27,17 +30,45 @@ public class ResultsDataTest {
                         "2015-01-28T22:20:00.000+02:00"),
                     "Testikisa", "Meidän poppoo", null, null, null);
 
-            trx = em.getTransaction();
+            final Group group = new Group(
+                    UUID.randomUUID().toString(),
+                    "group", (short)-1, (short)-1,
+                    ModelUtils.getDatatypeFactory().newDuration(0));
+
+            final Clazz assignedClazz = new Clazz(
+                    UUID.randomUUID().toString(), "H21",
+                    ModelUtils.getDatatypeFactory().newDuration("P1M"),
+                    group.getId());
+
+            final Clazz unassignedClazz = new Clazz(
+                    UUID.randomUUID().toString(), "H21",
+                    ModelUtils.getDatatypeFactory().newDuration("P1M"),
+                    null /* groupId */);
+
+            final Competitor competitor = new Competitor(
+                    UUID.randomUUID().toString(), "Trump Donald",
+                    assignedClazz.getId(), (short)0, null, null);
+
+            EntityTransaction trx = em.getTransaction();
             trx.begin();
             em.persist(competition);
+            em.persist(group);
+            em.persist(assignedClazz);
+            em.persist(unassignedClazz);
+            em.persist(competitor);
             trx.commit();
+            em.close();
+
+            System.out.println("Ready!");
         }
 
         catch (final Throwable ex) {
-            try { trx.rollback(); } catch (final Throwable ignored) {};
-
             ex.printStackTrace(System.err);
             System.exit(1);
+        }
+
+        finally {
+            try { emf.close(); } catch (final Throwable ignored) {}
         }
     }
 }

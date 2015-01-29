@@ -3,12 +3,9 @@
  */
 package org.gemini.results.model;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.Duration;
@@ -38,7 +35,7 @@ public class Group {
 
     public Group(final String id, final String name, 
             final short minNumber, final short maxNumber,
-            final Duration offset, final List<String> classIds) {
+            final Duration offset) {
         this.id = id;
         this.name = name;
         this.minNumber = minNumber;
@@ -60,5 +57,25 @@ public class Group {
 
     public String getName() {
         return this.name;
+    }
+
+    public void setMinNumber(final short minNumber) {
+        this.minNumber = minNumber;
+    }
+
+    public short getMinNumber() {
+        return this.minNumber;
+    }
+
+    public void setMaxNumber(final short maxNumber) {
+        this.maxNumber = maxNumber;
+    }
+
+    public void setOffset(final Duration offset) {
+        this.offset = offset;
+    }
+
+    public Duration getOffset() {
+        return this.offset;
     }
 }

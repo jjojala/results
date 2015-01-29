@@ -68,9 +68,9 @@ public class ClazzResource {
             if (getNoLock(id) != null)
                 return Response.status(Response.Status.CONFLICT).build();
 
-            if (clazz.getStartGroupId() != null) {
+            if (clazz.getGroupId() != null) {
                 final Group group =
-                        getStartGroupNoLock(clazz.getStartGroupId());
+                        getStartGroupNoLock(clazz.getGroupId());
                 if (group == null)
                     return Response.status(Response.Status.NOT_FOUND).build();
             }
@@ -206,7 +206,7 @@ public class ClazzResource {
             if (clazz == null)
                 return Response.status(Response.Status.NOT_FOUND).build();
 
-            return Response.ok(clazz.getStartGroupId()).build();
+            return Response.ok(clazz.getGroupId()).build();
         }
 
         finally {
@@ -227,7 +227,7 @@ public class ClazzResource {
             if (newGroup == null)
                 return Response.status(Response.Status.NOT_FOUND).build();
 
-            clazz.setStartGroupId(startGroupId);
+            clazz.setGroupId(startGroupId);
 
             return Response.ok().build();
         }

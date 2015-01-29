@@ -1,44 +1,84 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<!--
+    Copyright (C) Jari Ojala (jari.ojala@iki.fi).
+-->
 <entity-mappings xmlns="http://xmlns.jcp.org/xml/ns/persistence/orm"
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence/orm
         http://xmlns.jcp.org/xml/ns/persistence/orm_2_1.xsd" version="2.1">
+
     <!--
-<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
-                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                 xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm 
-                    http://java.sun.com/xml/ns/persistence/orm_2_1.xsd"
-                 version="1.0">
--->
-    <description>Mappings for results-data.</description>
-    <!--
-    <package>org.gemini.results.model</package>
+        Note about the declaration order: one would assume, that the tables
+        for the below declared entities would be created in declaration order?
+        Wrooong! They're created in the alphaphetical order by the table
+        name to be created. While this is ok, if you have no dependencies
+        between the tables, it is not ok if you have. Because of this, I had
+        to change the naming scheme so that the table that must be created
+        after the others, is also named so that it is last in alphapethic
+        order!
+
+        (this might be specific to hibernate only).
     -->
 
     <entity class="org.gemini.results.model.Competition"
             name="Competition">
-        <table name="COMPETITION"/>
+        <table name="A_COMPETITION"/>
+
         <convert converter="org.gemini.results.data.XMLGregorianCalendarConverter"
                 attribute-name="time"/>
 
         <attributes>
             <id name="id"></id>
-            <basic name="name"></basic>
-            <basic name="organizer"></basic>
-            <basic name="time"/>
+
             <transient name="groups"/>
             <transient name="classes"/>
             <transient name="competitors"/>
         </attributes>
     </entity>
 
+    <entity class="org.gemini.results.model.Group" name="Group">
+        <table name="B_GROUP"/>
+
+        <convert converter="org.gemini.results.data.DurationConverter"
+                 attribute-name="offset"/>
+
+        <attributes>
+            <id name="id"></id>
+        </attributes>
+    </entity>
+
     <entity class="org.gemini.results.model.Clazz" name="Clazz">
-        <table name="CLASS"></table>
+        <table name="C_CLASS"></table>
+
         <convert converter="org.gemini.results.data.DurationConverter"
                 attribute-name="offset"/>
 
         <attributes>
             <id name="id"></id>
+            <basic name="groupId">
+                <column column-definition="
+                    VARCHAR(255) CONSTRAINT groupId_fk
+                        FOREIGN KEY REFERENCES PUBLIC.B_GROUP(id)
+                        ON DELETE SET NULL"/>
+            </basic>
+        </attributes>
+    </entity>
+
+    <entity class="org.gemini.results.model.Competitor" name="Competitor">
+        <table name="D_COMPETITOR"></table>
+        <convert converter="org.gemini.results.data.DurationConverter"
+                 attribute-name="offset"/>
+        <convert converter="org.gemini.results.data.DurationConverter"
+                 attribute-name="result"/>
+
+        <attributes>
+            <id name="id"></id>
+            <basic name="classId">
+                <column column-definition="
+                    VARCHAR(255) CONSTRAINT classId_fk
+                        FOREIGN KEY REFERENCES PUBLIC.C_CLASS(id)
+                        ON DELETE SET NULL"/>
+            </basic>
         </attributes>
     </entity>
 

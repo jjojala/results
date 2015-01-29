@@ -50,4 +50,44 @@ public class Competitor {
     public final String getId() {
         return this.id;
     }
+
+    public final void setName(final String name) {
+        this.name = name;
+    }
+
+    public final String getName() {
+        return this.name;
+    }
+
+    public final void setClassId(final String clazzId) {
+        this.clazzId = clazzId;
+    }
+
+    public final String getClassId() {
+        return this.clazzId;
+    }
+
+    public final void setNumber(final short number) {
+        this.number = number;
+    }
+
+    public final short getNumber() {
+        return this.number;
+    }
+
+    public final void setOffset(final Duration offset) {
+        this.offset = offset;
+    }
+
+    public final Duration getOffset() {
+        return this.offset;
+    }
+
+    public final void setResult(final Duration result) {
+        this.result = result;
+    }
+
+    public final Duration getResult() {
+        return this.result;
+    }
 }

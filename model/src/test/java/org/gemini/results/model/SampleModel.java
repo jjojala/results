@@ -33,11 +33,9 @@ public class SampleModel {
 
             final List<Group> startGroups = Arrays.asList(
                     new Group(UUID.randomUUID().toString(),
-                        "elite", (short)1, (short)99, duration("P0M"),
-                        Arrays.asList(h21.getId(), d21.getId())),
+                        "elite", (short)1, (short)99, duration("P0M")),
                     new Group(UUID.randomUUID().toString(),
-                        "national", (short)100, (short)500, duration("P30M"),
-                        Arrays.asList(h35.getId(), d35.getId())));
+                        "national", (short)100, (short)500, duration("P30M")));
 
             final Competition competition = new Competition(
                     UUID.randomUUID().toString(),

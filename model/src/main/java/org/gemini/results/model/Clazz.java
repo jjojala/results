@@ -3,11 +3,9 @@
  */
 package org.gemini.results.model;
 
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.Duration;
@@ -28,17 +26,17 @@ public class Clazz {
     private Duration offset;
 
     @XmlAttribute
-    private String startGroupId;
+    private String groupId;
 
     protected Clazz() {
     }
 
     public Clazz(final String id, final String name, final Duration offset,
-            final String startGroupId) {
+            final String groupId) {
         this.id = id;
         this.name = name;
         this.offset = offset;
-        this.startGroupId = startGroupId;
+        this.groupId = groupId;
     }
 
     public void setId(final String id) {
@@ -65,11 +63,11 @@ public class Clazz {
         return this.offset;
     }
 
-    public void setStartGroupId(final String startGroupId) {
-        this.startGroupId = startGroupId;
+    public void setGroupId(final String groupId) {
+        this.groupId = groupId;
     }
 
-    public String getStartGroupId() {
-        return this.startGroupId;
+    public String getGroupId() {
+        return this.groupId;
     }
 }
