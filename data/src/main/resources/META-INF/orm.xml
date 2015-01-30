@@ -24,6 +24,10 @@
             name="Competition">
         <table name="A_COMPETITION"/>
 
+        <named-query name="Competition.list">
+            <query>SELECT c FROM Competition c ORDER BY time</query>
+        </named-query>
+
         <convert converter="org.gemini.results.data.XMLGregorianCalendarConverter"
                 attribute-name="time"/>
 
