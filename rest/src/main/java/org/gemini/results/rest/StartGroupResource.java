@@ -4,7 +4,6 @@
 package org.gemini.results.rest;
 
 import java.util.concurrent.locks.ReadWriteLock;
-import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -21,7 +20,6 @@ import javax.ws.rs.core.UriInfo;
 import org.gemini.results.model.Competition;
 import org.gemini.results.model.Group;
 
-@Singleton
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class StartGroupResource {

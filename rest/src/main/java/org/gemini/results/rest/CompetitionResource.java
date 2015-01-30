@@ -25,7 +25,6 @@ import javax.ws.rs.core.UriInfo;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.gemini.results.model.Competition;
 
-
 @Singleton
 @Path("competition")
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
