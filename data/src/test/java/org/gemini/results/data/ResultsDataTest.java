@@ -13,10 +13,12 @@ import org.gemini.results.model.Competition;
 import org.gemini.results.model.Competitor;
 import org.gemini.results.model.Group;
 import org.gemini.results.model.ModelUtils;
+import org.junit.Test;
 
 public class ResultsDataTest {
 
-    public static void main(final String[] args) {
+    @Test
+    public void testDatabase() throws Exception {
         final EntityManagerFactory emf =
                 Persistence.createEntityManagerFactory("results-data");
 
@@ -57,11 +59,6 @@ public class ResultsDataTest {
             em.close();
 
             System.out.println("Ready!");
-        }
-
-        catch (final Throwable ex) {
-            ex.printStackTrace(System.err);
-            System.exit(1);
         }
 
         finally {
