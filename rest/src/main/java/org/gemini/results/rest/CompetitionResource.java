@@ -5,9 +5,11 @@ package org.gemini.results.rest;
 
 import java.util.List;
 import javax.inject.Singleton;
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
+import javax.persistence.LockModeType;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -22,6 +24,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.gemini.results.data.DataUtils;
 import org.gemini.results.model.Competition;
 import org.gemini.results.model.CompetitionList;
 
@@ -45,11 +48,11 @@ public class CompetitionResource {
             final List<Competition> competitions =
                     em.createNamedQuery("Competition.list").getResultList();
 
-            return Response.ok(new CompetitionList(competitions)).build();
+            return RestUtils.ok(new CompetitionList(competitions));
         }
 
         finally {
-            try { em.close(); } catch (final Throwable ignored) {}
+            DataUtils.close(em);
         }
     }
 
@@ -58,15 +61,16 @@ public class CompetitionResource {
     public Response get(@PathParam("id") final String id) {
         final EntityManager em = emf_.createEntityManager();
         try {
-            final Competition competition = em.find(Competition.class, id);
-            if (competition != null)
-                return Response.ok(competition).build();
+            final Competition competition =
+                    DataUtils.find(em, Competition.class, id);
+            if (competition == null)
+                return RestUtils.notFound();
 
-            return Response.status(Response.Status.NOT_FOUND).build();
+            return RestUtils.ok(competition);
         }
 
         finally {
-            try { em.close(); } catch (final Throwable ignored) {}
+            DataUtils.close(em);
         }
     }
 
@@ -79,19 +83,19 @@ public class CompetitionResource {
 
         try {
             trx.begin();
-            em.merge(competition);
+            competition.setId(id);
+
+            if (em.find(Competition.class, id, LockModeType.PESSIMISTIC_READ) == null)
+                return RestUtils.notFound();
+
+            DataUtils.merge(em, competition);
             trx.commit();
 
-            /*
-            if (!competitions.containsKey(id))
-                return Response.status(Response.Status.NOT_FOUND).build();
-            */
-
-            return Response.ok().build();
+            return RestUtils.ok();
         }
 
         finally {
-            try { em.close(); } catch (final Throwable ignored) {}
+            DataUtils.close(em);
         }
     }
 
@@ -106,20 +110,19 @@ public class CompetitionResource {
         try {
             trx.begin();
             competition.setId(id);
-            em.persist(competition);
+            DataUtils.persist(em, competition);
             trx.commit();
 
-            /*
-            if (competitions.containsKey(id))
-                return Response.status(Response.Status.CONFLICT).build();
-            */
+            return RestUtils.created(UriBuilder.fromUri(
+                    ui.getRequestUri()).build());
+        }
 
-            return Response.created(UriBuilder.fromUri(
-                    ui.getRequestUri()).build()).build();
+        catch (final EntityExistsException ex) {
+            return RestUtils.conflict();
         }
 
         finally {
-            try { em.close(); } catch (final Throwable ignored) {}
+            DataUtils.close(em);
         }
     }
 
@@ -131,22 +134,19 @@ public class CompetitionResource {
 
         try {
             trx.begin();
-            final Competition c = em.find(Competition.class, id);
+            final Competition c = em.find(
+                    Competition.class, id, LockModeType.PESSIMISTIC_READ);
+            if (c == null)
+                return RestUtils.notFound();
+
             em.remove(c);
             trx.commit();
 
-            return Response.ok().build();
-
-            /*
-            if (competitions.remove(id) != null)
-                return Response.ok().build();
-
-            return Response.status(Response.Status.NOT_FOUND).build();
-            */
+            return RestUtils.ok();
         }
 
         finally {
-            try { em.close(); } catch (final Throwable ignored) {}
+            DataUtils.close(em);
         }
     }
 
@@ -157,11 +157,14 @@ public class CompetitionResource {
 
         try {
             final Competition c = em.find(Competition.class, id);
-            return Response.ok(c.getName()).build();
+            if (c == null)
+                return RestUtils.notFound();
+
+            return RestUtils.ok(c.getName());
         }
 
         finally {
-            try { em.close(); } catch (final Throwable ignored) {}
+            DataUtils.close(em);
         }
     }
 
@@ -174,16 +177,20 @@ public class CompetitionResource {
 
         try {
             trx.begin();
-            final Competition c = em.find(Competition.class, id);
+            final Competition c = em.find(
+                    Competition.class, id, LockModeType.PESSIMISTIC_READ);
+            if (c == null)
+                return RestUtils.notFound();
+
             c.setName(name);
             em.merge(c);
             trx.commit();
 
-            return Response.ok().build();
+            return RestUtils.ok();
         }
 
         finally {
-            try { em.close(); } catch (final Throwable ignored) {}
+            DataUtils.close(em);
         }
     }
 
@@ -193,12 +200,16 @@ public class CompetitionResource {
         final EntityManager em = emf_.createEntityManager();
 
         try {
-            final Competition c = em.find(Competition.class, id);
-            return Response.ok(c.getTime()).build();
+            final Competition c =em.find(
+                    Competition.class, id, LockModeType.PESSIMISTIC_READ);
+            if (c == null)
+                return RestUtils.notFound();
+
+            return RestUtils.ok(c.getTime());
         }
 
         finally {
-            try { em.close(); } catch (final Throwable ignored) {}
+            DataUtils.close(em);
         }
     }
 
@@ -211,15 +222,19 @@ public class CompetitionResource {
 
         try {
             trx.begin();
-            final Competition c = em.find(Competition.class, id);
+            final Competition c = em.find(
+                    Competition.class, id, LockModeType.PESSIMISTIC_READ);
+            if (c == null)
+                return RestUtils.notFound();
+
             c.setTime(time);
             trx.commit();
 
-            return Response.ok().build();
+            return RestUtils.ok();
         }
 
         finally {
-            try { em.close(); } catch (final Throwable ignored) {}
+            DataUtils.close(em);
         }
     }
 
@@ -229,12 +244,16 @@ public class CompetitionResource {
         final EntityManager em = emf_.createEntityManager();
 
         try {
-            final Competition c = em.find(Competition.class, id);
-            return Response.ok(c.getOrganizer()).build();
+            final Competition c = em.find(
+                    Competition.class, id, LockModeType.PESSIMISTIC_READ);
+            if (c == null)
+                return RestUtils.notFound();
+
+            return RestUtils.ok(c.getOrganizer());
         }
 
         finally {
-            try { em.close(); } catch (final Throwable ignored) {}
+            DataUtils.close(em);
         }
     }
 
@@ -247,15 +266,19 @@ public class CompetitionResource {
 
         try {
             trx.begin();
-            final Competition c = em.find(Competition.class, id);
+            final Competition c = em.find(
+                    Competition.class, id, LockModeType.PESSIMISTIC_READ);
+            if (c == null)
+                return RestUtils.notFound();
+
             c.setOrganizer(organizer);
             em.merge(c);
 
-            return Response.ok().build();
+            return RestUtils.ok();
         }
 
         finally {
-            try { em.close(); } catch (final Throwable ignored) {}
+            DataUtils.close(em);
         }
     }
 
@@ -268,6 +291,12 @@ public class CompetitionResource {
     @Path("{id}/class")
     public ClazzResource getClazzResource(
             @PathParam("id") final String id) {
-        return null;
+        return new ClazzResource(emf_, id);
+    }
+
+    @Path("{id}/competitor")
+    public CompetitorResource getCompetitorResource(
+            @PathParam("id") final String id) {
+        return new CompetitorResource(emf_, id);
     }
 }

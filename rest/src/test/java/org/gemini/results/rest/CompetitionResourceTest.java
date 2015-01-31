@@ -5,18 +5,22 @@ package org.gemini.results.rest;
 
 import java.util.List;
 import java.util.UUID;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
+import org.gemini.results.data.DataUtils;
 import org.gemini.results.model.Competition;
 import org.gemini.results.model.CompetitionList;
 import org.gemini.results.model.ModelUtils;
 import org.gemini.results.model.Group;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
@@ -27,16 +31,32 @@ public class CompetitionResourceTest extends JerseyTest {
             Persistence.createEntityManagerFactory("results-data");
 
     @AfterClass
-    public static void cleanUp() {
-        try {
-            
-        }
-
-        catch (final Throwable ex) {
-            
-        }
-
+    public static void cleanUpClass() {
         try { emf.close(); } catch (final Throwable ignored) {}
+    }
+
+    @After
+    public void cleanUp() {
+        final EntityManager em = emf.createEntityManager();
+
+        try {
+            final EntityTransaction trx = em.getTransaction();
+
+            trx.begin();
+
+            final List<Competition> competitions =
+                    em.createNamedQuery("Competition.list").getResultList();
+
+            for (final Competition c: competitions) {
+                em.remove(c);
+            }
+
+            trx.commit();
+        }
+
+        finally {
+            DataUtils.close(em);
+        }
     }
 
     @Override
@@ -91,6 +111,111 @@ public class CompetitionResourceTest extends JerseyTest {
             final List<Competition> competitions =
                     listResponse.readEntity(CompetitionList.class);
             Assert.assertEquals(0, competitions.size());
+        }
+    }
+
+    @Test
+    public void testGetNotFound() {
+        final String nonId = UUID.randomUUID().toString();
+
+        final Response response =
+                target("competition/" + nonId).request().get();
+        Assert.assertEquals(404, response.getStatus());
+    }
+
+    @Test
+    public void testCreate() {
+        final Competition competition = new Competition(
+                UUID.randomUUID().toString(),
+                ModelUtils.getDatatypeFactory().newXMLGregorianCalendar(
+                        "2015-01-31T13:07:15.000+02:00"),
+                "my-name", "my-organizer", null, null, null);
+
+        { // Create first
+            final Response response =
+                    target("competition/" + competition.getId()).request()
+                    .post(Entity.xml(competition));
+            Assert.assertEquals(201, response.getStatus());
+        }
+
+        {
+            final Response response = 
+                    target("competition/" + competition.getId()).request()
+                    .post(Entity.xml(competition));
+            Assert.assertEquals(409, response.getStatus());
+        }
+    }
+
+    @Test
+    public void testUpdate() {
+        final Competition competition = new Competition(
+                UUID.randomUUID().toString(),
+                ModelUtils.getDatatypeFactory().newXMLGregorianCalendar(
+                        "2015-01-31T13:07:15.000+02:00"),
+                "my-name", "my-organizer", null, null, null);
+
+        { // Create first
+            final Response response =
+                    target("competition/" + competition.getId()).request()
+                    .post(Entity.xml(competition));
+            Assert.assertEquals(201, response.getStatus());
+        }
+
+        { // Update - should be fine..
+            final Competition c = target("competition/" + competition.getId())
+                    .request().get(Competition.class);
+
+            Assert.assertEquals("my-name", c.getName());
+            c.setName("my-new-name");
+            final Response response = target("competition/" + c.getId())
+                    .request().put(Entity.xml(c));
+
+            Assert.assertEquals(200, response.getStatus());
+        }
+
+        { // Update something that doesn't exist
+            final String nonId = UUID.randomUUID().toString();
+
+            final Competition c = target("competition/" + competition.getId())
+                    .request().get(Competition.class);
+
+            Assert.assertEquals("my-new-name", c.getName());
+            Assert.assertEquals("my-organizer", c.getOrganizer());
+
+            c.setOrganizer("my-new-organizer");
+
+            final Response response = target("competition/" + nonId)
+                    .request().put(Entity.xml(c));
+
+            Assert.assertEquals(404, response.getStatus());
+        }
+    }
+
+    @Test
+    public void testRemove() {
+        final Competition competition = new Competition(
+                UUID.randomUUID().toString(),
+                ModelUtils.getDatatypeFactory().newXMLGregorianCalendar(
+                        "2015-01-31T13:07:15.000+02:00"),
+                "my-name", "my-organizer", null, null, null);
+
+        { // Create first
+            final Response response =
+                    target("competition/" + competition.getId()).request()
+                    .post(Entity.xml(competition));
+            Assert.assertEquals(201, response.getStatus());
+        }
+
+        { // Remove
+            final Response response = target(
+                    "competition/" + competition.getId()).request().delete();
+            Assert.assertEquals(200, response.getStatus());
+        }
+
+        { // Remove (non-existing competation at this point)
+            final Response response = target(
+                    "competition/" + competition.getId()).request().delete();
+            Assert.assertEquals(404, response.getStatus());
         }
     }
 

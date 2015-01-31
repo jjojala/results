@@ -16,16 +16,16 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import org.gemini.results.model.Clazz;
+import org.gemini.results.model.Competitor;
 
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-public class ClazzResource {
+public class CompetitorResource {
 
     private final EntityManagerFactory emf_;
     private final String competitionId_;
 
-    public ClazzResource(final EntityManagerFactory emf,
+    public CompetitorResource(final EntityManagerFactory emf,
             final String competitionId) {
         emf_ = emf;
         competitionId_ = competitionId;
@@ -34,7 +34,7 @@ public class ClazzResource {
     @POST
     @Path("{id}")
     public Response create(@Context UriInfo ui,
-            @PathParam("id") final String id, final Clazz clazz) {
+            @PathParam("id") final String id, final Competitor clazz) {
         return Response.status(Response.Status.NOT_IMPLEMENTED).build();
     }
 
@@ -73,19 +73,6 @@ public class ClazzResource {
     @Path("{id}#offset")
     public Response setOffset(@PathParam("id") final String id,
             final Long offset) {
-        return Response.status(Response.Status.NOT_IMPLEMENTED).build();
-    }
-
-    @GET
-    @Path("{id}#startGroupId")
-    public Response getStartGroupId(@PathParam("id") final String id) {
-        return Response.status(Response.Status.NOT_IMPLEMENTED).build();
-    }
-
-    @PUT
-    @Path("{id}#startGroupId")
-    public Response setStartGroupId(@PathParam("id") final String id,
-            final String startGroupId) {
         return Response.status(Response.Status.NOT_IMPLEMENTED).build();
     }
 }
