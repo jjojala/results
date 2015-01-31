@@ -63,6 +63,7 @@ public class GroupResource {
         try {
             trx.begin();
             group.setId(id);
+            group.setCompetitionId(competitionId_);
             em.persist(group);
             trx.commit();
 
