@@ -3,6 +3,7 @@
  */
 package org.gemini.results.rest;
 
+import java.util.List;
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -30,13 +31,30 @@ import org.gemini.results.model.Competition;
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class CompetitionResource {
 
-    private final EntityManagerFactory emf =
-            Persistence.createEntityManagerFactory("results-data");
+    private final EntityManagerFactory emf_;
+
+    public CompetitionResource(final EntityManagerFactory emf) {
+        emf_ = emf;
+    }
+
+    @GET
+    public Response list() {
+        final EntityManager em = emf_.createEntityManager();
+        try {
+            final List<Competition> competitions =
+                    em.createNamedQuery("Competition.list").getResultList();
+            return Response.ok(competitions).build();
+        }
+
+        finally {
+            try { em.close(); } catch (final Throwable ignored) {}
+        }
+    }
 
     @GET
     @Path("{id}")
     public Response get(@PathParam("id") final String id) {
-        final EntityManager em = emf.createEntityManager();
+        final EntityManager em = emf_.createEntityManager();
         try {
             final Competition competition = em.find(Competition.class, id);
             if (competition != null)
@@ -54,7 +72,7 @@ public class CompetitionResource {
     @Path("{id}")
     public Response update(@PathParam("id") final String id,
             final Competition competition) {
-        final EntityManager em = emf.createEntityManager();
+        final EntityManager em = emf_.createEntityManager();
         final EntityTransaction trx = em.getTransaction();
 
         try {
@@ -80,7 +98,7 @@ public class CompetitionResource {
     public Response create(@Context final UriInfo ui, 
             @PathParam("id") final String id,
             final Competition competition) {
-        final EntityManager em = emf.createEntityManager();
+        final EntityManager em = emf_.createEntityManager();
         final EntityTransaction trx = em.getTransaction();
 
         try {
@@ -106,7 +124,7 @@ public class CompetitionResource {
     @DELETE
     @Path("{id}")
     public Response remove(@PathParam("id") final String id) {
-        final EntityManager em = emf.createEntityManager();
+        final EntityManager em = emf_.createEntityManager();
         final EntityTransaction trx = em.getTransaction();
 
         try {
@@ -133,7 +151,7 @@ public class CompetitionResource {
     @GET
     @Path("{id}#name")
     public Response getName(@PathParam("id") final String id) {
-        final EntityManager em = emf.createEntityManager();
+        final EntityManager em = emf_.createEntityManager();
 
         try {
             final Competition c = em.find(Competition.class, id);
@@ -149,7 +167,7 @@ public class CompetitionResource {
     @Path("{id}#name")
     public Response setName(@PathParam("id") final String id,
             final String name) {
-        final EntityManager em = emf.createEntityManager();
+        final EntityManager em = emf_.createEntityManager();
         final EntityTransaction trx = em.getTransaction();
 
         try {
@@ -170,7 +188,7 @@ public class CompetitionResource {
     @GET
     @Path("{id}#time")
     public Response getTime(@PathParam("id") final String id) {
-        final EntityManager em = emf.createEntityManager();
+        final EntityManager em = emf_.createEntityManager();
 
         try {
             final Competition c = em.find(Competition.class, id);
@@ -186,7 +204,7 @@ public class CompetitionResource {
     @Path("{id}#time")
     public Response setTime(@PathParam("id") final String id,
             final XMLGregorianCalendar time) {
-        final EntityManager em = emf.createEntityManager();
+        final EntityManager em = emf_.createEntityManager();
         final EntityTransaction trx = em.getTransaction();
 
         try {
@@ -206,7 +224,7 @@ public class CompetitionResource {
     @GET
     @Path("{id}#organizer")
     public Response getOrganizer(@PathParam("id") final String id) {
-        final EntityManager em = emf.createEntityManager();
+        final EntityManager em = emf_.createEntityManager();
 
         try {
             final Competition c = em.find(Competition.class, id);
@@ -222,7 +240,7 @@ public class CompetitionResource {
     @Path("{id}#organizer")
     public Response setOrganizer(@PathParam("id") final String id,
             final String organizer) {
-        final EntityManager em = emf.createEntityManager();
+        final EntityManager em = emf_.createEntityManager();
         final EntityTransaction trx = em.getTransaction();
 
         try {
@@ -242,7 +260,7 @@ public class CompetitionResource {
     @Path("{id}/group")
     public GroupResource getGroupResource(
             @PathParam("id") final String id) {
-        return new GroupResource(emf, id);
+        return new GroupResource(emf_, id);
     }
 
     @Path("{id}/class")

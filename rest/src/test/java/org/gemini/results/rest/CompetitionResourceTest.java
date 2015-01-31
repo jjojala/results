@@ -4,6 +4,8 @@
 package org.gemini.results.rest;
 
 import java.util.UUID;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Application;
@@ -13,14 +15,23 @@ import org.gemini.results.model.ModelUtils;
 import org.gemini.results.model.Group;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class CompetitionResourceTest extends JerseyTest {
 
+    private static EntityManagerFactory emf =
+            Persistence.createEntityManagerFactory("results-data");
+
+    @AfterClass
+    public static void cleanUp() {
+        try { emf.close(); } catch (final Throwable ignored) {}
+    }
+
     @Override
     protected Application configure() {
-        return new ResourceConfig(CompetitionResource.class);
+        return new ResourceConfig().register(new CompetitionResource(emf));
     }
 
     @Test
