@@ -14,6 +14,8 @@ Maps JAXB annotated JTOs to the database (by using dedicated JPA2.1 ORM mapping 
 
 The implementation is based on JPA (hibernate), and JDBC/DBMS (currently HSQLDB).
 
+The latest enlightments hint that this component has only very minor role (in declaring the JPA entity-mappings XML and for providing specific @Converter classes). Instead, the results-rest will likely use JPA directly with the assistance of declarations in the results-data. And in production use, the results-server will supply the persistence-unit defintions (now we have them here and there, but only for testing purposes, which is pretty much acceptable - even a good approach).
+
 ### results-rest
 
 REST api for manipulating results data remotely. This is obviously based on JAXB generated XML objects from results-model, and the local DAOs from results-data.
