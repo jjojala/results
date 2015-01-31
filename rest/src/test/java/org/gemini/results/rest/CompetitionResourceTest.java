@@ -28,6 +28,14 @@ public class CompetitionResourceTest extends JerseyTest {
 
     @AfterClass
     public static void cleanUp() {
+        try {
+            
+        }
+
+        catch (final Throwable ex) {
+            
+        }
+
         try { emf.close(); } catch (final Throwable ignored) {}
     }
 
@@ -38,12 +46,52 @@ public class CompetitionResourceTest extends JerseyTest {
 
     @Test
     public void testList() {
-        final Response response = target("competition").request().get();
-        Assert.assertEquals(200, response.getStatus());
+        final Competition competition = new Competition(
+                UUID.randomUUID().toString(),
+                ModelUtils.getDatatypeFactory().newXMLGregorianCalendar(
+                        "2015-01-31T11:52:15.000+02:00"),
+                "my-name", "my-organizer", null, null, null);
 
-        final List<Competition> competitions =
-                response.readEntity(CompetitionList.class);
-        Assert.assertEquals(0, competitions.size());
+        {   // Create a competiont (so that we have at least one competition on
+            // the list)
+            final Response response = target("competition/" + competition.getId())
+                    .request().post(Entity.xml(competition));
+            Assert.assertEquals(201, response.getStatus());
+        }
+
+        {   // Get the just retrieved competition
+            final Response response = target("competition/" + competition.getId())
+                    .request().get();
+            Assert.assertEquals(200, response.getStatus());
+
+            final Competition c = response.readEntity(Competition.class);
+            Assert.assertEquals(competition.getId(), c.getId());
+            Assert.assertEquals(competition.getTime(), c.getTime());
+        }
+
+        { // Get the list of competitions - and remove them one by one
+            final Response listResponse = target("competition").request().get();
+            Assert.assertEquals(200, listResponse.getStatus());
+
+            final List<Competition> competitions =
+                    listResponse.readEntity(CompetitionList.class);
+            Assert.assertTrue(competitions.size() > 0);
+
+            for (final Competition c: competitions) {
+                final Response deleteResponse = 
+                        target("competition/" + c.getId()).request().delete();
+                Assert.assertEquals(200, deleteResponse.getStatus());
+            }
+        }
+
+        { // Final get - nothing shouldn't returned (as we just removed them)
+            final Response listResponse = target("competition").request().get();
+            Assert.assertEquals(200, listResponse.getStatus());
+
+            final List<Competition> competitions =
+                    listResponse.readEntity(CompetitionList.class);
+            Assert.assertEquals(0, competitions.size());
+        }
     }
 
     @Test

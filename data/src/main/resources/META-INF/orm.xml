@@ -49,9 +49,10 @@
             <id name="id"></id>
             <basic name="competitionId">
                 <column column-definition="
-                    VARCHAR(255) CONSTRAINT group_competitionId_fk
+                    VARCHAR(255)
+                        NOT NULL CONSTRAINT group_competitionId_fk
                         FOREIGN KEY REFERENCES PUBLIC.A_COMPETITION(id)
-                        ON DELETE SET NULL"/>
+                        ON DELETE CASCADE"/>
             </basic>
         </attributes>
     </entity>
@@ -63,9 +64,10 @@
             <id name="id"></id>
             <basic name="competitionId">
                 <column column-definition="
-                    VARCHAR(255) CONSTRAINT class_competitionId_fk
+                    VARCHAR(255)
+                        NOT NULL CONSTRAINT class_competitionId_fk
                         FOREIGN KEY REFERENCES PUBLIC.A_COMPETITION(id)
-                        ON DELETE SET NULL"/>
+                        ON DELETE CASCADE"/>
             </basic>
             <basic name="groupId">
                 <column column-definition="
@@ -83,9 +85,10 @@
             <id name="id"></id>
             <basic name="competitionId">
                 <column column-definition="
-                    VARCHAR(255) CONSTRAINT competitor_competitionId_fk
+                    VARCHAR(255)
+                        NOT NULL CONSTRAINT competitor_competitionId_fk
                         FOREIGN KEY REFERENCES PUBLIC.A_COMPETITION(id)
-                        ON DELETE SET NULL"/>
+                        ON DELETE CASCADE"/>
             </basic>
             <basic name="classId">
                 <column column-definition="

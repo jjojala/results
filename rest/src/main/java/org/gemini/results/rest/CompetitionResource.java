@@ -40,20 +40,12 @@ public class CompetitionResource {
     @GET
     public Response list() {
         final EntityManager em = emf_.createEntityManager();
+
         try {
             final List<Competition> competitions =
                     em.createNamedQuery("Competition.list").getResultList();
 
-            System.out.format("%d competitions found.\n", competitions.size());
-            for (final Competition c: competitions)
-                System.out.format("\tid: %s\n", c.getId());
-
             return Response.ok(new CompetitionList(competitions)).build();
-        }
-
-        catch (final Throwable ex) {
-            ex.printStackTrace(System.err);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
 
         finally {

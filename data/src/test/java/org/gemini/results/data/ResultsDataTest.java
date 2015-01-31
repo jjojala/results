@@ -3,6 +3,7 @@
  */
 package org.gemini.results.data;
 
+import java.util.List;
 import java.util.UUID;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -23,8 +24,6 @@ public class ResultsDataTest {
                 Persistence.createEntityManagerFactory("results-data");
 
         try {
-            EntityManager em = emf.createEntityManager();
-
             final Competition competition = new Competition(
                     UUID.randomUUID().toString(),
                     ModelUtils.getDatatypeFactory().newXMLGregorianCalendar(
@@ -48,15 +47,33 @@ public class ResultsDataTest {
                     "Trump Donald", assignedClazz.getId(),
                     (short)0, null, null);
 
-            EntityTransaction trx = em.getTransaction();
-            trx.begin();
-            em.persist(competition);
-            em.persist(group);
-            em.persist(assignedClazz);
-            em.persist(unassignedClazz);
-            em.persist(competitor);
-            trx.commit();
-            em.close();
+            {
+                final EntityManager em = emf.createEntityManager();
+                final EntityTransaction trx = em.getTransaction();
+                trx.begin();
+                em.persist(competition);
+                em.persist(group);
+                em.persist(assignedClazz);
+                em.persist(unassignedClazz);
+                em.persist(competitor);
+                trx.commit();
+                em.close();
+            }
+
+            {
+                final EntityManager em = emf.createEntityManager();
+                final EntityTransaction trx = em.getTransaction();
+
+                trx.begin();
+                final List<Competition> competitions =
+                        em.createNamedQuery("Competition.list").getResultList();
+
+                for (final Competition c: competitions)
+                    em.remove(c);
+
+                trx.commit();
+                em.close();
+            }
 
             System.out.println("Ready!");
         }

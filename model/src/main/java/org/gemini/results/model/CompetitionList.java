@@ -20,7 +20,7 @@ public class CompetitionList extends AbstractList<Competition> {
     @XmlElement(name = "competition")
     private List<Competition> competitions = new ArrayList<>();
 
-    protected CompetitionList() {
+    public CompetitionList() {
     }
 
     public CompetitionList(final List<Competition> items) {
