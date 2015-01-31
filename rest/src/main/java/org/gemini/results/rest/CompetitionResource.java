@@ -8,7 +8,6 @@ import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -24,6 +23,7 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.gemini.results.model.Competition;
+import org.gemini.results.model.CompetitionList;
 
 @Singleton
 @Path("competition")
@@ -43,7 +43,17 @@ public class CompetitionResource {
         try {
             final List<Competition> competitions =
                     em.createNamedQuery("Competition.list").getResultList();
-            return Response.ok(competitions).build();
+
+            System.out.format("%d competitions found.\n", competitions.size());
+            for (final Competition c: competitions)
+                System.out.format("\tid: %s\n", c.getId());
+
+            return Response.ok(new CompetitionList(competitions)).build();
+        }
+
+        catch (final Throwable ex) {
+            ex.printStackTrace(System.err);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
 
         finally {

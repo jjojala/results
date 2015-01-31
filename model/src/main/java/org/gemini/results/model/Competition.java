@@ -47,7 +47,7 @@ public class Competition {
     private List<Competitor> competitors;
 
     protected Competition() {
-        groups = new StartGroupList();
+        groups = new GroupList();
         clazzes = new ClazzList();
         competitors = new ArrayList<>();
     }
@@ -65,7 +65,7 @@ public class Competition {
         this.name = name;
         this.organizer = organizer;
         this.groups = startGroups == null
-                ? new StartGroupList() : startGroups;
+                ? new GroupList() : startGroups;
         this.clazzes = clazzes == null ? new ClazzList() : clazzes;
         this.competitors = competitors == null
                 ? new ArrayList<Competitor>() : competitors;

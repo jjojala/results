@@ -3,6 +3,7 @@
  */
 package org.gemini.results.rest;
 
+import java.util.List;
 import java.util.UUID;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -11,6 +12,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
 import org.gemini.results.model.Competition;
+import org.gemini.results.model.CompetitionList;
 import org.gemini.results.model.ModelUtils;
 import org.gemini.results.model.Group;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -32,6 +34,16 @@ public class CompetitionResourceTest extends JerseyTest {
     @Override
     protected Application configure() {
         return new ResourceConfig().register(new CompetitionResource(emf));
+    }
+
+    @Test
+    public void testList() {
+        final Response response = target("competition").request().get();
+        Assert.assertEquals(200, response.getStatus());
+
+        final List<Competition> competitions =
+                response.readEntity(CompetitionList.class);
+        Assert.assertEquals(0, competitions.size());
     }
 
     @Test

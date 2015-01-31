@@ -15,40 +15,40 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(namespace = ModelUtils.NAMESPACE)
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType
-public class StartGroupList extends AbstractList<Group> {
+public class GroupList extends AbstractList<Group> {
 
-    @XmlElement(name = "startGroup")
-    private List<Group> competitors = new ArrayList<>();
+    @XmlElement(name = "group")
+    private List<Group> groups = new ArrayList<>();
 
-    protected StartGroupList() {
+    protected GroupList() {
     }
 
-    public StartGroupList(final List<Group> items) {
-        this.competitors.addAll(items);
+    public GroupList(final List<Group> items) {
+        this.groups.addAll(items);
     }
 
     @Override
     public Group get(int index) {
-        return this.competitors.get(index);
+        return this.groups.get(index);
     }
 
     @Override
     public int size() {
-        return this.competitors.size();
+        return this.groups.size();
     }
 
     @Override
     public Group set(int index, Group element) {
-        return this.competitors.set(index, element);
+        return this.groups.set(index, element);
     }
 
     @Override
     public void add(int index, Group element) {
-        this.competitors.add(index, element);
+        this.groups.add(index, element);
     }
 
     @Override
     public Group remove(int index) {
-        return this.competitors.remove(index);
+        return this.groups.remove(index);
     }
 }
