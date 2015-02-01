@@ -20,7 +20,7 @@ public class GroupList extends AbstractList<Group> {
     @XmlElement(name = "group")
     private List<Group> groups = new ArrayList<>();
 
-    protected GroupList() {
+    public GroupList() {
     }
 
     public GroupList(final List<Group> items) {

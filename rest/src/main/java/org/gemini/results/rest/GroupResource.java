@@ -3,6 +3,7 @@
  */
 package org.gemini.results.rest;
 
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
@@ -19,7 +20,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
+import org.gemini.results.data.DataUtils;
 import org.gemini.results.model.Group;
+import org.gemini.results.model.GroupList;
 
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
@@ -32,6 +35,22 @@ public class GroupResource {
             final String competitionId) {
         emf_ = emf;
         competitionId_ = competitionId;
+    }
+
+    @GET
+    public Response list() {
+        final EntityManager em = emf_.createEntityManager();
+
+        try {
+            final List<Group> groups = em.createNamedQuery("Group.list")
+                    .setParameter(1, competitionId_).getResultList();
+
+            return RestUtils.ok(new GroupList(groups));
+        }
+
+        finally {
+            DataUtils.close(em);
+        }
     }
 
     @GET
@@ -66,11 +85,6 @@ public class GroupResource {
             group.setCompetitionId(competitionId_);
             em.persist(group);
             trx.commit();
-
-            /*
-            if (getNoLock(id) != null)
-                return Response.status(Response.Status.CONFLICT).build();
-            */
 
             return Response.created(UriBuilder.fromUri(
                     ui.getRequestUri()).build()).build();

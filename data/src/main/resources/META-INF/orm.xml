@@ -45,6 +45,11 @@
     <entity class="org.gemini.results.model.Group" name="Group">
         <table name="B_GROUP"/>
 
+        <named-query name="Group.list">
+            <query>
+                SELECT g FROM Group g WHERE competitionId=?1 ORDER BY offset
+            </query>
+        </named-query>
         <attributes>
             <id name="id"></id>
             <basic name="competitionId">
