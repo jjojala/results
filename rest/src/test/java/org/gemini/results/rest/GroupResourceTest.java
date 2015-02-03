@@ -45,7 +45,7 @@ public class GroupResourceTest extends JerseyTest {
             final EntityManager em = emf.createEntityManager();
             final EntityTransaction trx = em.getTransaction();
             trx.begin();
-            DataUtils.persist(em, competition);
+            em.persist(competition);
             trx.commit();
 
             DataUtils.close(em);

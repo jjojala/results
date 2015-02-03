@@ -70,44 +70,6 @@ public final class DataUtils {
         return true;
     }
 
-    @Deprecated
-    public static <T> T merge(final EntityManager em, final T entity)
-            throws PersistenceException {
-        return em.merge(entity);
-    }
-
-    @Deprecated
-    public static void persist(final EntityManager em, final Object entity)
-            throws PersistenceException {
-        try {
-            em.persist(entity); 
-            em.flush();
-        }
-
-        catch (final EntityExistsException | EntityNotFoundException ex) {
-            throw ex;
-        }
-
-        catch (final PersistenceException ex) {
-            Throwable cause = ex.getCause();
-            while (cause != null) {
-                if (cause instanceof SQLIntegrityConstraintViolationException) {
-                    final String message = cause.getMessage().toLowerCase();
-                    if (message.contains("foreign key")) {
-                        final EntityNotFoundException wrapper =
-                                new EntityNotFoundException(ex.getMessage());
-                        wrapper.setStackTrace(ex.getStackTrace());
-                        throw wrapper;
-                    } else if (message.contains("unique constraint"))
-                        throw new EntityExistsException(ex.getMessage(), ex);
-                }
-
-                cause = cause.getCause();
-            }
-
-            throw ex;
-        }
-    }
 
     public static String makeMessage(final Class<?> entityType, final Object key) {
         return String.format("class=%s, key=%s", entityType.getName(), key);
