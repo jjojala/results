@@ -8,6 +8,7 @@ import javax.inject.Singleton;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.EntityTransaction;
 import javax.persistence.LockModeType;
 import javax.ws.rs.Consumes;
@@ -64,7 +65,8 @@ public class CompetitionResource {
             final Competition competition =
                     DataUtils.find(em, Competition.class, id);
             if (competition == null)
-                return RestUtils.notFound();
+                return RestUtils.notFound(
+                        DataUtils.makeMessage(Competition.class, id));
 
             return RestUtils.ok(competition);
         }
@@ -84,14 +86,15 @@ public class CompetitionResource {
         try {
             trx.begin();
             competition.setId(id);
-
-            if (em.find(Competition.class, id, LockModeType.PESSIMISTIC_READ) == null)
-                return RestUtils.notFound();
-
-            DataUtils.merge(em, competition);
+            DataUtils.update(em, id, competition);
             trx.commit();
 
             return RestUtils.ok();
+        }
+
+        catch (final EntityNotFoundException ex) {
+            return RestUtils.notFound(
+                    "EntityNotFoundException: " + ex.getMessage());
         }
 
         finally {
@@ -110,7 +113,7 @@ public class CompetitionResource {
         try {
             trx.begin();
             competition.setId(id);
-            DataUtils.persist(em, competition);
+            DataUtils.create(em, id, competition);
             trx.commit();
 
             return RestUtils.created(UriBuilder.fromUri(
@@ -134,15 +137,15 @@ public class CompetitionResource {
 
         try {
             trx.begin();
-            final Competition c = em.find(
-                    Competition.class, id, LockModeType.PESSIMISTIC_READ);
-            if (c == null)
-                return RestUtils.notFound();
-
-            em.remove(c);
+            DataUtils.remove(em, id, Competition.class);
             trx.commit();
 
             return RestUtils.ok();
+        }
+
+        catch (final EntityNotFoundException ex) {
+            return RestUtils.notFound("EntityNotFoundException: "
+                    + ex.getMessage());
         }
 
         finally {
@@ -156,9 +159,10 @@ public class CompetitionResource {
         final EntityManager em = emf_.createEntityManager();
 
         try {
-            final Competition c = em.find(Competition.class, id);
+            final Competition c = DataUtils.find(em, Competition.class, id);
             if (c == null)
-                return RestUtils.notFound();
+                return RestUtils.notFound(DataUtils.makeMessage(
+                        Competition.class, id));
 
             return RestUtils.ok(c.getName());
         }
@@ -177,10 +181,11 @@ public class CompetitionResource {
 
         try {
             trx.begin();
-            final Competition c = em.find(
-                    Competition.class, id, LockModeType.PESSIMISTIC_READ);
+            final Competition c =
+                    DataUtils.findWithLock(em, Competition.class, id);
             if (c == null)
-                return RestUtils.notFound();
+                return RestUtils.notFound(
+                        DataUtils.makeMessage(Competition.class, id));
 
             c.setName(name);
             em.merge(c);
@@ -200,10 +205,10 @@ public class CompetitionResource {
         final EntityManager em = emf_.createEntityManager();
 
         try {
-            final Competition c =em.find(
-                    Competition.class, id, LockModeType.PESSIMISTIC_READ);
+            final Competition c = DataUtils.find(em, Competition.class, id);
             if (c == null)
-                return RestUtils.notFound();
+                return RestUtils.notFound(DataUtils.makeMessage(
+                        Competition.class, id));
 
             return RestUtils.ok(c.getTime());
         }
@@ -222,10 +227,11 @@ public class CompetitionResource {
 
         try {
             trx.begin();
-            final Competition c = em.find(
-                    Competition.class, id, LockModeType.PESSIMISTIC_READ);
+            final Competition c =
+                    DataUtils.findWithLock(em, Competition.class, id);
             if (c == null)
-                return RestUtils.notFound();
+                return RestUtils.notFound(
+                        DataUtils.makeMessage(Competition.class, id));
 
             c.setTime(time);
             trx.commit();
@@ -244,10 +250,10 @@ public class CompetitionResource {
         final EntityManager em = emf_.createEntityManager();
 
         try {
-            final Competition c = em.find(
-                    Competition.class, id, LockModeType.PESSIMISTIC_READ);
+            final Competition c = DataUtils.find(em, Competition.class, id);
             if (c == null)
-                return RestUtils.notFound();
+                return RestUtils.notFound(DataUtils.makeMessage(
+                        Competition.class, id));
 
             return RestUtils.ok(c.getOrganizer());
         }
@@ -266,10 +272,11 @@ public class CompetitionResource {
 
         try {
             trx.begin();
-            final Competition c = em.find(
-                    Competition.class, id, LockModeType.PESSIMISTIC_READ);
+            final Competition c =
+                    DataUtils.findWithLock(em, Competition.class, id);
             if (c == null)
-                return RestUtils.notFound();
+                return RestUtils.notFound(
+                        DataUtils.makeMessage(Competition.class, id));
 
             c.setOrganizer(organizer);
             em.merge(c);

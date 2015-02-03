@@ -20,7 +20,6 @@ public abstract class ModelUtils {
     public static DatatypeFactory getDatatypeFactory() {
         return DatatypeFactoryHolder.getDatatypeFactory();
     }
-
     private ModelUtils() { throw new AssertionError(); }
 
     private static class JaxbContextHolder {

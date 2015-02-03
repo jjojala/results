@@ -10,6 +10,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
 import org.gemini.results.data.DataUtils;
@@ -19,7 +20,6 @@ import org.gemini.results.model.Group;
 import org.gemini.results.model.GroupList;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -54,11 +54,6 @@ public class GroupResourceTest extends JerseyTest {
 
     @AfterClass
     public static void cleanUpClass() {
-        try { emf.close(); } catch (final Throwable ignored) {}
-    }
-
-    @After
-    public void cleanUp() {
         final EntityManager em = emf.createEntityManager();
 
         try {
@@ -79,6 +74,9 @@ public class GroupResourceTest extends JerseyTest {
         finally {
             DataUtils.close(em);
         }
+
+        DataUtils.close(emf);
+        emf = null;
     }
 
     @Override
@@ -129,7 +127,166 @@ public class GroupResourceTest extends JerseyTest {
     }
 
     @Test
-    public void writeOtherTestCases() {
-        Assert.fail();
+    public void testNonExistingCompetition() {
+        final String nonExistingCompetitionId = UUID.randomUUID().toString();
+        final String nonExistingGroupId = UUID.randomUUID().toString();
+
+        final Group group = new Group(nonExistingGroupId,
+                nonExistingCompetitionId, "my-group-name",
+                (short)-1, (short)-1, 0L);
+
+        { // Get
+            final Response response = target(String.format(
+                    "competition/%s/group/%s", nonExistingCompetitionId,
+                    nonExistingGroupId)).request().get();
+
+            Assert.assertEquals(404, response.getStatus());
+        }
+
+        { // create
+            final Response response = target(String.format(
+                    "competition/%s/group/%s", nonExistingCompetitionId,
+                    nonExistingGroupId)).request().post(Entity.xml(group));
+
+            System.out.println(response.getEntity());
+            Assert.assertEquals(404, response.getStatus());
+        }
+
+        { // update
+            final Response response = target(String.format(
+                    "competition/%s/group/%s", nonExistingCompetitionId,
+                    nonExistingGroupId)).request().put(Entity.xml(group));
+
+            Assert.assertEquals(404, response.getStatus());
+        }
+
+        { // delete
+            final Response response = target(String.format(
+                    "competition/%s/group/%s", nonExistingCompetitionId,
+                    nonExistingGroupId)).request().delete();
+
+            Assert.assertEquals(404, response.getStatus());
+            System.out.println(response.readEntity(String.class));
+        }
+    }
+
+    @Test
+    public void testNonExistingGroup() {
+        final String nonExistingGroupId = UUID.randomUUID().toString();
+        final Group group = new Group(nonExistingGroupId,
+                competitionId, "my-group-name",
+                (short)-1, (short)-1, 0L);
+
+        { // get
+            final Response response = target(String.format(
+                    "competition/%s/group/%s", competitionId,
+                    nonExistingGroupId)).request().get();
+
+            Assert.assertEquals(404, response.getStatus());
+        }
+
+        { // update
+            final Response response = target(String.format(
+                    "competition/%s/group/%s", competitionId,
+                    nonExistingGroupId)).request().put(Entity.xml(group));
+
+            Assert.assertEquals(404, response.getStatus());
+
+            /* TODO: support for resonse body in cases of 4xx responses...
+            final String responseBody = response.readEntity(String.class);
+            System.out.println(responseBody);
+
+            Assert.assertTrue(responseBody.startsWith(
+                    EntityNotFoundException.class.getSimpleName()));
+            Assert.assertTrue(responseBody.contains(
+                    Group.class.getName()));
+            Assert.assertTrue(responseBody.contains(
+                    nonExistingGroupId));
+                    */
+        }
+
+        { // delete
+            final Response response = target(String.format(
+                    "competition/%s/group/%s", competitionId,
+                    nonExistingGroupId)).request().delete();
+
+            Assert.assertEquals(404, response.getStatus());
+        }
+    }
+
+    @Test
+    public void testCrud() {
+        final String groupId = UUID.randomUUID().toString();
+
+        { // Create
+            final Group group = new Group(groupId,
+                    competitionId, "my-group-name",
+                    (short) -1, (short) -1, 0L);
+
+            final WebTarget resource = target(String.format(
+                    "competition/%s/group/%s", competitionId, groupId));
+            final Response response =
+                    resource.request().post(Entity.xml(group));
+
+            Assert.assertEquals(201, response.getStatus());
+            final String locationHeader = response.getHeaderString("Location");
+            Assert.assertTrue(locationHeader.contains(competitionId));
+            Assert.assertTrue(locationHeader.contains(groupId));
+        }
+
+        { // re-create
+            final Group group = new Group(groupId,
+                    competitionId, "my-group-name",
+                    (short) -1, (short) -1, 0L);
+
+            final WebTarget resource = target(String.format(
+                    "competition/%s/group/%s", competitionId, groupId));
+            final Response response =
+                    resource.request().post(Entity.xml(group));
+
+            Assert.assertEquals(409, response.getStatus());
+        }
+
+        { // Update
+            { // baseline
+                final Response response = target(String.format(
+                        "competition/%s/group/%s", competitionId, groupId))
+                        .request().get();
+
+                Assert.assertEquals(200, response.getStatus());
+                final Group group = response.readEntity(Group.class);
+                Assert.assertEquals("my-group-name", group.getName());
+            }
+
+            { // change and update
+                final Group group = new Group(groupId,
+                        competitionId, "my-group-name#2",
+                        (short) -1, (short) -1, 0L);
+
+                final Response response = target(String.format(
+                        "competition/%s/group/%s", competitionId,
+                        groupId)).request().put(Entity.xml(group));
+
+                Assert.assertEquals(200, response.getStatus());
+            }
+
+            { // get changes
+                final Response response = target(String.format(
+                        "competition/%s/group/%s", competitionId, groupId))
+                        .request().get();
+
+                Assert.assertEquals(200, response.getStatus());
+                final Group group = response.readEntity(Group.class);
+                Assert.assertEquals("my-group-name#2", group.getName());
+            }
+        }
+
+        { // delete
+            final Response response = target(String.format(
+                    "competition/%s/group/%s", competitionId, groupId))
+                    .request().delete();
+
+            Assert.assertEquals(200, response.getStatus());
+        }
     }
 }

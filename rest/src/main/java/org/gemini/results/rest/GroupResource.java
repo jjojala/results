@@ -4,8 +4,10 @@
 package org.gemini.results.rest;
 
 import java.util.List;
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.EntityTransaction;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -21,6 +23,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import org.gemini.results.data.DataUtils;
+import org.gemini.results.model.Competition;
 import org.gemini.results.model.Group;
 import org.gemini.results.model.GroupList;
 
@@ -46,6 +49,10 @@ public class GroupResource {
                     .setParameter(1, competitionId_).getResultList();
 
             return RestUtils.ok(new GroupList(groups));
+        }
+
+        catch (final Throwable ex) {
+            return RestUtils.serverError(ex);
         }
 
         finally {
@@ -81,17 +88,69 @@ public class GroupResource {
 
         try {
             trx.begin();
+
+            if (DataUtils.findWithLock(
+                    em, Competition.class, competitionId_) == null)
+                return RestUtils.notFound(DataUtils.makeMessage(
+                        Competition.class, competitionId_));
+
             group.setId(id);
             group.setCompetitionId(competitionId_);
-            em.persist(group);
+
+            DataUtils.create(em, id, group);
             trx.commit();
 
-            return Response.created(UriBuilder.fromUri(
-                    ui.getRequestUri()).build()).build();
+            return RestUtils.created(UriBuilder.fromUri(
+                    ui.getRequestUri()).build());
+        }
+
+        catch (final EntityExistsException ex) {
+            return RestUtils.conflict();
         }
 
         finally {
-            try { em.close(); } catch (final Throwable ignored) {}
+            DataUtils.close(em);
+        }
+    }
+
+    @PUT
+    @Path("{id}")
+    public Response update(@PathParam("id") final String id,
+            final Group group) {
+        final EntityManager em = emf_.createEntityManager();
+        final EntityTransaction trx = em.getTransaction();
+
+        try {
+            trx.begin();
+
+            if (DataUtils.findWithLock(
+                    em, Competition.class, competitionId_) == null)
+                return RestUtils.notFound(DataUtils.makeMessage(
+                        Competition.class, competitionId_));
+
+            group.setId(id);
+            group.setCompetitionId(competitionId_);
+
+            DataUtils.update(em, id, group);
+
+            trx.commit();
+
+            return RestUtils.ok();
+        }
+
+        catch (final EntityNotFoundException ex) {
+            return RestUtils.notFound(
+                    "EntityNotFoundExceptin: " + ex.getMessage());
+        }
+
+        catch (final Throwable ex) {
+            System.err.println("GROUP UPDATE #2:");
+            ex.printStackTrace(System.err);
+            return RestUtils.serverError(ex);
+        }
+
+        finally {
+            DataUtils.close(em);
         }
     }
 
@@ -103,15 +162,18 @@ public class GroupResource {
 
         try {
             trx.begin();
-            final Group group = em.find(Group.class, id);
-            em.remove(group);
+            DataUtils.remove(em, id, Group.class);
             trx.commit();
 
             return Response.ok().build();
         }
 
+        catch (final EntityNotFoundException ex) {
+            return RestUtils.notFound(ex.getMessage());
+        }
+
         finally {
-            try { em.close(); } catch (final Throwable ignored) {}
+            DataUtils.close(em);
         }
     }
 
@@ -121,15 +183,16 @@ public class GroupResource {
         final EntityManager em = emf_.createEntityManager();
 
         try {
-            final Group group = em.find(Group.class, id);
+            final Group group = DataUtils.find(em, Group.class, id);
             if (group == null)
-                return Response.status(Response.Status.NOT_FOUND).build();
+                return RestUtils.notFound(
+                        DataUtils.makeMessage(Group.class, id));
 
-            return Response.ok(group.getName()).build();
+            return RestUtils.ok(group.getName());
         }
 
         finally {
-            try { em.close(); } catch (final Throwable ignored) {}
+            DataUtils.close(em);
         }
     }
 
@@ -142,16 +205,21 @@ public class GroupResource {
 
         try {
             trx.begin();
-            final Group group = em.find(Group.class, id);
+            final Group group = DataUtils.findWithLock(em, Group.class, id);
+            if (group == null)
+                return RestUtils.notFound(
+                        DataUtils.makeMessage(Group.class, id));
+
             group.setName(name);
-            em.merge(group);
+            DataUtils.update(em, id, group);
+
             trx.commit();
 
             return Response.ok().build();
         }
 
         finally {
-            try { em.close(); } catch (final Throwable ignored) {}
+            DataUtils.close(em);
         }
     }
 }
