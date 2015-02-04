@@ -7,18 +7,41 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URI;
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityNotFoundException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 public abstract class RestUtils {
 
+    private static final String ENTITY_EXISTS = 
+            EntityExistsException.class.getSimpleName();
+    private static final String ENTITY_NOT_FOUND =
+            EntityNotFoundException.class.getSimpleName();
+
+    @Deprecated
     public static Response notFound(final String message) {
         return Response.status(Response.Status.NOT_FOUND)
                 .type(MediaType.TEXT_PLAIN).entity(message).build();
     }
 
+    public static Response notFound(
+            final Class<?> entityType, final String key) {
+        return Response.status(Response.Status.NOT_FOUND)
+                .entity(String.format("%s: class=%s, key=%s",
+                    ENTITY_NOT_FOUND, entityType.getName(), key)).build();
+    }
+
+    @Deprecated
     public static Response conflict() {
         return Response.status(Response.Status.CONFLICT).build();
+    }
+
+    public static Response conflict(
+            final Class<?> entityType, final String key) {
+        return Response.status(Response.Status.CONFLICT)
+                .entity(String.format("%s: class=%s, key=%s",
+                    ENTITY_EXISTS, entityType.getName(), key)).build();
     }
 
     public static Response ok() {

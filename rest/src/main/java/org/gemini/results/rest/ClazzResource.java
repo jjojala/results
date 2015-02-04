@@ -3,7 +3,12 @@
  */
 package org.gemini.results.rest;
 
+import java.util.List;
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.EntityTransaction;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -15,8 +20,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
+import org.gemini.results.data.DataUtils;
 import org.gemini.results.model.Clazz;
+import org.gemini.results.model.ClazzList;
+import org.gemini.results.model.Competition;
+import org.gemini.results.model.Group;
 
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
@@ -31,23 +41,136 @@ public class ClazzResource {
         competitionId_ = competitionId;
     }
 
-    @POST
-    @Path("{id}")
-    public Response create(@Context UriInfo ui,
-            @PathParam("id") final String id, final Clazz clazz) {
-        return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+    @GET
+    public Response list() {
+        final EntityManager em = emf_.createEntityManager();
+
+        try {
+            final List<Clazz> classes = em.createNamedQuery("Clazz.list")
+                    .setParameter(1, competitionId_).getResultList();
+
+            return RestUtils.ok(new ClazzList(classes));
+        }
+
+        finally {
+            DataUtils.close(em);
+        }
     }
 
     @GET
     @Path("{id}")
     public Response get(@PathParam("id") final String id) {
-        return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+        final EntityManager em = emf_.createEntityManager();
+
+        try {
+            final Clazz clazz = DataUtils.find(em, Clazz.class, id);
+            if (clazz != null)
+                return RestUtils.ok(clazz);
+
+            return RestUtils.notFound(Clazz.class, id);
+        }
+
+        finally {
+            DataUtils.close(em);
+        }
+    }
+
+    @POST
+    @Path("{id}")
+    public Response create(@Context UriInfo ui,
+            @PathParam("id") final String id, final Clazz clazz) {
+        final EntityManager em = emf_.createEntityManager();
+        final EntityTransaction trx = em.getTransaction();
+
+        try {
+            trx.begin();
+
+            if (DataUtils.findWithLock(
+                    em, Competition.class, competitionId_) == null)
+                return RestUtils.notFound(Competition.class, competitionId_);
+
+            if (clazz.getGroupId() != null && DataUtils.findWithLock(
+                    em, Group.class, clazz.getGroupId()) == null)
+                return RestUtils.notFound(Group.class, clazz.getGroupId());
+
+            clazz.setId(id);
+            clazz.setCompetitionId(competitionId_);
+
+            DataUtils.create(em, id, clazz);
+
+            trx.commit();
+
+            return RestUtils.created(UriBuilder.fromUri(
+                    ui.getRequestUri()).build());
+        }
+
+        catch (final EntityExistsException ex) {
+            return RestUtils.conflict(Clazz.class, id);
+        }
+
+        finally {
+            DataUtils.close(em);
+        }
+    }
+
+    @PUT
+    @Path("{id}")
+    public Response update(@PathParam("id") final String id,
+            final Clazz clazz) {
+        final EntityManager em = emf_.createEntityManager();
+        final EntityTransaction trx = em.getTransaction();
+
+        try {
+            trx.begin();
+
+            if (DataUtils.findWithLock(
+                    em, Competition.class, competitionId_) == null)
+                return RestUtils.notFound(Competition.class, competitionId_);
+
+            if (clazz.getGroupId() != null && DataUtils.findWithLock(
+                    em, Group.class, clazz.getGroupId()) == null)
+                return RestUtils.notFound(Group.class, clazz.getGroupId());
+
+            clazz.setId(id);
+            clazz.setCompetitionId(competitionId_);
+
+            DataUtils.update(em, id, clazz);
+
+            trx.commit();
+
+            return RestUtils.ok();
+        }
+
+        catch (final EntityNotFoundException ex) {
+            return RestUtils.notFound(Clazz.class, id);
+        }
+
+        finally {
+            DataUtils.close(em);
+        }
     }
 
     @DELETE
     @Path("{id}")
     public Response remove(@PathParam("id") final String id) {
-        return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+        final EntityManager em = emf_.createEntityManager();
+        final EntityTransaction trx = em.getTransaction();
+
+        try {
+            trx.begin();
+            DataUtils.remove(em, id, Clazz.class);
+            trx.commit();
+
+            return RestUtils.ok();
+        }
+
+        catch (final EntityNotFoundException ex) {
+            return RestUtils.notFound(Clazz.class, id);
+        }
+
+        finally {
+            DataUtils.close(em);
+        }
     }
 
     @GET

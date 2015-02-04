@@ -3,7 +3,6 @@
  */
 package org.gemini.results.data;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -71,6 +70,7 @@ public final class DataUtils {
     }
 
 
+    @Deprecated
     public static String makeMessage(final Class<?> entityType, final Object key) {
         return String.format("class=%s, key=%s", entityType.getName(), key);
     }

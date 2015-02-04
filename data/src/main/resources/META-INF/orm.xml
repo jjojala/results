@@ -50,6 +50,7 @@
                 SELECT g FROM Group g WHERE competitionId=?1 ORDER BY offset
             </query>
         </named-query>
+
         <attributes>
             <id name="id"></id>
             <basic name="competitionId">
@@ -64,6 +65,12 @@
 
     <entity class="org.gemini.results.model.Clazz" name="Clazz">
         <table name="C_CLASS"></table>
+
+        <named-query name="Clazz.list">
+            <query>
+                SELECT c FROM Clazz c WHERE competitionId=?1 ORDER BY name
+            </query>
+        </named-query>
 
         <attributes>
             <id name="id"></id>

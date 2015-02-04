@@ -51,10 +51,6 @@ public class GroupResource {
             return RestUtils.ok(new GroupList(groups));
         }
 
-        catch (final Throwable ex) {
-            return RestUtils.serverError(ex);
-        }
-
         finally {
             DataUtils.close(em);
         }
@@ -70,11 +66,11 @@ public class GroupResource {
             if (group != null)
                 return Response.ok(group).build();
 
-            return Response.status(Response.Status.NOT_FOUND).build();
+            return RestUtils.notFound(Group.class, id);
         }
 
         finally {
-            try { em.close(); } catch (final Throwable ignored) {}
+            DataUtils.close(em);
         }
     }
 
