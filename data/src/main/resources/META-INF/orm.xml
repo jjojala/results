@@ -100,6 +100,20 @@
     <entity class="org.gemini.results.model.Competitor" name="Competitor">
         <table name="D_COMPETITOR"></table>
 
+        <named-query name="Competitor.list">
+            <query>
+                SELECT c FROM Competitor c
+                    WHERE competitionId=?1 ORDER BY offset
+            </query>
+        </named-query>
+
+        <named-query name="Clazz.listByClassId">
+            <query>
+                SELECT c FROM Clazz c
+                    WHERE competitionId=?1 AND classId=?2 ORDER BY number
+            </query>
+        </named-query>
+
         <attributes>
             <id name="id"></id>
             <basic name="competitionId">
