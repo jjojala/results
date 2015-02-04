@@ -65,6 +65,9 @@ public class GroupResource {
         final EntityManager em = emf_.createEntityManager();
 
         try {
+            if (DataUtils.find(em, Competition.class, competitionId_) == null)
+                return RestUtils.notFound(Competition.class, competitionId_);
+
             final Group group = em.find(Group.class, id);
             if (group != null)
                 return Response.ok(group).build();
@@ -90,8 +93,7 @@ public class GroupResource {
 
             if (DataUtils.findWithLock(
                     em, Competition.class, competitionId_) == null)
-                return RestUtils.notFound(DataUtils.makeMessage(
-                        Competition.class, competitionId_));
+                return RestUtils.notFound(Competition.class, competitionId_);
 
             group.setId(id);
             group.setCompetitionId(competitionId_);
@@ -104,7 +106,7 @@ public class GroupResource {
         }
 
         catch (final EntityExistsException ex) {
-            return RestUtils.conflict();
+            return RestUtils.conflict(Group.class, id);
         }
 
         finally {
@@ -124,8 +126,7 @@ public class GroupResource {
 
             if (DataUtils.findWithLock(
                     em, Competition.class, competitionId_) == null)
-                return RestUtils.notFound(DataUtils.makeMessage(
-                        Competition.class, competitionId_));
+                return RestUtils.notFound(Competition.class, competitionId_);
 
             group.setId(id);
             group.setCompetitionId(competitionId_);
@@ -138,14 +139,7 @@ public class GroupResource {
         }
 
         catch (final EntityNotFoundException ex) {
-            return RestUtils.notFound(
-                    "EntityNotFoundExceptin: " + ex.getMessage());
-        }
-
-        catch (final Throwable ex) {
-            System.err.println("GROUP UPDATE #2:");
-            ex.printStackTrace(System.err);
-            return RestUtils.serverError(ex);
+            return RestUtils.notFound(Group.class, id);
         }
 
         finally {
@@ -160,6 +154,9 @@ public class GroupResource {
         final EntityTransaction trx = em.getTransaction();
 
         try {
+            if (DataUtils.find(em, Competition.class, competitionId_) == null)
+                return RestUtils.notFound(Competition.class, competitionId_);
+
             trx.begin();
             DataUtils.remove(em, id, Group.class);
             trx.commit();
@@ -168,7 +165,7 @@ public class GroupResource {
         }
 
         catch (final EntityNotFoundException ex) {
-            return RestUtils.notFound(ex.getMessage());
+            return RestUtils.notFound(Group.class, id);
         }
 
         finally {
@@ -184,8 +181,7 @@ public class GroupResource {
         try {
             final Group group = DataUtils.find(em, Group.class, id);
             if (group == null)
-                return RestUtils.notFound(
-                        DataUtils.makeMessage(Group.class, id));
+                return RestUtils.notFound(Group.class, id);
 
             return RestUtils.ok(group.getName());
         }
@@ -206,8 +202,7 @@ public class GroupResource {
             trx.begin();
             final Group group = DataUtils.findWithLock(em, Group.class, id);
             if (group == null)
-                return RestUtils.notFound(
-                        DataUtils.makeMessage(Group.class, id));
+                return RestUtils.notFound(Group.class, id);
 
             group.setName(name);
             DataUtils.update(em, id, group);

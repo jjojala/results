@@ -63,16 +63,11 @@ public final class DataUtils {
             throws PersistenceException {
         final T entity = findWithLock(em, entityType, primaryKey);
         if (entity == null)
-            throw new EntityNotFoundException(makeMessage(entityType, primaryKey));
+            throw new EntityNotFoundException(String.format("class=%s, key=%s",
+                    entityType.getName(), primaryKey));
 
         em.remove(entity);
         return true;
-    }
-
-
-    @Deprecated
-    public static String makeMessage(final Class<?> entityType, final Object key) {
-        return String.format("class=%s, key=%s", entityType.getName(), key);
     }
 
     private DataUtils() { throw new AssertionError(); }

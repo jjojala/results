@@ -10,7 +10,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.EntityTransaction;
-import javax.persistence.LockModeType;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -65,8 +64,7 @@ public class CompetitionResource {
             final Competition competition =
                     DataUtils.find(em, Competition.class, id);
             if (competition == null)
-                return RestUtils.notFound(
-                        DataUtils.makeMessage(Competition.class, id));
+                return RestUtils.notFound(Competition.class, id);
 
             return RestUtils.ok(competition);
         }
@@ -93,8 +91,7 @@ public class CompetitionResource {
         }
 
         catch (final EntityNotFoundException ex) {
-            return RestUtils.notFound(
-                    "EntityNotFoundException: " + ex.getMessage());
+            return RestUtils.notFound(Competition.class, id);
         }
 
         finally {
@@ -121,7 +118,7 @@ public class CompetitionResource {
         }
 
         catch (final EntityExistsException ex) {
-            return RestUtils.conflict();
+            return RestUtils.conflict(Competition.class, id);
         }
 
         finally {
@@ -144,8 +141,7 @@ public class CompetitionResource {
         }
 
         catch (final EntityNotFoundException ex) {
-            return RestUtils.notFound("EntityNotFoundException: "
-                    + ex.getMessage());
+            return RestUtils.notFound(Competition.class, id);
         }
 
         finally {
@@ -161,8 +157,7 @@ public class CompetitionResource {
         try {
             final Competition c = DataUtils.find(em, Competition.class, id);
             if (c == null)
-                return RestUtils.notFound(DataUtils.makeMessage(
-                        Competition.class, id));
+                return RestUtils.notFound(Competition.class, id);
 
             return RestUtils.ok(c.getName());
         }
@@ -184,8 +179,7 @@ public class CompetitionResource {
             final Competition c =
                     DataUtils.findWithLock(em, Competition.class, id);
             if (c == null)
-                return RestUtils.notFound(
-                        DataUtils.makeMessage(Competition.class, id));
+                return RestUtils.notFound(Competition.class, id);
 
             c.setName(name);
             em.merge(c);
@@ -207,8 +201,7 @@ public class CompetitionResource {
         try {
             final Competition c = DataUtils.find(em, Competition.class, id);
             if (c == null)
-                return RestUtils.notFound(DataUtils.makeMessage(
-                        Competition.class, id));
+                return RestUtils.notFound(Competition.class, id);
 
             return RestUtils.ok(c.getTime());
         }
@@ -230,8 +223,7 @@ public class CompetitionResource {
             final Competition c =
                     DataUtils.findWithLock(em, Competition.class, id);
             if (c == null)
-                return RestUtils.notFound(
-                        DataUtils.makeMessage(Competition.class, id));
+                return RestUtils.notFound(Competition.class, id);
 
             c.setTime(time);
             trx.commit();
@@ -252,8 +244,7 @@ public class CompetitionResource {
         try {
             final Competition c = DataUtils.find(em, Competition.class, id);
             if (c == null)
-                return RestUtils.notFound(DataUtils.makeMessage(
-                        Competition.class, id));
+                return RestUtils.notFound(Competition.class, id);
 
             return RestUtils.ok(c.getOrganizer());
         }
@@ -275,8 +266,7 @@ public class CompetitionResource {
             final Competition c =
                     DataUtils.findWithLock(em, Competition.class, id);
             if (c == null)
-                return RestUtils.notFound(
-                        DataUtils.makeMessage(Competition.class, id));
+                return RestUtils.notFound(Competition.class, id);
 
             c.setOrganizer(organizer);
             em.merge(c);
