@@ -17,6 +17,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -42,12 +43,19 @@ public class ClazzResource {
     }
 
     @GET
-    public Response list() {
+    public Response list(@QueryParam("groupId") final String groupId) {
         final EntityManager em = emf_.createEntityManager();
 
         try {
-            final List<Clazz> classes = em.createNamedQuery("Clazz.list")
-                    .setParameter(1, competitionId_).getResultList();
+            if (DataUtils.find(em, Competition.class, competitionId_) == null)
+                return RestUtils.notFound(Competition.class, competitionId_);
+
+            final List<Clazz> classes = (groupId == null || groupId.isEmpty())
+                    ? em.createNamedQuery("Clazz.list")
+                        .setParameter(1, competitionId_).getResultList()
+                    : em.createNamedQuery("Clazz.listByGroupId")
+                        .setParameter(1, competitionId_)
+                        .setParameter(2, groupId).getResultList();
 
             return RestUtils.ok(new ClazzList(classes));
         }
@@ -63,6 +71,9 @@ public class ClazzResource {
         final EntityManager em = emf_.createEntityManager();
 
         try {
+            if (DataUtils.find(em, Competition.class, competitionId_) == null)
+                return RestUtils.notFound(Competition.class, competitionId_);
+
             final Clazz clazz = DataUtils.find(em, Clazz.class, id);
             if (clazz != null)
                 return RestUtils.ok(clazz);
@@ -157,6 +168,9 @@ public class ClazzResource {
         final EntityTransaction trx = em.getTransaction();
 
         try {
+            if (DataUtils.find(em, Competition.class, competitionId_) == null)
+                return RestUtils.notFound(Competition.class, competitionId_);
+
             trx.begin();
             DataUtils.remove(em, id, Clazz.class);
             trx.commit();
@@ -176,6 +190,7 @@ public class ClazzResource {
     @GET
     @Path("{id}#name")
     public Response getName(@PathParam("id") final String id) {
+        // TODO: Implement
         return Response.status(Response.Status.NOT_IMPLEMENTED).build();
     }
 
@@ -183,12 +198,14 @@ public class ClazzResource {
     @Path("{id}#name")
     public Response setName(@PathParam("id") final String id,
             final String name) {
+        // TODO: Implement
         return Response.status(Response.Status.NOT_IMPLEMENTED).build();
     }
 
     @GET
     @Path("{id}#offset")
     public Response getOffset(@PathParam("id") final String id) {
+        // TODO: Implement
         return Response.status(Response.Status.NOT_IMPLEMENTED).build();
     }
 
@@ -196,12 +213,14 @@ public class ClazzResource {
     @Path("{id}#offset")
     public Response setOffset(@PathParam("id") final String id,
             final Long offset) {
+        // TODO: Implement
         return Response.status(Response.Status.NOT_IMPLEMENTED).build();
     }
 
     @GET
     @Path("{id}#startGroupId")
     public Response getStartGroupId(@PathParam("id") final String id) {
+        // TODO: Implement
         return Response.status(Response.Status.NOT_IMPLEMENTED).build();
     }
 
@@ -209,6 +228,7 @@ public class ClazzResource {
     @Path("{id}#startGroupId")
     public Response setStartGroupId(@PathParam("id") final String id,
             final String startGroupId) {
+        // TODO: Implement
         return Response.status(Response.Status.NOT_IMPLEMENTED).build();
     }
 }

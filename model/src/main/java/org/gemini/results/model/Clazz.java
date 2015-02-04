@@ -30,7 +30,7 @@ public class Clazz {
     @XmlAttribute
     private String groupId;
 
-    protected Clazz() {
+    public Clazz() {
     }
 
     public Clazz(final String id, final String competitionId,

@@ -45,6 +45,9 @@ public class GroupResource {
         final EntityManager em = emf_.createEntityManager();
 
         try {
+            if (DataUtils.find(em, Competition.class, competitionId_) == null)
+                return RestUtils.notFound(Competition.class, competitionId_);
+
             final List<Group> groups = em.createNamedQuery("Group.list")
                     .setParameter(1, competitionId_).getResultList();
 

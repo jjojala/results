@@ -21,7 +21,7 @@ public class ClazzList extends AbstractList<Clazz> {
     @XmlElement(name = "class")
     private List<Clazz> classes = new ArrayList<>();
 
-    protected ClazzList() {
+    public ClazzList() {
     }
 
     public ClazzList(final List<Clazz> classes) {

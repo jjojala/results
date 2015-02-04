@@ -124,6 +124,12 @@ public class GroupResourceTest extends JerseyTest {
             final List<Group> groups = response.readEntity(GroupList.class);
             Assert.assertEquals(0, groups.size());
         }
+
+        {
+            final Response response = target("competition/huuhaa/group")
+                    .request().get();
+            Assert.assertEquals(404, response.getStatus());
+        }
     }
 
     @Test
