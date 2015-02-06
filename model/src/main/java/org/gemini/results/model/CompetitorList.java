@@ -21,19 +21,11 @@ public class CompetitorList extends AbstractList<Competitor> {
     @XmlElement(name = "competitor")
     private List<Competitor> competitors = new ArrayList<>();
 
-    protected CompetitorList() {
+    public CompetitorList() {
     }
 
     public CompetitorList(final List<Competitor> items) {
         this.competitors.addAll(items);
-    }
-
-    public Competitor getById(final String id) {
-        for (final Competitor c: competitors)
-            if (c.getId().equals(id))
-                return c;
-        throw new NoSuchElementException(
-                String.format("Competitor [id='%s'] not found!", id));
     }
 
     @Override
