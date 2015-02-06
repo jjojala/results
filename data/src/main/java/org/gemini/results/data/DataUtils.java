@@ -63,8 +63,7 @@ public final class DataUtils {
             throws PersistenceException {
         final T entity = findWithLock(em, entityType, primaryKey);
         if (entity == null)
-            throw new EntityNotFoundException(String.format("class=%s, key=%s",
-                    entityType.getName(), primaryKey));
+            return false;
 
         em.remove(entity);
         return true;

@@ -172,14 +172,11 @@ public class ClazzResource {
                 return RestUtils.notFound(Competition.class, competitionId_);
 
             trx.begin();
-            DataUtils.remove(em, id, Clazz.class);
+            if (DataUtils.remove(em, id, Clazz.class) == false)
+                return RestUtils.notFound(Clazz.class, id);
             trx.commit();
 
             return RestUtils.ok();
-        }
-
-        catch (final EntityNotFoundException ex) {
-            return RestUtils.notFound(Clazz.class, id);
         }
 
         finally {

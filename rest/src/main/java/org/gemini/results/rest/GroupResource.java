@@ -158,14 +158,12 @@ public class GroupResource {
                 return RestUtils.notFound(Competition.class, competitionId_);
 
             trx.begin();
-            DataUtils.remove(em, id, Group.class);
+            if (DataUtils.remove(em, id, Group.class) == false)
+                return RestUtils.notFound(Group.class, id);
+
             trx.commit();
 
             return Response.ok().build();
-        }
-
-        catch (final EntityNotFoundException ex) {
-            return RestUtils.notFound(Group.class, id);
         }
 
         finally {

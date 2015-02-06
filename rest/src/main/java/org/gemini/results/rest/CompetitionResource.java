@@ -134,14 +134,11 @@ public class CompetitionResource {
 
         try {
             trx.begin();
-            DataUtils.remove(em, id, Competition.class);
+            if (DataUtils.remove(em, id, Competition.class) == false)
+                return RestUtils.notFound(Competition.class, id);
             trx.commit();
 
             return RestUtils.ok();
-        }
-
-        catch (final EntityNotFoundException ex) {
-            return RestUtils.notFound(Competition.class, id);
         }
 
         finally {

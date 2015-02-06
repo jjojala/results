@@ -191,15 +191,12 @@ public class CompetitorResource {
                     em, Competition.class, competitionId_) == null)
                 return RestUtils.notFound(Competition.class, competitionId_);
 
-            DataUtils.remove(em, id, Competitor.class);
+            if (DataUtils.remove(em, id, Competitor.class) == false)
+                return RestUtils.notFound(Competitor.class, id);
 
             trx.commit();
 
             return RestUtils.ok();
-        }
-
-        catch (final EntityNotFoundException ex) {
-            return RestUtils.notFound(Competition.class, id);
         }
 
         finally {
