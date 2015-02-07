@@ -4,8 +4,11 @@
 package org.gemini.results.server;
 
 import java.net.URI;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.ws.rs.core.UriBuilder;
 import org.gemini.results.rest.CompetitionResource;
+import org.glassfish.grizzly.http.server.CLStaticHttpHandler;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.moxy.json.MoxyJsonFeature;
@@ -15,15 +18,22 @@ public class Main {
 
     public static void main(final String[] args) {
         try {
+            final EntityManagerFactory emf =
+                    Persistence.createEntityManagerFactory("results-data");
+
             final URI restUri = UriBuilder.fromUri(
                     "http://0.0.0.0:8800/rest/").build();
 
             final ResourceConfig config = new ResourceConfig()
-                    .register(CompetitionResource.class)
+                    .register(new CompetitionResource(emf))
                     .register(MoxyJsonFeature.class);
 
             final HttpServer server =
                     GrizzlyHttpServerFactory.createHttpServer(restUri, config);
+
+            server.getServerConfiguration().addHttpHandler(
+                    new CLStaticHttpHandler(
+                        Main.class.getClassLoader(), "/"), "/");
 
             server.start();
 
