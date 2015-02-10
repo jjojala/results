@@ -4,9 +4,33 @@
         <meta charset="utf-8">
         <title>title</title>
         <!-- <link rel="stylesheet" href="style.css"> -->
-        <!-- <script src="script.js"></script> -->
+
+        <script src="dojo/dojo.js"
+                data-dojo-config="async: true">
+        </script>
+
+        <script>
+            require(["dijit/form/Select", "dojo/data/ObjectStore",
+                    "dojo/store/Memory", "dojo/domReady!"],
+                function(Select, ObjectStore, Memory) {
+
+                    var store = new Memory({
+                        data: [
+                            { id: 'abc', label: 'Abc' },
+                            { id: 'def', label: 'Def' }
+                        ]
+                    });
+
+                    var os = new ObjectStore({ objectStore: store });
+
+                    var s = new Select({ store: os }, "competitionSelection");
+                    s.startup();
+
+
+                })
+        </script>
     </head>
     <body>
-        Hello world!
+        <div id="competitionSelection"></div>
     </body>
 </html>
