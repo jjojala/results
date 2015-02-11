@@ -1,37 +1,113 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
     <head>
-        <meta charset="utf-8">
+        <meta charset="utf-8"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
         <title>Results</title>
-        <!-- <link rel="stylesheet" href="style.css"> -->
-
-        <script src="dojo/dojo.js"
-                data-dojo-config="async: true">
+        <script type="text/javascript" src="dojo/dojo.js"
+            data-dojo-config="'parseOnLoad':true, 'async':true"></script>
+        <script type="text/javascript">
+            require([
+                "dojo/parser",
+                "dijit/layout/ContentPane",
+                "dijit/layout/TabContainer",
+                "dijit/form/Select",
+                "dijit/form/Button",
+                "dijit/form/TextBox",
+                "dijit/form/DateTextBox",
+                "dijit/form/TimeTextBox"
+            ]);
         </script>
-
-        <script>
-            require(["dijit/form/Select", "dojo/data/ObjectStore",
-                    "dojo/store/Memory", "dojo/domReady!"],
-                function(Select, ObjectStore, Memory) {
-
-                    var store = new Memory({
-                        data: [
-                            { id: 'abc', label: 'Abc' },
-                            { id: 'def', label: 'Def' }
-                        ]
+        <style>
+            @import "dijit/themes/claro/document.css";
+            @import "dijit/themes/claro/claro.css";
+            @import "dojo/dojox/grid/resources/claroGrid.css";
+            @import "app.css";
+        </style>
+<!--    <script type="text/javascript" src="app.js"></script> -->
+        <script type="text/javascript">
+            require(["dojo/request", "dijit/registry", "dojo/ready"],
+                function(request, registry, ready) {
+                    ready(function(){
+                        request("rest/competition", { 'headers': {
+                                'Accept':'application/xml',
+                                'Content-Type': 'application/xml'}}).then(
+                                function (data) {
+                                    alert("Got data: " + data);
+                                },
+                                function (err) {
+                                    alert("Got error: " + err);
+                                });
+                        alert(registry.byId("competition-select"));
                     });
-
-                    var os = new ObjectStore({ objectStore: store });
-
-                    var s = new Select({ store: os }, "competitionSelection");
-                    s.startup();
-
-
-                })
+                });
         </script>
     </head>
-    <body>
-        <h1>Results</h1>
-        <div id="competitionSelection"></div>
+
+    <body class="claro" id="myapp">
+
+        <span data-dojo-type="dijit/layout/TabContainer"
+              style="min-width: 1em; min-height: 1em; width: 100%; height: 300px;"
+              controllerWidget="dijit.layout.TabController">
+
+            <div data-dojo-type="dijit/layout/ContentPane" title="Competition"
+                 extractContent="false" preventCache="false" preload="true"
+                 refreshOnShow="false" selected="true"
+                 closable="false" doLayout="false">
+
+                <div
+                     style="min-width: 1em; min-height: 1em; width: 100%; height: 100%;">
+                    <div>
+                        <label for="competition-select">Pick competition: </label>
+                        <select id="competition-select"
+                                data-dojo-type="dijit/form/Select">
+                            <option value="Item 1">
+                                Item 1</option>
+                            <option value="Item 2">
+                                Item 2</option>
+                            <option value="Item 3">
+                                Item 3</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="competition-date">Date of competition: </label>
+                        <input id="competition-date" type="text"
+                               data-dojo-type="dijit/form/DateTextBox"></input>
+                        <label for="competition-time">Time of competition: </label>
+                        <input type="text"
+                               data-dojo-type="dijit/form/TimeTextBox"></input>
+                    </div>
+                    <div>
+                        <label for="competition-name">Name of competition: </label>
+                        <input id="competition-name" type="text"
+                               data-dojo-type="dijit/form/TextBox"
+                               style="width: auto;"></input>
+                    </div>
+                    <div>
+                        <label for="competition-organizer">
+                            Organizer of competition: </label>
+                        <input id="competition-organizer" type="text"
+                               data-dojo-type="dijit/form/TextBox"></input>
+                    </div>
+                    <div>
+                        <input type="button" data-dojo-type="dijit/form/Button"
+                               intermediateChanges="false" label="Update"
+                               iconClass="dijitNoIcon"></input>
+                        <input type="button" data-dojo-type="dijit/form/Button"
+                               intermediateChanges="false" label="Remove"
+                               iconClass="dijitNoIcon"></input>
+                        <input type="button" data-dojo-type="dijit/form/Button"
+                               intermediateChanges="false" label="Create"
+                               iconClass="dijitNoIcon"></input>
+                    </div>
+                </div>
+            </div>
+            <div data-dojo-type="dijit/layout/ContentPane" title="Groups"
+                 extractContent="false" preventCache="false" preload="false"
+                 refreshOnShow="false" selected="true" closable="false"
+                 doLayout="false"></div>
+            <div data-dojo-type="dijit/layout/ContentPane" title="Classes"></div>
+            <div data-dojo-type="dijit/layout/ContentPane" title="Competitors"></div>
+        </span>
     </body>
 </html>

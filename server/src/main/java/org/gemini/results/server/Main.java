@@ -37,11 +37,11 @@ public class Main {
                     new CLStaticHttpHandler(
                         Main.class.getClassLoader(), "/"), "/");
                     */
-            server.getServerConfiguration().addHttpHandler(
-                    new StaticHttpHandler(
-                            "../ui/src/main/resources/",
-                            "../ui/target/classes/"),
-                    "/");
+            final StaticHttpHandler handler = new StaticHttpHandler(
+                    "../ui/src/main/resources/", "../ui/target/classes/");
+            handler.setFileCacheEnabled(false);
+            
+            server.getServerConfiguration().addHttpHandler(handler, "/");
 
             server.start();
 
