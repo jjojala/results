@@ -29,9 +29,11 @@
             require(["dojo/request", "dijit/registry", "dojo/ready"],
                 function(request, registry, ready) {
                     ready(function(){
-                        request("rest/competition", { 'headers': {
-                                'Accept':'application/xml',
-                                'Content-Type': 'application/xml'}}).then(
+                        request("rest/competition", { 
+                            /*'handleAs': 'xml', */
+                            'headers': {
+                                'Accept':'application/json',
+                                'Content-Type': 'application/json'}}).then(
                                 function (data) {
                                     alert("Got data: " + data);
                                 },

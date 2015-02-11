@@ -11,7 +11,7 @@ import org.gemini.results.rest.CompetitionResource;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.StaticHttpHandler;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
-import org.glassfish.jersey.moxy.json.MoxyJsonFeature;
+import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 
 public class Main {
@@ -24,9 +24,10 @@ public class Main {
             final URI restUri = UriBuilder.fromUri(
                     "http://0.0.0.0:8800/rest/").build();
 
+            
             final ResourceConfig config = new ResourceConfig()
                     .register(new CompetitionResource(emf))
-                    .register(MoxyJsonFeature.class);
+                    .register(JacksonFeature.class);
 
             final HttpServer server =
                     GrizzlyHttpServerFactory.createHttpServer(restUri, config);

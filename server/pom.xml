@@ -23,6 +23,7 @@
             <groupId>org.gemini</groupId>
             <artifactId>results-rest</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+            <optional>false</optional>
         </dependency>
 
         <dependency>
@@ -38,7 +39,7 @@
 
         <dependency>
             <groupId>org.glassfish.jersey.media</groupId>
-            <artifactId>jersey-media-moxy</artifactId>
+            <artifactId>jersey-media-json-jackson</artifactId>
         </dependency>
 
         <dependency>
