@@ -75,13 +75,13 @@ public class CompetitionResourceTest extends JerseyTest {
         {   // Create a competiont (so that we have at least one competition on
             // the list)
             final Response response = target("competition/" + competition.getId())
-                    .request().post(Entity.xml(competition));
+                    .request().post(Entity.json(competition));
             Assert.assertEquals(201, response.getStatus());
         }
 
         {   // Get the just retrieved competition
             final Response response = target("competition/" + competition.getId())
-                    .request().get();
+                    .request().accept("application/json").get();
             Assert.assertEquals(200, response.getStatus());
 
             final Competition c = response.readEntity(Competition.class);
