@@ -8,8 +8,8 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.ws.rs.core.UriBuilder;
 import org.gemini.results.rest.CompetitionResource;
-import org.glassfish.grizzly.http.server.CLStaticHttpHandler;
 import org.glassfish.grizzly.http.server.HttpServer;
+import org.glassfish.grizzly.http.server.StaticHttpHandler;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.moxy.json.MoxyJsonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -31,9 +31,17 @@ public class Main {
             final HttpServer server =
                     GrizzlyHttpServerFactory.createHttpServer(restUri, config);
 
+            // TODO: Use CLStaticHttpHandler for production
+            /* like this...
             server.getServerConfiguration().addHttpHandler(
                     new CLStaticHttpHandler(
                         Main.class.getClassLoader(), "/"), "/");
+                    */
+            server.getServerConfiguration().addHttpHandler(
+                    new StaticHttpHandler(
+                            "../ui/src/main/resources/",
+                            "../ui/target/classes/"),
+                    "/");
 
             server.start();
 
