@@ -29,18 +29,30 @@
             require(["dojo/request", "dijit/registry", "dojo/ready"],
                 function(request, registry, ready) {
                     ready(function(){
+                        function timeToString(time) {
+                            var date = new Date(time * 1000);
+                            return date.toString();
+                        };
+
                         request("rest/competition", { 
-                            /*'handleAs': 'xml', */
+                            'handleAs': 'json',
                             'headers': {
                                 'Accept':'application/json',
                                 'Content-Type': 'application/json'}}).then(
-                                function (data) {
-                                    alert("Got data: " + data);
+                                function (competitions) {
+                                    alert("Got data: " + competitions);
+                                    var select = registry.byId("competition-select");
+                                    for (var i = 0; i < competitions.length; ++i) {
+                                        var competition = competitions[i];
+                                        select.addOption({
+                                            'label': timeToString(competition.time) + ': ' + competition.name,
+                                            'value': competition.id
+                                        })
+                                    }
                                 },
                                 function (err) {
                                     alert("Got error: " + err);
                                 });
-                        alert(registry.byId("competition-select"));
                     });
                 });
         </script>
@@ -63,12 +75,6 @@
                         <label for="competition-select">Pick competition: </label>
                         <select id="competition-select"
                                 data-dojo-type="dijit/form/Select">
-                            <option value="Item 1">
-                                Item 1</option>
-                            <option value="Item 2">
-                                Item 2</option>
-                            <option value="Item 3">
-                                Item 3</option>
                         </select>
                     </div>
                     <div>
