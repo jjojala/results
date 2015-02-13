@@ -25,8 +25,11 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.gemini.results.data.DataUtils;
+import org.gemini.results.model.Clazz;
 import org.gemini.results.model.Competition;
 import org.gemini.results.model.CompetitionList;
+import org.gemini.results.model.Competitor;
+import org.gemini.results.model.Group;
 
 @Singleton
 @Path("competition")
@@ -49,6 +52,76 @@ public class CompetitionResource {
                     em.createNamedQuery("Competition.list").getResultList();
 
             return RestUtils.ok(new CompetitionList(competitions));
+        }
+
+        finally {
+            DataUtils.close(em);
+        }
+    }
+
+    @GET
+    @Path("export/{id}")
+    public Response export(@PathParam("id") final String id) {
+        final EntityManager em = emf_.createEntityManager();
+        try {
+            final Competition competition =
+                    DataUtils.find(em, Competition.class, id);
+            if (competition == null)
+                return RestUtils.notFound(Competition.class, id);
+
+            competition.getGroups().addAll(em.createNamedQuery("Group.list")
+                    .setParameter(1, id).getResultList());
+            competition.getClasses().addAll(em.createNamedQuery("Clazz.list")
+                    .setParameter(1, id).getResultList());
+            competition.getCompetitors().addAll(em.createNamedQuery(
+                    "Competitor.list").setParameter(1, id).getResultList());
+
+            return RestUtils.ok(competition);
+        }
+
+        finally {
+            DataUtils.close(em);
+        }
+    }
+
+    @POST
+    @Path("import/{id}")
+    public Response _import(@Context final UriInfo ui,
+            @PathParam("id") final String id,
+            final Competition competition) {
+        final EntityManager em = emf_.createEntityManager();
+        final EntityTransaction trx = em.getTransaction();
+
+        try {
+            trx.begin();
+            System.out.println("Importing...");
+            competition.setId(id);
+            DataUtils.create(em, id, competition);
+
+            for (final Group group: competition.getGroups()) {
+                System.out.println("group: " + group.getId());
+                group.setCompetitionId(id);
+                DataUtils.create(em, group.getId(), group);
+            }
+
+            for (final Clazz clazz: competition.getClasses()) {
+                clazz.setCompetitionId(id);
+                DataUtils.create(em, clazz.getId(), clazz);
+            }
+
+            for (final Competitor competitor: competition.getCompetitors()) {
+                competitor.setCompetitionId(id);
+                DataUtils.create(em, competitor.getId(), competitor);
+            }
+
+            trx.commit();
+
+            return RestUtils.created(UriBuilder.fromUri(
+                    ui.getRequestUri()).build());
+        }
+
+        catch (final EntityExistsException ex) {
+            return RestUtils.conflict(Competition.class, id);
         }
 
         finally {
