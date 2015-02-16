@@ -24,11 +24,30 @@
             @import "dojox/grid/resources/claroGrid.css";
             @import "app.css";
         </style>
-<!--    <script type="text/javascript" src="app.js"></script> -->
+        <script type="text/javascript" src="app.js"></script> 
         <script type="text/javascript">
             require(["dojo/request", "dijit/registry", "dojo/ready"],
                 function(request, registry, ready) {
                     ready(function(){
+                        
+                        var g_competition = null;
+
+                        function setCompetition(competitionId) {
+                            request('rest/competition/' + competitionId, {
+                                'handleAs':'json',
+                                'headers':{
+                                    'Accept':'application/json',
+                                    'Content-Type':'application/json'
+                                }}).then(
+                                    function(data) {
+                                        alert(JSON.stringify(data));
+                                    },
+                                    function(err) {
+                                        alert(err);
+                                    }
+                                );
+                        }
+
                         function timeToString(time) {
                             var date = new Date(time * 1000);
                             return date.toString();
@@ -40,7 +59,6 @@
                                 'Accept':'application/json',
                                 'Content-Type': 'application/json'}}).then(
                                 function (competitions) {
-                                    alert("Got data: " + competitions);
                                     var select = registry.byId("competition-select");
                                     for (var i = 0; i < competitions.length; ++i) {
                                         var competition = competitions[i];
@@ -49,7 +67,12 @@
                                             'value': competition.id
                                         })
                                     }
+
+                                    select.on("change", function() {
+                                        setCompetition(this.get("value"));
+                                    });
                                 },
+
                                 function (err) {
                                     alert("Got error: " + err);
                                 });
