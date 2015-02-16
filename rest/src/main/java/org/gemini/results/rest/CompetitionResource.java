@@ -121,7 +121,7 @@ public class CompetitionResource {
         }
 
         catch (final EntityExistsException ex) {
-            return RestUtils.conflict(Competition.class, id);
+            return RestUtils.conflict(ex);
         }
 
         finally {

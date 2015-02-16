@@ -42,8 +42,7 @@ public final class DataUtils {
             final E entity) throws PersistenceException {
         if (findWithLock(em, entity.getClass(), primaryKey) != null)
             throw new EntityExistsException(
-                    String.format("class=%s, primaryKey=%s",
-                        entity.getClass().toString(), primaryKey.toString()));
+                    getIdentity(entity.getClass(), primaryKey.toString()));
 
         em.persist(entity);
     }
@@ -52,8 +51,7 @@ public final class DataUtils {
             final E entity) throws PersistenceException {
         if (findWithLock(em, entity.getClass(), primaryKey) == null)
             throw new EntityNotFoundException(
-                    String.format("class=%s, primaryKey=%s",
-                    entity.getClass().getName(), primaryKey.toString()));
+                    getIdentity(entity.getClass(), primaryKey.toString()));
 
         return em.merge(entity);
     }
@@ -67,6 +65,12 @@ public final class DataUtils {
 
         em.remove(entity);
         return true;
+    }
+
+    public static String getIdentity(final Class<?> entityType,
+            final String entityKey) {
+        return String.format("class=%s, key=%s",
+                entityType.getName(), entityKey);
     }
 
     private DataUtils() { throw new AssertionError(); }
