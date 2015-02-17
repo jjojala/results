@@ -29,8 +29,17 @@
             require(["dojo/request", "dijit/registry", "dojo/ready"],
                 function(request, registry, ready) {
                     ready(function(){
-                        
-                        var g_competition = null;
+
+                        var g_competition = new Competition(request, 'rest', 'e1');
+
+                        g_competition.get(
+                                function(data) {
+                                    alert('Got data: ' + JSON.stringify(data));
+                                },
+                                function(err) {
+                                    alert('Failure: ' + err);
+                                }
+                            );
 
                         function setCompetition(competitionId) {
                             request('rest/competition/' + competitionId, {
@@ -49,8 +58,9 @@
                         }
 
                         function timeToString(time) {
-                            var date = new Date(time * 1000);
-                            return date.toString();
+                            var date = new Date(time);
+                            return date.toLocaleDateString() + ' '
+                                    + date.toLocaleTimeString();
                         };
 
                         request("rest/competition", { 
