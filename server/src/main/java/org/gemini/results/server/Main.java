@@ -8,6 +8,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.ws.rs.core.UriBuilder;
 import org.gemini.results.rest.CompetitionResource;
+import org.glassfish.grizzly.http.server.CLStaticHttpHandler;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.StaticHttpHandler;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
@@ -33,11 +34,11 @@ public class Main {
                     GrizzlyHttpServerFactory.createHttpServer(restUri, config);
 
             // TODO: Use CLStaticHttpHandler for production
-            /* like this...
+            /* like this... */
             server.getServerConfiguration().addHttpHandler(
                     new CLStaticHttpHandler(
-                        Main.class.getClassLoader(), "/"), "/");
-                    */
+                        Main.class.getClassLoader(), "/META-INF/resources/webjars/"), "/lib");
+                    /* */
             final StaticHttpHandler handler = new StaticHttpHandler(
                     "../ui/src/main/resources/", "../ui/target/classes/");
             handler.setFileCacheEnabled(false);
