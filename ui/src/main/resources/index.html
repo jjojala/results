@@ -1,46 +1,53 @@
 <!doctype html>
-<html lang="en" ng-app>
-<head>
-  <meta charset="utf-8">
-  <title>My HTML File</title>
-  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
-  <link rel="stylesheet" href="css/app.css">
-  <script src="bower_components/angular/angular.js"></script>
-</head>
-<body>
+<html lang="en" ng-app="ResultsApplication">
+    <head>
+        <meta charset="utf-8">
+        <title>My HTML File</title>
+        <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
+        <link rel="stylesheet" href="app/app.css">
+        <script src="lib/angular/1.3.14/angular.js"></script>
+        <script src="app/app.js"></script>
+    </head>
+    <body>
 
-  <p>Nothing here {{'yet' + '!'}}</p>
+        <div ng-controller="CompetitionSelectionController">
+            
+            Search: <input ng-model="query"><br>
 
-</body>
+            Sort by:
+            <select ng-model="orderProp">
+                <option value="time">Time</option>
+                <option value="name">Name</option>
+                <option value="id">#Id</option>
+            </select>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>#Id</th>
+                        <th style="text-align: left;">Time</th>
+                        <th style="text-align: left;">Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="c in competitions | filter:query
+                                | orderBy:orderProp">
+                        <td style="text-align: center;">{{c.id}}</td>
+                        <td>{{c.time}}</td>
+                        <td>{{c.name}}</td>
+                    </tr>
+                </li>
+            </tbody>
+            </table>
+
+        </div>
+
+    </body>
 </html>
 <!--
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="utf-8"/>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-        <title>Results</title>
-        <script type="text/javascript" src="dojo/dojo.js"
-            data-dojo-config="'parseOnLoad':true, 'async':true"></script>
-        <script type="text/javascript">
-            require([
-                "dojo/parser",
-                "dijit/layout/ContentPane",
-                "dijit/layout/TabContainer",
-                "dijit/form/Select",
-                "dijit/form/Button",
-                "dijit/form/TextBox",
-                "dijit/form/DateTextBox",
-                "dijit/form/TimeTextBox"
-            ]);
-        </script>
-        <style>
-            @import "dijit/themes/claro/document.css";
-            @import "dijit/themes/claro/claro.css";
-            @import "dojox/grid/resources/claroGrid.css";
-            @import "app.css";
-        </style>
-        <script type="text/javascript" src="app.js"></script> 
         <script type="text/javascript">
             require(["dojo/request", "dijit/registry", "dojo/ready"],
                 function(request, registry, ready) {

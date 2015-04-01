@@ -2,6 +2,24 @@
  * Copyright (C) 2015 Jari Ojala (jari.ojala@iki.fi).
  */
 
+var app = angular.module('ResultsApplication', []);
+
+app.controller('CompetitionSelectionController', function ($scope) {
+    $scope.competitions = [
+        {'name': 'BB DDEE', 'id': '1', 'time': '2015-05-14T11:00:00.000+03:00'},
+        {'name': 'CC EEFF', 'id': '2', 'time': '2015-04-02T00:55:40.000+03:00'},
+        {'name': 'AA FFDD', 'id': '3', 'time': '1970-06-12T13:00:00.000+03:00'}
+    ];
+
+    $scope.orderProp = 'time';
+});
+
+function timeToString(time) {
+    var date = new Date(time);
+    return date.toLocaleDateString() + ' '
+            + date.toLocaleTimeString();
+};
+
 function Rest(request) {
 
     this.create = function(url, data) {
