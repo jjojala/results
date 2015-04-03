@@ -3,9 +3,6 @@
     <head>
         <meta charset="utf-8">
         <title>Results</title>
-<!--
-        <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
--->
         <link rel="stylesheet" href="app/app.css">
         <script src="lib/angular/1.3.14/angular.js"></script>
         <script src="lib/angular-route/1.3.15/angular-route.js"></script>
@@ -25,169 +22,40 @@
             <select ng-model="orderProp">
                 <option value="time">Time</option>
                 <option value="name">Name</option>
-                <option value="id">#Id</option>
+                <option value="organizer">Organizer</option>
             </select>
 
-            <table style="width: 100%">
-                <thead>
-                    <tr>
-                        <th>#Id</th>
-                        <th style="text-align: left;">Time</th>
-                        <th style="text-align: left;">Name</th>
-                        <th class="table-row-control">X</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr ng-repeat="c in competitions 
-                                | filter:query | orderBy:orderProp"
-                        ng-mouseenter="active = $index"
-                        ng-mouseleave="active = -1" ng-init="active = -1"
-                        ng-click="onClick(c, $index, $event)">
+            <div class="table-div">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="text-align: left;">Time</th>
+                            <th style="text-align: left;">Name</th>
+                            <th>Organizer</th>
+                            <th style="width: 25px"></th>
+                        </tr>
+                    </thead>
 
-                        <td style="text-align: center;">{{c.id}}</td>
-                        <td>{{c.time}}</td>
-                        <td>{{c.name}}</td>
-                        <td class="table-row-control" ng-show="$index == active"
-                            ng-click="onDeleteRequest(c, $index, $event)">X</td>
-                    </tr>
-                </tbody>
-            </table>
+                    <tbody>
+                        <tr ng-repeat="c in competitions 
+                                    | filter:query | orderBy:orderProp"
+                            ng-mouseenter="active = $index"
+                            ng-mouseleave="active = -1" ng-init="active = -1"
+                            ng-dblclick="onSelectionRequest(c, $index, $event)">
 
-            <div style="align: center;">
-                <button type="button">Ok</button>
+                            <td>{{unixTimeToString(c.time)}}</td>
+                            <td>{{c.name}}</td>
+                            <td>{{c.organizer}}</td>
+
+                            <td class="table-row-control" ng-show="$index == active"
+                                ng-click="onDeleteRequest(c, $index, $event)">X</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
+
+            Double-click to choose, or create 
+            <button type="button">New</button>
         </div>
     </body>
 </html>
-<!--
-<!DOCTYPE html>
-<html>
-    <head>
-        <script type="text/javascript">
-            require(["dojo/request", "dijit/registry", "dojo/ready"],
-                function(request, registry, ready) {
-                    ready(function(){
-
-                        var g_competition = new Competition(request, 'rest', 'e1');
-
-                        g_competition.get(
-                                function(data) {
-                                    alert('Got data: ' + JSON.stringify(data));
-                                },
-                                function(err) {
-                                    alert('Failure: ' + err);
-                                }
-                            );
-
-                        function setCompetition(competitionId) {
-                            request('rest/competition/' + competitionId, {
-                                'handleAs':'json',
-                                'headers':{
-                                    'Accept':'application/json',
-                                    'Content-Type':'application/json'
-                                }}).then(
-                                    function(data) {
-                                        alert(JSON.stringify(data));
-                                    },
-                                    function(err) {
-                                        alert(err);
-                                    }
-                                );
-                        }
-
-                        function timeToString(time) {
-                            var date = new Date(time);
-                            return date.toLocaleDateString() + ' '
-                                    + date.toLocaleTimeString();
-                        };
-
-                        request("rest/competition", { 
-                            'handleAs': 'json',
-                            'headers': {
-                                'Accept':'application/json',
-                                'Content-Type': 'application/json'}}).then(
-                                function (competitions) {
-                                    var select = registry.byId("competition-select");
-                                    for (var i = 0; i < competitions.length; ++i) {
-                                        var competition = competitions[i];
-                                        select.addOption({
-                                            'label': timeToString(competition.time) + ': ' + competition.name,
-                                            'value': competition.id
-                                        })
-                                    }
-
-                                    select.on("change", function() {
-                                        setCompetition(this.get("value"));
-                                    });
-                                },
-
-                                function (err) {
-                                    alert("Got error: " + err);
-                                });
-                    });
-                });
-        </script>
-    </head>
-
-    <body class="claro" id="myapp">
-
-        <span data-dojo-type="dijit/layout/TabContainer"
-              style="min-width: 1em; min-height: 1em; width: 100%; height: 300px;"
-              controllerWidget="dijit.layout.TabController">
-
-            <div data-dojo-type="dijit/layout/ContentPane" title="Competition"
-                 extractContent="false" preventCache="false" preload="true"
-                 refreshOnShow="false" selected="true"
-                 closable="false" doLayout="false">
-
-                <div
-                     style="min-width: 1em; min-height: 1em; width: 100%; height: 100%;">
-                    <div>
-                        <label for="competition-select">Pick competition: </label>
-                        <select id="competition-select"
-                                data-dojo-type="dijit/form/Select">
-                        </select>
-                    </div>
-                    <div>
-                        <label for="competition-date">Date of competition: </label>
-                        <input id="competition-date" type="text"
-                               data-dojo-type="dijit/form/DateTextBox"></input>
-                        <label for="competition-time">Time of competition: </label>
-                        <input type="text"
-                               data-dojo-type="dijit/form/TimeTextBox"></input>
-                    </div>
-                    <div>
-                        <label for="competition-name">Name of competition: </label>
-                        <input id="competition-name" type="text"
-                               data-dojo-type="dijit/form/TextBox"
-                               style="width: auto;"></input>
-                    </div>
-                    <div>
-                        <label for="competition-organizer">
-                            Organizer of competition: </label>
-                        <input id="competition-organizer" type="text"
-                               data-dojo-type="dijit/form/TextBox"></input>
-                    </div>
-                    <div>
-                        <input type="button" data-dojo-type="dijit/form/Button"
-                               intermediateChanges="false" label="Update"
-                               iconClass="dijitNoIcon"></input>
-                        <input type="button" data-dojo-type="dijit/form/Button"
-                               intermediateChanges="false" label="Remove"
-                               iconClass="dijitNoIcon"></input>
-                        <input type="button" data-dojo-type="dijit/form/Button"
-                               intermediateChanges="false" label="Create"
-                               iconClass="dijitNoIcon"></input>
-                    </div>
-                </div>
-            </div>
-            <div data-dojo-type="dijit/layout/ContentPane" title="Groups"
-                 extractContent="false" preventCache="false" preload="false"
-                 refreshOnShow="false" selected="true" closable="false"
-                 doLayout="false"></div>
-            <div data-dojo-type="dijit/layout/ContentPane" title="Classes"></div>
-            <div data-dojo-type="dijit/layout/ContentPane" title="Competitors"></div>
-        </span>
-    </body>
-</html>
--->

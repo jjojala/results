@@ -31,6 +31,7 @@
     margin: 10% auto;
     padding: 5px 20px 13px 20px;
     border-radius: 10px;
+    box-shadow: 10px 10px 5px #435200; /* primary-4 */
 }
 
 .modal-dialog > h2 {
@@ -59,7 +60,19 @@
     background-color: #214800; /* secondary-1-4 */
 }
 
+.table-div {
+    position: relative;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+table {
+    width: 100%;
+    border: 1px solid #435200; /* primary-4 */
+}
+
 thead > tr {
+    border: 1px solid black;
     background-color: #BACD66; /* primary-2 */
     line-height: 25px;
 }
@@ -72,19 +85,23 @@ tbody > tr:hover {
     background-color: #687B14; /* primary-3 */
 }
 
+tbody > tr .active {
+    font-weight: bold;
+}
+
 .table-row-control {
-    background-color: red; /* #5E9732; secondary-1-0 */
+    background-color: #E699AF; /* #5E9732; secondary-2-1 */
     color: white;
-    line-height: 25px;
+    line-height: 20px;
     text-align: center;
-    width: 24px;
+    width: 20px;
     text-decoration: none;
     font-weight: bold;
-    -webkit-border-radius: 12px;
-    -moz-border-radius: 12px;
-    border-radius: 12px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
 }
 
 .table-row-control:hover {
-    background-color: #214800; /* secondary-1-4 */    
+    background-color: #4D0016; /* secondary-2-4 */    
 }
