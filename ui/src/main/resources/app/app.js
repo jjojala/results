@@ -4,12 +4,18 @@
 
 var app = angular.module('ResultsApplication', []);
 
-app.controller('CompetitionSelectionController', function ($scope) {
-    $scope.competitions = [
-        {'name': 'BB DDEE', 'id': '1', 'time': '2015-05-14T11:00:00.000+03:00'},
-        {'name': 'CC EEFF', 'id': '2', 'time': '2015-04-02T00:55:40.000+03:00'},
-        {'name': 'AA FFDD', 'id': '3', 'time': '1970-06-12T13:00:00.000+03:00'}
-    ];
+app.controller('CompetitionSelectionController', function ($scope, $http) {
+
+    $http.get("rest/competition").success(function (data) {
+        $scope.competitions = data;
+    }).error(function (err, status) {
+        alert(status);
+    });
+
+    $scope.onDeleteRequest = function(c, i, e) {
+        console.log("Delete requested for competition #" + c.id);
+        console.log("    i=" + i);
+    }
 
     $scope.orderProp = 'time';
 });

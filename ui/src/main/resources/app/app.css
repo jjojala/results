@@ -1,1 +1,90 @@
-/* intentionally empty */
+/* Colors */
+.primary-1 { background-color: #E7F6A4 }
+.primary-2 { background-color: #BACD66 }
+.primary-0 { background-color: #90A437 }
+.primary-3 { background-color: #687B14 }
+.primary-4 { background-color: #435200 }
+
+.secondary-1-1 { background-color: #B8E297 }
+.secondary-1-2 { background-color: #87BC5E }
+.secondary-1-0 { background-color: #5E9732 }
+.secondary-1-3 { background-color: #3C7113 }
+.secondary-1-4 { background-color: #214B00 }
+
+.secondary-2-1 { background-color: #E699AF }
+.secondary-2-2 { background-color: #BF607B }
+.secondary-2-0 { background-color: #993350 }
+.secondary-2-3 { background-color: #73132E }
+.secondary-2-4 { background-color: #4D0016 }
+
+.complement-1 { background-color: #AA71A7 }
+.complement-2 { background-color: #8D478A }
+.complement-0 { background-color: #71266E }
+.complement-3 { background-color: #550E52 }
+.complement-4 { background-color: #390036 }
+
+
+.modal-dialog {
+    background-color: #90A437; /* primary-0 */
+    width: 600px;
+    position: relative;
+    margin: 10% auto;
+    padding: 5px 20px 13px 20px;
+    border-radius: 10px;
+}
+
+.modal-dialog > h2 {
+    background-color: #BACD66; /* primary-2 */
+    font-style: italic;
+    text-align: center;
+}
+
+.modal-dialog-close {
+    background-color: #5E9732; /* secondary-1-0 */
+    color: white;
+    line-height: 25px;
+    position: absolute;
+    right: -5px;
+    text-align: center;
+    top: -5px;
+    width: 24px;
+    text-decoration: none;
+    font-weight: bold;
+    -webkit-border-radius: 12px;
+    -moz-border-radius: 12px;
+    border-radius: 12px;
+}
+
+.modal-dialog-close:hover {
+    background-color: #214800; /* secondary-1-4 */
+}
+
+thead > tr {
+    background-color: #BACD66; /* primary-2 */
+    line-height: 25px;
+}
+
+tbody > tr {
+    line-height: 25px;
+}
+
+tbody > tr:hover {
+    background-color: #687B14; /* primary-3 */
+}
+
+.table-row-control {
+    background-color: red; /* #5E9732; secondary-1-0 */
+    color: white;
+    line-height: 25px;
+    text-align: center;
+    width: 24px;
+    text-decoration: none;
+    font-weight: bold;
+    -webkit-border-radius: 12px;
+    -moz-border-radius: 12px;
+    border-radius: 12px;
+}
+
+.table-row-control:hover {
+    background-color: #214800; /* secondary-1-4 */    
+}
