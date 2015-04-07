@@ -5,11 +5,10 @@ Yep, ... ever-lasting project now in the github for everybody to blame. Let's se
 ## Building and running
 
 After getting the sources from git, let's say to <dir>/results:
-
-'''
+```
 # cd <dir>/results
 # mvn install
-'''
+```
 
 (The compilation likely requires JDK7)
 
@@ -19,9 +18,9 @@ I use NetBeans. From netbeans I'll  open the project results-server,
 and then right-click Main.java and choose 'Run File'. 
 
 Alternatively it should run fine from the command line by typing:
-'''
+```
 # java -jar <dir>/results/server/target/results-server-1.0.0-SNAPSHOT.jar
-'''
+```
 
 (or whatever the present version is). This trick is however rarely used if
 at all (so far), but eventually this will be the way to use it.
