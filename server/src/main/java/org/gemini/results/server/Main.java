@@ -37,7 +37,12 @@ public class Main {
             /* like this... */
             server.getServerConfiguration().addHttpHandler(
                     new CLStaticHttpHandler(
-                        Main.class.getClassLoader(), "/META-INF/resources/webjars/"), "/lib");
+                        Main.class.getClassLoader(), new String[] {
+                            "/META-INF/resources/webjars/angular/1.3.14/",
+                            "/META-INF/resources/webjars/angular-bootstrap/0.11.2/",
+                            "/META-INF/resources/webjars/angular-datepicker/1.0.3/",
+                            "/META-INF/resources/webjars/angular-route/1.3.15/"
+                        }), "/lib");
                     /* */
             final StaticHttpHandler handler = new StaticHttpHandler(
                     "../ui/src/main/resources/", "../ui/target/classes/");
