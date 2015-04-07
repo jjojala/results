@@ -4,7 +4,7 @@ Yep, ... ever-lasting project now in the github for everybody to blame. Let's se
 
 ## Building and running
 
-After getting the sources from git, let's say to <dir>/results:
+After getting the sources from git, let's say to /results:
 ```
 # cd <dir>/results
 # mvn install
