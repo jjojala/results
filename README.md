@@ -6,7 +6,7 @@ Yep, ... ever-lasting project now in the github for everybody to blame. Let's se
 
 After getting the sources from git, let's say to <dir>/results:
 
-'''shell
+'''
 # cd <dir>/results
 # mvn install
 '''
@@ -19,7 +19,7 @@ I use NetBeans. From netbeans I'll  open the project results-server,
 and then right-click Main.java and choose 'Run File'. 
 
 Alternatively it should run fine from the command line by typing:
-'''shell
+'''
 # java -jar <dir>/results/server/target/results-server-1.0.0-SNAPSHOT.jar
 '''
 
