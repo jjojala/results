@@ -12,75 +12,10 @@
         <script src="lib/angular-route.min.js"></script>
         <script src="lib/ui-bootstrap-tpls.min.js"></script>
         <script src="lib/dist/index.min.js"></script>
-<!--
-        <script src="lib/dist/datePicker.js"></script>
-        <script src="lib/scripts/input.js"></script>
--->
         <script src="app/app.js"></script>
     </head>
+
     <body>
-
-        <div id="competition-selection" class="modal-dialog"
-             ng-controller="CompetitionSelectionController">
-            <a href="#close" title="Close"
-               class="modal-dialog-close">X</a>
-            <h2>Competitions</h2>
-
-            Search: <input ng-model="query">
-
-            Sort by:
-            <select ng-model="orderProp">
-                <option value="time">Time</option>
-                <option value="name">Name</option>
-                <option value="organizer">Organizer</option>
-            </select>
-
-            <div class="table-div">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Time</th>
-                            <th>Name</th>
-                            <th>Organizer</th>
-                            <th style="width: 25px"></th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        <tr ng-repeat="c in competitions 
-                                    | filter:query | orderBy:orderProp"
-                            ng-mouseenter="active = $index"
-                            ng-mouseleave="active = -1" ng-init="active = -1"
-                            ng-dblclick="onSelectionRequest(c, $index, $event)">
-
-                            <td>
-                                <div>
-                                    <input type="text" date-time
-                                           style="width: 140px;"
-                                           format="dd.M.yyyy HH:mm.ss"
-                                           ng-show="$index == active"
-                                           ng-model="c.timeObject"
-                                           required="true" view="date"
-                                           ng-change="onTimeChange(c)">
-                                </div>
-                            
-                                <div ng-show="$index != active"
-                                     style="width: 145px;">
-                                    {{unixTimeToString(c.timeObject)}}
-                                </div>
-                            </td>
-                            <td>{{c.name}}</td>
-                            <td>{{c.organizer}}</td>
-
-                            <td class="table-row-control" ng-show="$index == active"
-                                ng-click="onDeleteRequest(c, $index, $event)">X</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            Double-click to choose, or create 
-            <button type="button">New</button>
-        </div>
+        <div ng-view></div>
     </body>
 </html>

@@ -2,9 +2,45 @@
  * Copyright (C) 2015 Jari Ojala (jari.ojala@iki.fi).
  */
 
-var app = angular.module('ResultsApplication', [ 'datePicker', 'ui.bootstrap' ]);
+var app = angular.module('ResultsApplication', [ 
+    'ngRoute', 'datePicker', 'ui.bootstrap' ]);
 
-app.controller('CompetitionSelectionController', function ($scope, $http) {
+app.getRandomUuid = function() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+        return v.toString(16);
+    });
+}
+
+app.config(['$routeProvider', function($routeProvider) {
+   $routeProvider
+           .when('/competition-list', {
+                    templateUrl: '/view/competition-list-tmpl.html',
+                    controller: 'CompetitionListController'
+                })
+           .when('/competition/:competitionId', {
+                    templateUrl: '/view/competition-main-tmpl.html',
+                    controller: 'CompetitionMainController'
+                })
+                .otherwise({
+                    redirectTo: '/competition-list'
+                })
+}]);
+
+app.controller('CompetitionMainController',
+    function($scope, $http, $routeParams) {
+        $http.get("rest/competition/" + $routeParams.competitionId)
+            .success(function (date) {
+                $scope.competition = date;
+            })
+            .error(function (err, status) {
+                alert(err + ' ' + status);
+            });
+        
+        $scope.competitionId = app.getRandomUuid();
+    });
+
+app.controller('CompetitionListController', function ($scope, $http) {
 
     $http.get("rest/competition").success(function (data) {
         for (i = 0; i < data.length; ++i)
@@ -15,7 +51,7 @@ app.controller('CompetitionSelectionController', function ($scope, $http) {
         alert(status);
     });
 
-    var selectedCompetitionId = null;
+    $scope.selectedItemId= null;
 
     $scope.onTimeChange = function(c) {
         c.time = c.timeObject.getTime();
@@ -42,5 +78,5 @@ app.controller('CompetitionSelectionController', function ($scope, $http) {
         });
     }
 
-    $scope.orderProp = 'time';
+    $scope.sortCriteria = 'time';
 });
