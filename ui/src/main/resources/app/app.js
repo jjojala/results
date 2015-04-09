@@ -5,13 +5,6 @@
 var app = angular.module('ResultsApplication', [ 
     'ngRoute', 'datePicker', 'ui.bootstrap' ]);
 
-app.getRandomUuid = function() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-        var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
-        return v.toString(16);
-    });
-}
-
 app.config(['$routeProvider', function($routeProvider) {
    $routeProvider
            .when('/competition-list', {
@@ -27,8 +20,32 @@ app.config(['$routeProvider', function($routeProvider) {
                 })
 }]);
 
+app.service('Uuid', function() {
+    return {
+        randomUUID: function() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
+                    .replace(/[xy]/g, function(c) {
+                var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+                return v.toString(16);
+            });            
+        }
+    };
+});
+
+app.filter('unixTimeToDate', function() {
+    return function(unixTime) {
+        return unixTime ? new Date(unixTime) : null;
+    };
+});
+
+app.filter('unixTimeToString', function() {
+    return function(unixTime, fmt) {
+        return unixTime ? new Date(unixTime).toLocaleString() : null;
+    };
+});
+
 app.controller('CompetitionMainController',
-    function($scope, $http, $routeParams) {
+    function($scope, $http, $routeParams, Uuid) {
         $http.get("rest/competition/" + $routeParams.competitionId)
             .success(function (date) {
                 $scope.competition = date;
@@ -37,7 +54,7 @@ app.controller('CompetitionMainController',
                 alert(err + ' ' + status);
             });
         
-        $scope.competitionId = app.getRandomUuid();
+        $scope.competitionId = Uuid.randomUUID();
     });
 
 app.controller('CompetitionListController', function ($scope, $http) {
@@ -56,11 +73,6 @@ app.controller('CompetitionListController', function ($scope, $http) {
     $scope.onTimeChange = function(c) {
         c.time = c.timeObject.getTime();
         alert('Time changed. New time: ' + unixTimeToString(c.time));
-    }
-
-    $scope.unixTimeToString = function(unixTime) {
-        var date = new Date(unixTime);
-        return date.toLocaleString();
     }
 
     $scope.onSelectionRequest = function(c, i, e) {

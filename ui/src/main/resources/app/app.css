@@ -73,20 +73,24 @@ input[type="text"], .uneditable-input {
     margin: 0px 3px;
 }
 
+.selection-list div,
 .selection-list-item a {
     width: 100%;
 }
 
+.selection-list-item div:hover,
 .selection-list-item a:hover {
     background-color: #687B14; /* primary-3 */
 }
 
+.selection-list-item div:active,
 .selection-list-item a:active {
     background-color: red;
 }
 
-.selection-list-item a .selected {
-    background-color: white;
+.selection-list-item div:focus,
+.selection-list-item a:focus {
+    background-color: red;
 }
 
 .selection-list div.time {

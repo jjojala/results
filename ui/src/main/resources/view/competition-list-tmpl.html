@@ -1,8 +1,5 @@
 <div id="competition-selection" class="modal-dialog">
-<!--
-    <a href="#close" title="Close"
-       class="modal-dialog-close">X</a>
--->
+
     <h2>Competitions</h2>
 
     <div>
@@ -22,15 +19,32 @@
             <div class="name">Name</div>
             <div class="organizer">Organizer</div>
         </li>
-        
+
+        <li class="selection-list-item">
+            <a>
+                <div class="time">
+                    {{(newCompetition.time | unixTimeToString) || '&lt;new&gt;'}}
+                </div><!--
+                <div ng-show="active == -1" class="time">
+                    <input type="text" date-time
+                           format="dd.M.yyyy HH:mm.ss"
+                           ng-model="newCompetition.time"
+                           required="true" view="date">
+                </div>-->
+
+                <div class="name">{{newCompetition.name}}</div>
+                <div class="organizer">{{newCompetition.organizer}}</div>
+            </a>
+        </li>
+
         <li class="selection-list-item" ng-repeat="c in competitions
                     | filter:filster | orderBy:sortCriteria">
             <a>
-                <div class="time">{{unixTimeToString(c.timeObject)}}</div>
+                <div class="time">{{c.time | unixTimeToString}}</div>
                 <div class="name">{{c.name}}</div>
                 <div class="organizer">{{c.organizer}}</div>
             </a>
-        </li>
+        </lli>
     </ul>
 
     <!--
