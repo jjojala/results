@@ -34,14 +34,18 @@
     box-shadow: 10px 10px 5px #435200; /* primary-4 */
 }
 
-.modal-dialog > h2 {
+.modal-dialog-title {
     background-color: #BACD66; /* primary-2 */
     font-style: italic;
     text-align: center;
 }
 
-
-input[type="text"], .uneditable-input {
+input[type="text"],
+input[type="datetime-local"],
+.uneditable-input {
+    height: 25px;
+    text-height: 25px;
+    background: white;
     padding: 0px;
     margin: 0px;
 }
@@ -51,7 +55,7 @@ input[type="text"], .uneditable-input {
     padding: 0px;
     margin: 0px;
     list-style-type: none;
-    line-height: 25px
+    line-height: 30px
 }
 
 .selection-list-head {
@@ -60,55 +64,42 @@ input[type="text"], .uneditable-input {
     margin: 0px;
     background-color: #BACD66; /* primary-2 */
     font-weight: bold;
-    line-height: 25px;
+    line-height: 30px;
 }
 
-.selection-list-item div {
+.selection-list-column {
     display: inline-block;
     margin: 0px 3px;    
 }
 
-.selection-list-head div {
-    display: inline-block;
-    margin: 0px 3px;
+.editable-date-input {
+    width: 175px;
 }
 
-.selection-list div,
-.selection-list-item a {
-    width: 100%;
-}
-
-.selection-list-item div:hover,
 .selection-list-item a:hover {
     background-color: #687B14; /* primary-3 */
 }
 
-.selection-list-item div:active,
-.selection-list-item a:active {
-    background-color: red;
+.selection-list .time {
+    width: 175px;
 }
 
-.selection-list-item div:focus,
-.selection-list-item a:focus {
-    background-color: red;
+.selection-list .name {
+    width: 195px;
 }
 
-.selection-list div.time {
+.selection-list .organizer {
     width: 140px;
 }
 
-.selection-list div.name {
-    width: 240px;
-}
-
-.selection-list div.organizer {
-    width: 140px;
+.selection-list .operations {
+    width: 50px;
 }
 
 .table-row-control {
     background-color: #E699AF; /* #5E9732; secondary-2-1 */
     color: white;
-    line-height: 20px;
+    line-height: 25px;
     text-align: center;
     width: 20px;
     text-decoration: none;

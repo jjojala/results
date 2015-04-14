@@ -32,17 +32,64 @@ app.service('Uuid', function() {
     };
 });
 
-app.filter('unixTimeToDate', function() {
-    return function(unixTime) {
-        return unixTime ? new Date(unixTime) : null;
-    };
-});
+app.directive('editableDateField', function() {
+        return {
+            restrict: 'AE',
+            scope: {
+                required: '@',
+                format: '@',
+                model: '=ngModel'
+            },
+            template:
+                  "<div>"
+                + "  <div ng-hide='editMode' class='editable-date-text' "
+                + "      ng-click='editMode = true'>"
+                + "    {{model | date:format}}"
+                + "  </div>"
+                + "  <input ng-show='editMode' class='editable-date-input' "
+                + "      type='datetime-local' ng-model='localModel' "
+                + "      ng-required='required' ng-blur='editMode = false'/>"
+                //+ "  <input type='text' date-time class='editable-date-input' "
+                //+ "      format='{{format}}' ng-show='editMode' "
+                //+ "      ng-model='modelDate' required='true'"
+                //+ "      view='date'/>"
+                + "</div>",
+            link: {
+                pre: function preLink(s, e, a) {
+                },
+                post: function postLink(s, e, a) {
+                    s.editMode = false;
+                    s.localModel = new Date(s.model);
+                    
+                    e.find('input').bind('blur', function(val) {
+                        s.editMode = false;
+                        s.model = s.localModel.getTime();
+                        s.$digest();
+                    });
+                }
+            }
+        };
+    });
 
-app.filter('unixTimeToString', function() {
-    return function(unixTime, fmt) {
-        return unixTime ? new Date(unixTime).toLocaleString() : null;
-    };
-});
+app.directive('editableTextField', function() {
+        return {
+            restrict: 'AE',
+            scope: {
+                value: '=ngModel'
+            },
+            template:
+                  "<div class='editable-text-field'>"
+                + "  <div ng-show='editMode' ng-click='editMode = false'>"
+                + "    {{value}}"
+                + "  </div>"
+                + "  <input type='text' ng-hide='editMode'"
+                + "      ng-model='value' ng-blur='editMode = true'/>"
+                + "</div>",
+            link: function postLink(s, e, a) {
+                s.editMode = true;
+            }
+        };
+    });
 
 app.controller('CompetitionMainController',
     function($scope, $http, $routeParams, Uuid) {
@@ -59,6 +106,12 @@ app.controller('CompetitionMainController',
 
 app.controller('CompetitionListController', function ($scope, $http) {
 
+    $scope.newCompetition = {
+        time: new Date().getTime(),
+        name: "<type name here>",
+        organizer: "<type organization here>"
+    };
+
     $http.get("rest/competition").success(function (data) {
         for (i = 0; i < data.length; ++i)
             data[i].timeObject = new Date(data[i].time);
@@ -70,24 +123,24 @@ app.controller('CompetitionListController', function ($scope, $http) {
 
     $scope.selectedItemId= null;
 
-    $scope.onTimeChange = function(c) {
-        c.time = c.timeObject.getTime();
-        alert('Time changed. New time: ' + unixTimeToString(c.time));
+    $scope.onSelect = function(c) {
+        alert('TODO: Selected: ' + angular.toJson(c, true));
     }
 
-    $scope.onSelectionRequest = function(c, i, e) {
-        console.log("SELECT: Competition id:" + c.id + ". Index: " + i);
+    $scope.onCreate = function(c) {
+        alert('TODO: Create: ' + angular.toJson(c, true));
     }
 
-    $scope.onDeleteRequest = function(c, i, e) {
-        console.log("DELETE: Competition id: " + c.id + ". Index: " + i);
-        console.log("    i=" + i);
-
+    $scope.onDestroy = function(c, i) {
+        alert('TODO: Destroy: ' + angular.toJson(c, true));
+/*
         $http.delete("rest/competition/" + c.id).success(function () {
             $scope.competitions.splice(i, 1);
         }).error(function (err) {
             alert("Deleting competition failed: " + err.statusText);
         });
+*/
+        $scope.competitions.splice(i, 1);
     }
 
     $scope.sortCriteria = 'time';
