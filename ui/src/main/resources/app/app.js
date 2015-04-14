@@ -104,7 +104,7 @@ app.controller('CompetitionMainController',
         $scope.competitionId = Uuid.randomUUID();
     });
 
-app.controller('CompetitionListController', function ($scope, $http) {
+app.controller('CompetitionListController', function ($scope, $http, Uuid) {
 
     $scope.newCompetition = {
         time: new Date().getTime(),
@@ -128,7 +128,25 @@ app.controller('CompetitionListController', function ($scope, $http) {
     }
 
     $scope.onCreate = function(c) {
+        c.id = Uuid.randomUUID();
         alert('TODO: Create: ' + angular.toJson(c, true));
+        $http.post("rest/competition/" + c.id, c).success(function() {
+            $scope.competitions.push(c);
+        }).error(function (err, status) {
+            alert("Adding competition failed: \nerr: " + err + "\nstatus: "
+                    + status + "\nCompetition:"+ angular.toJson(c, true));
+        });
+    }
+    
+    $scope.onSave = function(c) {
+        delete c.timeObject;
+        alert('TODO: Updating: ' + angular.toJson(c, true));
+        $http.put("rest/competition/" + c.id, c).success(function() {
+            console.log("Great, succeeded!");
+        }).error(function (err, status) {
+            alert("Updating competition failed: \nerr: " + err + "\nstatus: "
+                    + status + "\nCompetition:"+ angular.toJson(c, true));
+        });
     }
 
     $scope.onDestroy = function(c, i) {
