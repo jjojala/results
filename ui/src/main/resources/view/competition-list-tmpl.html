@@ -1,10 +1,10 @@
-<div id="competition-selection" class="modal-dialog">
+<div class="container">
 
-    <h2 class="modal-dialog-title">Competitions</h2>
+    <h2>Competitions</h2>
 
     <div>
         Search: <input ng-model="filter">
-
+        
         Sort by:
         <select ng-model="sortCriteria">
             <option value="time">Time</option>
@@ -13,45 +13,81 @@
         </select>
     </div>
 
-    <ul class="selection-list">
-        <li class="selection-list-head">
-            <div class="selection-list-column time">Time</div>
-            <div class="selection-list-column name">Name</div>
-            <div class="selection-list-column organizer">Organizer</div>
-            <div class="selection-list-column operations"></div>
-        </li>
+    <div>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Name</th>
+                    <th>Organizer</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <input type="datetime-local"
+                               placeholder="dd.M.yyyy HH:mm"
+                               ng-model="_new.time"/>
+                    </td>
+                    <td>
+                        <input type="text"
+                               placeholder="<competition's name>"
+                               ng-model="_new.name"/>
+                    </td>
+                    <td>
+                        <input type="text"
+                               placeholder="<competition's organizer>"
+                               ng-model="_new.organizer"/>    
+                    </td>
+                    <td>
+                        <a href ng-click="onCreate(_new); _new = {}">
+                            <i class="glyphicon glyphicon-plus"></i>
+                        </a>
+                    </td>
+                </tr>
+                <tr ng-repeat="c in competitions | filter:filter 
+                            | orderBy:sortCriteria"
+                            ng-click="onSelect(c)">
+                    <td>{{c.time | date:'dd.M.yyyy HH:mm'}}</td>
+                    <td>{{c.name}}</td>
+                    <td>{{c.organizer}}</td>
+                    <td>
+                        <a href ng-click="onDownload(c)">
+                            <i class="glyphicon glyphicon-download"></i>
+                        </a>
+                        <a href ng-click="onDestroy(c, $index)">
+                            <i class="glyphicon glyphicon-remove-sign"></i>
+                        </a>
+                        <a href="#/competition/{{c.id}}">
+                            <i class="glyphicon glyphicon-chevron-right"></i>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <!--
+        <ul class="selection-list">
 
-        <li class="selection-list-item">
-            <a ng-click="selectedItemId == -1">
-                <div class="selection-list-column time" editable-date-field
-                     format="dd.M.yyyy HH:mm"
-                     ng-model="newCompetition.time"></div>
-                <div class="selection-list-column name" editable-text-field
-                     ng-model="newCompetition.name"></div>
-                <div class="selection-list-column organizer" editable-text-field
-                     ng-model="newCompetition.organizer"></div>
-                <div class="selection-list-column operations">
-                    <span><a ng-click="onCreate(newCompetition)">+</a></span>
-                </div>
-            </a>
-        </li>
 
-        <li class="selection-list-item" ng-repeat="c in competitions
-                    | filter:filster | orderBy:sortCriteria">
-            <a>
-                <div class="selection-list-column time"
-                     format="dd.M.yyyy HH:mm"
-                     editable-date-field ng-model="c.time"></div>
-                <div class="selection-list-column name"
-                     editable-text-field ng-model="c.name"></div>
-                <div class="selection-list-column organizer"
-                     editable-text-field ng-model="c.organizer"></div>
-                <div class="selection-list-column operations">
-                    <span><a ng-click="onDestroy(c, $index)">-</a></span>
-                    <span><a ng-click="onSave(c)">S</a></span>
-                    <span><a href="#/competition/{{c.id}}">&gt;</a></span>
-                </div>
-            </a>
-        </lli>
-    </ul>
+            <li class="selection-list-item" ng-repeat="c in competitions
+                        | filter:filster | orderBy:sortCriteria">
+                <a>
+                    <div class="selection-list-column time"
+                         format="dd.M.yyyy HH:mm"
+                         editable-date-field ng-model="c.time"></div>
+                    <div class="selection-list-column name"
+                         editable-text-field ng-model="c.name"></div>
+                    <div class="selection-list-column organizer"
+                         editable-text-field ng-model="c.organizer"></div>
+                    <div class="selection-list-column operations">
+                        <span><a ng-click="onDestroy(c, $index)">-</a></span>
+                        <span><a ng-click="onSave(c)">S</a></span>
+                        <span><a href="#/competition/{{c.id}}">&gt;</a></span>
+                    </div>
+                </a>
+            </lli>
+        </ul>
+        -->
+    </div>
 </div>

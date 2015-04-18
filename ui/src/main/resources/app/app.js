@@ -3,7 +3,7 @@
  */
 
 var app = angular.module('ResultsApplication', [ 
-    'ngRoute', 'datePicker', 'ui.bootstrap' ]);
+    'ngRoute' /*, 'ui.bootstrap' */]);
 
 app.config(['$routeProvider', function($routeProvider) {
    $routeProvider
@@ -106,11 +106,7 @@ app.controller('CompetitionMainController',
 
 app.controller('CompetitionListController', function ($scope, $http, Uuid) {
 
-    $scope.newCompetition = {
-        time: new Date().getTime(),
-        name: "<type name here>",
-        organizer: "<type organization here>"
-    };
+    $scope._new = {};
 
     $http.get("rest/competition").success(function (data) {
         for (i = 0; i < data.length; ++i)
@@ -121,10 +117,9 @@ app.controller('CompetitionListController', function ($scope, $http, Uuid) {
         alert(status);
     });
 
-    $scope.selectedItemId= null;
-
     $scope.onSelect = function(c) {
-        alert('TODO: Selected: ' + angular.toJson(c, true));
+        aleert('Selected: ' + angular.toJson(c, true));
+        _new = c;
     }
 
     $scope.onCreate = function(c) {
@@ -151,14 +146,15 @@ app.controller('CompetitionListController', function ($scope, $http, Uuid) {
 
     $scope.onDestroy = function(c, i) {
         alert('TODO: Destroy: ' + angular.toJson(c, true));
-/*
         $http.delete("rest/competition/" + c.id).success(function () {
             $scope.competitions.splice(i, 1);
         }).error(function (err) {
             alert("Deleting competition failed: " + err.statusText);
         });
-*/
-        $scope.competitions.splice(i, 1);
+    }
+
+    $scope.onDownload = function(c) {
+        alert('TODO: Download: ' + angular.toJson(c, true));
     }
 
     $scope.sortCriteria = 'time';
