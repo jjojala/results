@@ -28,20 +28,22 @@
                     <td>
                         <input type="datetime-local"
                                placeholder="dd.M.yyyy HH:mm"
-                               ng-model="_new.time"/>
+                               ng-model="current.time"/>
                     </td>
                     <td>
                         <input type="text"
                                placeholder="<competition's name>"
-                               ng-model="_new.name"/>
+                               ng-model="current.name"/>
                     </td>
                     <td>
                         <input type="text"
                                placeholder="<competition's organizer>"
-                               ng-model="_new.organizer"/>    
+                               ng-model="current.organizer"/>    
                     </td>
                     <td>
-                        <a href ng-click="onCreate(_new); _new = {}">
+                        <a href ng-click="onCreate(current); current = {}"
+                           data-toggle="tooltip" data-placement="left"
+                           title="Create new competition with this data.">
                             <i class="glyphicon glyphicon-plus"></i>
                         </a>
                     </td>
@@ -53,41 +55,24 @@
                     <td>{{c.name}}</td>
                     <td>{{c.organizer}}</td>
                     <td>
-                        <a href ng-click="onDownload(c)">
+                        <a href="rest/competition/export/{{c.id}}"
+                           data-toggle="tooltip" data-placement="left"
+                           title="Download competition as XML.">
                             <i class="glyphicon glyphicon-download"></i>
                         </a>
-                        <a href ng-click="onDestroy(c, $index)">
+                        <a href ng-click="onDestroy(c, $index)"
+                           data-togglse="tooltip" data-placement="left"
+                           title="Permanently remove the competition.">
                             <i class="glyphicon glyphicon-remove-sign"></i>
                         </a>
-                        <a href="#/competition/{{c.id}}">
+                        <a href="#/competition/{{c.id}}"
+                           data-toggle="tooltip" data-placement="left"
+                           title="Pick this competition and continue...">
                             <i class="glyphicon glyphicon-chevron-right"></i>
                         </a>
                     </td>
                 </tr>
             </tbody>
         </table>
-        <!--
-        <ul class="selection-list">
-
-
-            <li class="selection-list-item" ng-repeat="c in competitions
-                        | filter:filster | orderBy:sortCriteria">
-                <a>
-                    <div class="selection-list-column time"
-                         format="dd.M.yyyy HH:mm"
-                         editable-date-field ng-model="c.time"></div>
-                    <div class="selection-list-column name"
-                         editable-text-field ng-model="c.name"></div>
-                    <div class="selection-list-column organizer"
-                         editable-text-field ng-model="c.organizer"></div>
-                    <div class="selection-list-column operations">
-                        <span><a ng-click="onDestroy(c, $index)">-</a></span>
-                        <span><a ng-click="onSave(c)">S</a></span>
-                        <span><a href="#/competition/{{c.id}}">&gt;</a></span>
-                    </div>
-                </a>
-            </lli>
-        </ul>
-        -->
     </div>
 </div>

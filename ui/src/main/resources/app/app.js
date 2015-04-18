@@ -15,7 +15,7 @@ app.config(['$routeProvider', function($routeProvider) {
                     templateUrl: '/view/competition-main-tmpl.html',
                     controller: 'CompetitionMainController'
                 })
-                .otherwise({
+           .otherwise({
                     redirectTo: '/competition-list'
                 })
 }]);
@@ -32,70 +32,32 @@ app.service('Uuid', function() {
     };
 });
 
-app.directive('editableDateField', function() {
-        return {
-            restrict: 'AE',
-            scope: {
-                required: '@',
-                format: '@',
-                model: '=ngModel'
-            },
-            template:
-                  "<div>"
-                + "  <div ng-hide='editMode' class='editable-date-text' "
-                + "      ng-click='editMode = true'>"
-                + "    {{model | date:format}}"
-                + "  </div>"
-                + "  <input ng-show='editMode' class='editable-date-input' "
-                + "      type='datetime-local' ng-model='localModel' "
-                + "      ng-required='required' ng-blur='editMode = false'/>"
-                //+ "  <input type='text' date-time class='editable-date-input' "
-                //+ "      format='{{format}}' ng-show='editMode' "
-                //+ "      ng-model='modelDate' required='true'"
-                //+ "      view='date'/>"
-                + "</div>",
-            link: {
-                pre: function preLink(s, e, a) {
-                },
-                post: function postLink(s, e, a) {
-                    s.editMode = false;
-                    s.localModel = new Date(s.model);
-                    
-                    e.find('input').bind('blur', function(val) {
-                        s.editMode = false;
-                        s.model = s.localModel.getTime();
-                        s.$digest();
-                    });
-                }
-            }
-        };
-    });
-
-app.directive('editableTextField', function() {
-        return {
-            restrict: 'AE',
-            scope: {
-                value: '=ngModel'
-            },
-            template:
-                  "<div class='editable-text-field'>"
-                + "  <div ng-show='editMode' ng-click='editMode = false'>"
-                + "    {{value}}"
-                + "  </div>"
-                + "  <input type='text' ng-hide='editMode'"
-                + "      ng-model='value' ng-blur='editMode = true'/>"
-                + "</div>",
-            link: function postLink(s, e, a) {
-                s.editMode = true;
-            }
-        };
+app.controller('CompetitorsController',
+    function($scope, $http) {
+        console.log('competition: ' + angular.toJson($scope.competition, true));
+        $scope.competitors = [
+            { name: 'Ojala Jari' },
+            { name: 'Joenperä Lenita' },
+            { name: 'Ojala Jenny' },
+            { name: 'Ojala Kalle' },
+            { name: 'Ojala Aleksi' }
+        ];
+        /*
+        $http.get("rest/competitor/?classId=" + $scope.competition.id)
+            .success(function (data) {
+                $scope.competitors = data;
+            })
+            .error(function (err, status) {
+                alert(err + ' ' + status);
+            });
+            */
     });
 
 app.controller('CompetitionMainController',
     function($scope, $http, $routeParams, Uuid) {
         $http.get("rest/competition/" + $routeParams.competitionId)
-            .success(function (date) {
-                $scope.competition = date;
+            .success(function (data) {
+                $scope.competition = data;
             })
             .error(function (err, status) {
                 alert(err + ' ' + status);
@@ -106,7 +68,7 @@ app.controller('CompetitionMainController',
 
 app.controller('CompetitionListController', function ($scope, $http, Uuid) {
 
-    $scope._new = {};
+    $scope.current = {};
 
     $http.get("rest/competition").success(function (data) {
         for (i = 0; i < data.length; ++i)
@@ -118,8 +80,12 @@ app.controller('CompetitionListController', function ($scope, $http, Uuid) {
     });
 
     $scope.onSelect = function(c) {
-        aleert('Selected: ' + angular.toJson(c, true));
-        _new = c;
+        $scope.current = {
+            id: c.id,
+            time: new Date(c.time),
+            name: c.name,
+            organizer: c.organizer
+        };
     }
 
     $scope.onCreate = function(c) {
@@ -155,6 +121,7 @@ app.controller('CompetitionListController', function ($scope, $http, Uuid) {
 
     $scope.onDownload = function(c) {
         alert('TODO: Download: ' + angular.toJson(c, true));
+        $http.get("rest/competition/export/" + c.id);
     }
 
     $scope.sortCriteria = 'time';

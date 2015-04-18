@@ -1,4 +1,46 @@
-<div>
-    <h2>{{competition.id}} - {{competition.time}} {{competition.name}}</h2>
-    <h3>{{competition.organizer}}</h3>
+<div class="container">
+    <form>
+        <fieldset>
+            <legend>
+                <span class="span2">
+                    <small>{{competition.time | date:"dd.M.yyyy HH.mm"}}</small>
+                </span>
+                <span>{{competition.name}}</span><br/>
+                <span><small>{{competition.organizer}}</span>
+            </legend>
+        </fieldset>
+    </form>
+    <div>
+        <ul class="nav nav-tabs" ng-init="option = 1">
+            <li ng-class="option == 1 ? 'active' : ''">
+                <a href ng-click="option = 1">Competitors</a>
+            </li>
+            <li ng-class="option == 2 ? 'active' : ''">
+                <a href ng-click="option = 2">Classes</a>
+            </li>
+            <li ng-class="option == 3 ? 'active' : ''">
+                <a href ng-click="option = 3">Groups</a>
+            </li>
+        </ul>
+        <div ng-show="option == 1"
+             ng-controller="CompetitorsController">
+            <table class="table table-hover">
+              <thead>
+                  <tr>
+                      <td>Class</td>
+                      <td>Name</td>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr ng-repeat="c in competitors">
+                      <td>{{c.clazz}}</td>
+                      <td>{{c.name}}</td>
+                  </tr>
+              </tbody>
+          </table>
+        </div>
+        </div>
+        <div ng-show="option == 2">Classes...</div>
+        <div ng-show="option == 3">Groups...</div>    
+    </div>
 </div>
