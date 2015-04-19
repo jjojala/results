@@ -22,25 +22,157 @@
                 <a href ng-click="option = 3">Groups</a>
             </li>
         </ul>
-        <div ng-show="option == 1"
-             ng-controller="CompetitorsController">
+
+        <div ng-show="option == 1">
             <table class="table table-hover">
-              <thead>
-                  <tr>
-                      <td>Class</td>
-                      <td>Name</td>
-                  </tr>
-              </thead>
-              <tbody>
-                  <tr ng-repeat="c in competitors">
-                      <td>{{c.clazz}}</td>
-                      <td>{{c.name}}</td>
-                  </tr>
-              </tbody>
-          </table>
+                <thead>
+                    <tr>
+                        <td>Class</td>
+                        <td>Name</td>
+                        <td></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <input type='text'
+                                   placeholder="<competitor's class>"
+                                   ng-model="current.competitor.class"/>
+                        </td>
+                        <td>
+                            <input type="text"
+                                   placeholder="<competitor's name>"
+                                   ng-model='current.competitor.name'/>
+                        </td>
+                        <td>
+                            <a href ng-click="onCompetitorCreate(current.competitor); 
+                                            current.competitor = {}"
+                                    data-toggle="tooltip" data-placement="left"
+                                    title="Create new competitor with this data.">
+                                <i class="glyphicon glyphicon-plus"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr ng-repeat="c in competitors"
+                        ng-click="onCompetitorSelect(current.competitor)">
+                        <td>{{c.clazz}}</td>
+                        <td>{{c.name}}</td>
+                        <td>
+                            <a href ng-click="onCompetitorDestroy(c, $index)"
+                                    data-togglse="tooltip" data-placement="left"
+                                    title="Permanently remove the competition.">
+                                <i class="glyphicon glyphicon-remove-sign"></i>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
+
+        <div ng-show="option == 2">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <td>Name</td>
+                        <td>Offset</td>
+                        <td>Group</td>
+                        <td></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <input type='text'
+                                   placeholder="<class name>"
+                                   ng-model="current.class.name"/>
+                        </td>
+                        <td>
+                            <input type="text"
+                                   placeholder="<class offset>"
+                                   ng-model='current.class.offset'/>
+                        </td>
+                        <td>
+                            <input type="text"
+                                   placeholder="<class's group>"
+                                   ng-model='current.class.group'/>
+                        </td>
+                        <td>
+                            <a href ng-click="onClassCreate(current.class); 
+                                            current.class = {}"
+                                    data-toggle="tooltip" data-placement="left"
+                                    title="Create new competitor with this data.">
+                                <i class="glyphicon glyphicon-plus"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr ng-repeat="c in classes"
+                        ng-click="onClassSelect(current.competitor)">
+                        <td>{{c.name}}</td>
+                        <td>{{c.offset}}</td>
+                        <td>{{c.group}}</td>
+                        <td>
+                            <a href ng-click="onClassDestroy(c, $index)"
+                                    data-togglse="tooltip" data-placement="left"
+                                    title="Permanently remove the class.">
+                                <i class="glyphicon glyphicon-remove-sign"></i>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-        <div ng-show="option == 2">Classes...</div>
-        <div ng-show="option == 3">Groups...</div>    
+
+        <div ng-show="option == 3">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <td>Name</td>
+                        <td>Min. number</td>
+                        <td>Offset</td>
+                        <td></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <input type='text'
+                                   placeholder="<group's name>"
+                                   ng-model="current.group.name"/>
+                        </td>
+                        <td>
+                            <input type="text"
+                                   placeholder="<grou's min. number>"
+                                   ng-model='current.group.minNumber'/>
+                        </td>
+                        <td>
+                            <input type="text"
+                                   placeholder="<group's offset>"
+                                   ng-model='current.group.offset'/>
+                        </td>
+                        <td>
+                            <a href ng-click="onGroupCreate(current.group); 
+                                            current.group = {}"
+                                    data-toggle="tooltip" data-placement="left"
+                                    title="Create new group with this data.">
+                                <i class="glyphicon glyphicon-plus"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr ng-repeat="g in groups"
+                        ng-click="onGroupSelect(current.group)">
+                        <td>{{g.name}}</td>
+                        <td>{{g.minNumber}}</td>
+                        <td>{{g.offset}}</td>
+                        <td>
+                            <a href ng-click="onGroupDestroy(g, $index)"
+                                    data-togglse="tooltip" data-placement="left"
+                                    title="Permanently remove the group.">
+                                <i class="glyphicon glyphicon-remove-sign"></i>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>            
+        </div>
     </div>
 </div>

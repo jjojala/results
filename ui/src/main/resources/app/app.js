@@ -31,39 +31,110 @@ app.service('Uuid', function() {
         }
     };
 });
-
-app.controller('CompetitorsController',
-    function($scope, $http) {
-        console.log('competition: ' + angular.toJson($scope.competition, true));
-        $scope.competitors = [
-            { name: 'Ojala Jari' },
-            { name: 'Joenperä Lenita' },
-            { name: 'Ojala Jenny' },
-            { name: 'Ojala Kalle' },
-            { name: 'Ojala Aleksi' }
-        ];
-        /*
-        $http.get("rest/competitor/?classId=" + $scope.competition.id)
-            .success(function (data) {
-                $scope.competitors = data;
-            })
-            .error(function (err, status) {
-                alert(err + ' ' + status);
-            });
-            */
-    });
-
+    
 app.controller('CompetitionMainController',
     function($scope, $http, $routeParams, Uuid) {
+        $scope.current = {};
         $http.get("rest/competition/" + $routeParams.competitionId)
             .success(function (data) {
                 $scope.competition = data;
+                $http.get("rest/competition/" + $scope.competition.id
+                        + "/competitor/")
+                    .success(function (data) {
+                        $scope.competitors = data;
+                    })
+                    .error(function (err, status) {
+                        alert(err + ' ' + status);
+                    });
+                $http.get("rest/competition/"
+                        + $scope.competition.id
+                        + "/group/")
+                    .success(function (data) {
+                        $scope.groups = data;
+                    })
+                    .error(function (err, status) {
+                        alert(err + ' ' + status);
+                    });
+                $http.get("rest/competition/" + $scope.competition.id
+                        + "/class/")
+                    .success(function (data) {
+                        $scope.classes = data;
+                    })
+                    .error(function (err, status) {
+                        alert(err + ' ' + status);
+                    });
             })
             .error(function (err, status) {
                 alert(err + ' ' + status);
             });
-        
-        $scope.competitionId = Uuid.randomUUID();
+
+        $scope.onGroupCreate = function(g) {
+            g.id = Uuid.randomUUID();
+            $http.post("rest/competition/" + $scope.competition.id
+                    + "/group/" + g.id, g)
+                .success(function() {
+                    $scope.groups.push(g);
+                })
+                .error(function(err, status) {
+                    alert("Adding group failed: \nerr: " + err + "\nstatus: "
+                            + status + "\nGroup: " + angular.toJson(g, true));
+                });
+        };
+
+        $scope.onClassCreate = function(c) {
+            c.id = Uuid.randomUUID();
+            $http.post("rest/competition/" + $scope.competition.id
+                    + "/class/" + c.id, c)
+                .success(function() {
+                    $scope.classes.push(c);
+                })
+                .error(function(err, status) {
+                    alert("Adding class failed: \nerr: " + err + "\nstatus: "
+                            + status + "\nClass: " + angular.toJson(c, true));
+                });
+        };
+
+        $scope.onCompetitorCreate = function(c) {
+            c.id = Uuid.randomUUID();
+            alert('TODO: Create: ' + angular.toJson(c, true));
+            $http.post("rest/competition/" + $scope.competition.id
+                    + "/competitor/" + c.id, c).success(function() {
+                $scope.competitors.push(c);
+            }).error(function (err, status) {
+                alert("Adding competitor failed: \nerr: " + err + "\nstatus: "
+                        + status + "\nCompetitor:"+ angular.toJson(c, true));
+            });
+        };
+
+        $scope.onGroupDestroy = function(g, i) {
+            $http.delete("rest/competition/" + $scope.competition.id
+                    + "/group/" + g.id)
+                .success(function () {
+                    $scope.groups.splice(i, 1);
+                }).error(function (err) {
+                    alert("Deleting group failed: " + err.statusText);
+                });
+        }
+
+        $scope.onClassDestroy = function(c, i) {
+            $http.delete("rest/competition/" + $scope.competition.id
+                    + "/class/" + c.id)
+                .success(function () {
+                    $scope.classes.splice(i, 1);
+                }).error(function (err) {
+                    alert("Deleting class failed: " + err.statusText);
+                });
+        }
+
+        $scope.onCompetitorDestroy = function(c, i) {
+            $http.delete("rest/competition/" + $scope.competition.id
+                    + "/competitor/" + c.id)
+                .success(function () {
+                    $scope.competitors.splice(i, 1);
+                }).error(function (err) {
+                    alert("Deleting competitor failed: " + err.statusText);
+                });
+        }
     });
 
 app.controller('CompetitionListController', function ($scope, $http, Uuid) {
