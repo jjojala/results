@@ -24,10 +24,32 @@
         </ul>
 
         <div ng-show="option == 1">
+            <label>
+                Search filter:
+                <input ng-model="competitor.filter">
+            </label>
+
+            <label>
+                Sort by:
+                <select ng-model="competitor.sortCriteria">
+                    <option value="class">Class</option>
+                    <option value="number">Number</option>
+                    <option value="offset">Start time</option>
+                    <option value="name">Name</option>
+                </select>
+            </label>
+
+            <label>
+                Pick next free number in the group
+                <input type="checkbox" ng-model="competitor.autoNumbering">
+            </label>
+  
             <table class="table table-hover">
                 <thead>
                     <tr>
                         <td>Class</td>
+                        <td>Number</td>
+                        <td>Start time</td>
                         <td>Name</td>
                         <td></td>
                     </tr>
@@ -39,6 +61,17 @@
                                    placeholder="<competitor's class>"
                                    ng-model="current.competitor.class"/>
                         </td>
+                        <td>
+                            <input type="text"
+                                   placeholder="<competitor's number>"
+                                   ng-model='current.competitor.number'/>
+                        </td>
+                        <td>
+                            <input type="text"
+                                   placeholder="<competitor's start time>"
+                                   ng-model='current.competitor.offset'/>
+                        </td>
+
                         <td>
                             <input type="text"
                                    placeholder="<competitor's name>"
@@ -53,9 +86,12 @@
                             </a>
                         </td>
                     </tr>
-                    <tr ng-repeat="c in competitors"
+                    <tr ng-repeat="c in competitors | filter:competitor.filter
+                            | orderBy:competitor.sortCriteria"
                         ng-click="onCompetitorSelect(current.competitor)">
                         <td>{{c.clazz}}</td>
+                        <td>{{c.number}}</td>
+                        <td>{{c.offset}}</td>
                         <td>{{c.name}}</td>
                         <td>
                             <a href ng-click="onCompetitorDestroy(c, $index)"
@@ -70,6 +106,17 @@
         </div>
 
         <div ng-show="option == 2">
+            <div>
+                Search: <input ng-model="class.filter">
+
+                Sort by:
+                <select ng-model="class.sortCriteria">
+                    <option value="name">Name</option>
+                    <option value="offset">Offset</option>
+                    <option value="group">Group</option>
+                </select>
+            </div>
+
             <table class="table table-hover">
                 <thead>
                     <tr>
@@ -123,6 +170,16 @@
         </div>
 
         <div ng-show="option == 3">
+            <div>
+                Search: <input ng-model="group.filter">
+
+                Sort by:
+                <select ng-model="group.sortCriteria">
+                    <option value="name">Name</option>
+                    <option value="minNumber">Min. number</option>
+                    <option value="offset">Offset</option>
+                </select>
+            </div>
             <table class="table table-hover">
                 <thead>
                     <tr>
