@@ -140,11 +140,12 @@
                         </td>
                         <td>
                             <input type="text"
-                                   placeholder="<class's group>"
-                                   ng-model='current.class.group'/>
+                                   ng-model="current.classGroup"
+                                   typeahead="g as (g.name) for g in groups  | filter:$viewValue"
+                                   placeholder="<class's group>" bs-typeahead/>
                         </td>
                         <td>
-                            <a href ng-click="onClassCreate(current.class); 
+                            <a href ng-click="onClassCreate(current.class, current.classGroup); 
                                             current.class = {}"
                                     data-toggle="tooltip" data-placement="left"
                                     title="Create new competitor with this data.">

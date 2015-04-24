@@ -3,7 +3,7 @@
  */
 
 var app = angular.module('ResultsApplication', [ 
-    'ngRoute' /*, 'ui.bootstrap' */]);
+    'ngRoute', 'ui.bootstrap']);
 
 app.config(['$routeProvider', function($routeProvider) {
    $routeProvider
@@ -17,7 +17,7 @@ app.config(['$routeProvider', function($routeProvider) {
                 })
            .otherwise({
                     redirectTo: '/competition-list'
-                })
+                });
 }]);
 
 app.service('Uuid', function() {
@@ -34,7 +34,7 @@ app.service('Uuid', function() {
     
 app.controller('CompetitionMainController',
     function($scope, $http, $routeParams, Uuid) {
-        $scope.current = {};
+        $scope.current = { class: null, group: null, competitor:null };
         $http.get("rest/competition/" + $routeParams.competitionId)
             .success(function (data) {
                 $scope.competition = data;
@@ -81,8 +81,10 @@ app.controller('CompetitionMainController',
                 });
         };
 
-        $scope.onClassCreate = function(c) {
+        $scope.onClassCreate = function(c, g) {
             c.id = Uuid.randomUUID();
+            c.groupId = g.id;
+
             $http.post("rest/competition/" + $scope.competition.id
                     + "/class/" + c.id, c)
                 .success(function() {
