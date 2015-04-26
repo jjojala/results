@@ -31,7 +31,22 @@ app.service('Uuid', function() {
         }
     };
 });
-    
+
+app.directive('rs-typeahead', function() {
+    return {
+        replace: true,
+        restrict: 'A',
+        scope: {
+            ngModel: '=',
+            typehead: '=',
+            placeholder: '='
+        },
+        template: "<input type='text' ng-model='ng-model' "
+            + "typehead-min-length='0' typeahead='typehead' "
+            + " placeholder='placeholder' bs-typeahead/>"
+    };
+});
+
 app.controller('CompetitionMainController',
     function($scope, $http, $routeParams, Uuid) {
         $scope.current = { class: null, group: null, competitor:null };
@@ -79,7 +94,7 @@ app.controller('CompetitionMainController',
                     alert("Adding group failed: \nerr: " + err + "\nstatus: "
                             + status + "\nGroup: " + angular.toJson(g, true));
                 });
-        };
+        };        
 
         $scope.onClassCreate = function(c, g) {
             c.id = Uuid.randomUUID();
@@ -137,6 +152,67 @@ app.controller('CompetitionMainController',
                     alert("Deleting competitor failed: " + err.statusText);
                 });
         }
+
+        $scope.onCompetitorUpdate = function(c, clz) {
+            c.clazzId = clz.id;
+            $http.put("rest/competition/" + $scope.competition.id
+                    + "/competitor/" + c.id, c)
+                .error(function(err, status) {
+                    alert("Updating competitor failed: \nerr: " + err + "\nstatus: "
+                        + status + "\nCompetitor: " + angular.toJson(c, true));
+                });
+        };
+
+        $scope.onClassUpdate = function(c, g) {
+            c.groupId = g.id;
+            $http.put("rest/competition/" + $scope.competition.id
+                    + "/class/" + c.id, c)
+                .error(function(err, status) {
+                    alert("Updating class failed: \nerr: " + err + "\nstatus: "
+                    + status + "\nClass: " + angular.toJson(c, true));
+                });
+        };
+
+        $scope.onGroupUpdate = function(g) {
+            $http.put("rest/competition/" + $scope.competition.id
+                    + "/group/" + g.id, g)
+                .error(function(err, status) {
+                    alert("Updating group failed: \nerr: " + err + "\nstatus: "
+                            + status + "\nGroup: " + angular.toJson(g, true));
+                });
+        };        
+
+        $scope.onCompetitorSelect = function(c) {
+            $scope.current.competitor = c;
+        };
+
+        $scope.onClassSelect = function(c) {
+            $scope.current.class = c;
+        };
+
+        $scope.onGroupSelect = function(g) {
+            $scope.current.group = g;
+        };
+
+        $scope.getClassName = function(classes, id) {
+            if (classes) {
+                for (i = 0; i < classes.length; ++i) {
+                    if (classes[i].id === id)
+                        return classes[i].name;
+                }
+            }
+            return id;
+        };
+
+        $scope.getGroupName = function(groups, id) {
+            if (groups) {
+                for (i = 0; i < groups.length; ++i) {
+                    if (groups[i].id === id)
+                        return groups[i].name;
+                }
+            }
+            return id;       
+        };
     });
 
 app.controller('CompetitionListController', function ($scope, $http, Uuid) {

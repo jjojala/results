@@ -57,9 +57,11 @@
                 <tbody>
                     <tr>
                         <td>
-                            <input type='text'
-                                   placeholder="<competitor's class>"
-                                   ng-model="current.competitor.class"/>
+                            <input type="text"
+                                   ng-model="current.competitorClass"
+                                   typehead-min-length=0
+                                   typeahead="clz as (clz.name) for clz in classes  | filter:$viewValue"
+                                   placeholder="<competitor's class>" bs-typeahead/>
                         </td>
                         <td>
                             <input type="text"
@@ -78,18 +80,24 @@
                                    ng-model='current.competitor.name'/>
                         </td>
                         <td>
-                            <a href ng-click="onCompetitorCreate(current.competitor); 
+                            <a href ng-click="onCompetitorCreate(current.competitor, current.competitorClass); 
                                             current.competitor = {}"
                                     data-toggle="tooltip" data-placement="left"
                                     title="Create new competitor with this data.">
                                 <i class="glyphicon glyphicon-plus"></i>
                             </a>
+                            <a href ng-show="current.competitor['id']"
+                                    ng-click="onCompetitorUpdate(current.competitor, current.competitorClass)"
+                                    data-toggle="tooltip" data-placement="left"
+                                    title="Update the competitor with this data.">
+                                <i class="glyphicon glyphicon-edit"></i>
+                            </a>
                         </td>
                     </tr>
                     <tr ng-repeat="c in competitors | filter:competitor.filter
                             | orderBy:competitor.sortCriteria"
-                        ng-click="onCompetitorSelect(current.competitor)">
-                        <td>{{c.clazz}}</td>
+                        ng-click="onCompetitorSelect(c)">
+                        <td>{{getClassName(classes, c.clazzId)}}</td>
                         <td>{{c.number}}</td>
                         <td>{{c.offset}}</td>
                         <td>{{c.name}}</td>
@@ -141,6 +149,7 @@
                         <td>
                             <input type="text"
                                    ng-model="current.classGroup"
+                                   typehead-min-length=0
                                    typeahead="g as (g.name) for g in groups  | filter:$viewValue"
                                    placeholder="<class's group>" bs-typeahead/>
                         </td>
@@ -151,13 +160,21 @@
                                     title="Create new competitor with this data.">
                                 <i class="glyphicon glyphicon-plus"></i>
                             </a>
+                            <a href ng-show="current.class['id']"
+                                    ng-click="onClassUpdate(current.class, current.classGroup)"
+                                    data-toggle="tooltip" data-placement="left"
+                                    title="Update the class with this data.">
+                                <i class="glyphicon glyphicon-edit"></i>
+                            </a>
                         </td>
                     </tr>
-                    <tr ng-repeat="c in classes"
-                        ng-click="onClassSelect(current.competitor)">
+
+                    <tr ng-repeat="c in classes | filter:class.filter
+                            | orderBy:class.sortCriteria"
+                        ng-click="onClassSelect(c)">
                         <td>{{c.name}}</td>
                         <td>{{c.offset}}</td>
-                        <td>{{c.group}}</td>
+                        <td>{{getGroupName(groups, c.groupId)}}</td>
                         <td>
                             <a href ng-click="onClassDestroy(c, $index)"
                                     data-togglse="tooltip" data-placement="left"
@@ -214,10 +231,17 @@
                                     title="Create new group with this data.">
                                 <i class="glyphicon glyphicon-plus"></i>
                             </a>
+                            <a href ng-show="current.group['id']"
+                                    ng-click="onGroupUpdate(current.group)"
+                                    data-toggle="tooltip" data-placement="left"
+                                    title="Update the group with this data.">
+                                <i class="glyphicon glyphicon-edit"></i>
+                            </a>
                         </td>
                     </tr>
-                    <tr ng-repeat="g in groups"
-                        ng-click="onGroupSelect(current.group)">
+                    <tr ng-repeat="g in groups | filter:group.filter 
+                            | orderBy:group.sortCriteria"
+                        ng-click="onGroupSelect(g)">
                         <td>{{g.name}}</td>
                         <td>{{g.minNumber}}</td>
                         <td>{{g.offset}}</td>
