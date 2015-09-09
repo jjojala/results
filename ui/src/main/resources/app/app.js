@@ -218,6 +218,7 @@ app.controller('CompetitionMainController',
 app.controller('CompetitionListController', function ($scope, $http, Uuid) {
 
     $scope.current = {};
+    $scope.competitions = [];
 
     $http.get("rest/competition").success(function (data) {
         for (i = 0; i < data.length; ++i)
