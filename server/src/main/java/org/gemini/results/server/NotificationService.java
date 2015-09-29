@@ -3,35 +3,43 @@
  */
 package org.gemini.results.server;
 
-import java.util.Calendar;
+import java.util.Iterator;
 import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import org.gemini.results.rest.ResourceListener;
 import org.glassfish.grizzly.http.HttpRequestPacket;
 import org.glassfish.grizzly.websockets.DataFrame;
 import org.glassfish.grizzly.websockets.WebSocket;
 import org.glassfish.grizzly.websockets.WebSocketApplication;
 
-public class NotificationService extends WebSocketApplication {
+public class NotificationService extends WebSocketApplication
+{
 
-    private ScheduledExecutorService executor =
-            Executors.newScheduledThreadPool(2);
-
-    public NotificationService() {
-        executor.scheduleWithFixedDelay(new Runnable() {
+    public ResourceListener getResourceListener() {
+        return new ResourceListener() {
 
             @Override
-            public void run() {
-                final Set<WebSocket> sockets = getWebSockets();
-                if (sockets.iterator().hasNext())
-                    sockets.iterator().next().broadcast(sockets,
-                            Calendar.getInstance().toString());
+            public void onCreate(Class<?> resourceType, Object resultingResource) {
+                broadcast(getWebSockets(), resultingResource);
             }
-            
-        }, 5000, 5000, TimeUnit.MILLISECONDS);
-    }
 
+            @Override
+            public void onUpdate(Class<?> resourceType, Object resultingResource) {
+                broadcast(getWebSockets(), resultingResource);
+            }
+
+            @Override
+            public void onRemove(Class<?> resourceType, Object removedResource) {
+                broadcast(getWebSockets(), removedResource);
+            }
+        };
+    }
+    
+    private static void broadcast(final Set<WebSocket> sockets, final Object msg) {
+        final Iterator<WebSocket> it = sockets.iterator();
+        if (it.hasNext())
+            it.next().broadcast(sockets, msg.toString());
+    }
+    
     @Override
     public void onClose(WebSocket socket, DataFrame frame) {
         super.onClose(socket, frame);

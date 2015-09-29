@@ -4,6 +4,8 @@
 package org.gemini.results.rest;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -34,12 +36,18 @@ import org.gemini.results.model.NameList;
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class CompetitorResource {
 
+    private static final Logger LOG = Logger.getLogger(
+            CompetitorResource.class.getName());
+
     private final EntityManagerFactory emf_;
+    private final ResourceListener listener_;
     private final String competitionId_;
 
     public CompetitorResource(final EntityManagerFactory emf,
+            final ResourceListener listener,
             final String competitionId) {
         emf_ = emf;
+        listener_ = listener;
         competitionId_ = competitionId;
     }
 
@@ -56,6 +64,11 @@ public class CompetitorResource {
                 System.out.println(name);
 
             return RestUtils.ok(new NameList(names));
+        }
+
+        catch (final RuntimeException ex) {
+            LOG.log(Level.WARNING, "Competitor list failed: ", ex);
+            return Response.serverError().entity(ex).build();
         }
 
         finally {
@@ -81,6 +94,11 @@ public class CompetitorResource {
             return RestUtils.ok(new CompetitorList(competitors));
         }
 
+        catch (final RuntimeException ex) {
+            LOG.log(Level.WARNING, "Competitor list(classId) failed: ", ex);
+            return Response.serverError().entity(ex).build();
+        }
+
         finally {
             DataUtils.close(em);
         }
@@ -100,6 +118,11 @@ public class CompetitorResource {
                 return RestUtils.notFound(Competitor.class, id);
 
             return RestUtils.ok(c);
+        }
+
+        catch (final RuntimeException ex) {
+            LOG.log(Level.WARNING, "Competitor get failed: ", ex);
+            return Response.serverError().entity(ex).build();
         }
 
         finally {
@@ -130,12 +153,18 @@ public class CompetitorResource {
             DataUtils.create(em, id, competitor);
             trx.commit();
 
+            listener_.onCreate(Competitor.class, competitor);
             return RestUtils.created(UriBuilder.fromUri(
                     ui.getRequestUri()).build());
         }
 
         catch (final EntityExistsException ex) {
             return RestUtils.conflict(Competitor.class, id);
+        }
+
+        catch (final RuntimeException ex) {
+            LOG.log(Level.WARNING, "Competitor create failed: ", ex);
+            return Response.serverError().entity(ex).build();
         }
 
         finally {
@@ -166,11 +195,17 @@ public class CompetitorResource {
 
             trx.commit();
 
+            listener_.onUpdate(Competitor.class, competitor);
             return RestUtils.ok();
         }
 
         catch (final EntityNotFoundException ex) {
             return RestUtils.notFound(Competitor.class, id);
+        }
+
+        catch (final RuntimeException ex) {
+            LOG.log(Level.WARNING, "Competitor update failed: ", ex);
+            return Response.serverError().entity(ex).build();
         }
 
         finally {
@@ -191,12 +226,21 @@ public class CompetitorResource {
                     em, Competition.class, competitionId_) == null)
                 return RestUtils.notFound(Competition.class, competitionId_);
 
-            if (DataUtils.remove(em, id, Competitor.class) == false)
+            final Competitor competitor = DataUtils.findWithLock(
+                   em, Competitor.class, id);
+            if (competitor == null)
                 return RestUtils.notFound(Competitor.class, id);
 
+            DataUtils.remove(em, id, Competitor.class); // == true
             trx.commit();
 
+            listener_.onRemove(Competitor.class, competitor);
             return RestUtils.ok();
+        }
+
+        catch (final RuntimeException ex) {
+            LOG.log(Level.WARNING, "Competitor remove failed: ", ex);
+            return Response.serverError().entity(ex).build();
         }
 
         finally {

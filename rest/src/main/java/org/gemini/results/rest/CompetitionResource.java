@@ -4,6 +4,8 @@
 package org.gemini.results.rest;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.inject.Singleton;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
@@ -37,10 +39,16 @@ import org.gemini.results.model.Group;
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class CompetitionResource {
 
+    private static final Logger LOG = Logger.getLogger(
+            CompetitionResource.class.getName());
+    
     private final EntityManagerFactory emf_;
+    private final ResourceListener listener_;
 
-    public CompetitionResource(final EntityManagerFactory emf) {
+    public CompetitionResource(final EntityManagerFactory emf,
+            ResourceListener listener) {
         emf_ = emf;
+        listener_ = new ResourceListenerWrapper(listener);
     }
 
     @GET
@@ -52,6 +60,11 @@ public class CompetitionResource {
                     em.createNamedQuery("Competition.list").getResultList();
 
             return RestUtils.ok(new CompetitionList(competitions));
+        }
+        
+        catch (final RuntimeException ex) {
+            LOG.log(Level.WARNING, "'Competition.list' failed: ", ex);
+            return Response.serverError().entity(ex).build();
         }
 
         finally {
@@ -77,6 +90,11 @@ public class CompetitionResource {
                     "Competitor.list").setParameter(1, id).getResultList());
 
             return RestUtils.ok(competition);
+        }
+
+        catch (final RuntimeException ex) {
+            LOG.log(Level.WARNING, "Competition export failed: ", ex);
+            return Response.serverError().entity(ex).build();
         }
 
         finally {
@@ -124,6 +142,11 @@ public class CompetitionResource {
             return RestUtils.conflict(ex);
         }
 
+        catch (final RuntimeException ex) {
+            LOG.log(Level.WARNING, "Competition import failed: ", ex);
+            return Response.serverError().entity(ex).build();
+        }
+        
         finally {
             DataUtils.close(em);
         }
@@ -140,6 +163,11 @@ public class CompetitionResource {
                 return RestUtils.notFound(Competition.class, id);
 
             return RestUtils.ok(competition);
+        }
+
+        catch (final RuntimeException ex) {
+            LOG.log(Level.WARNING, "Competition get failed: ", ex);
+            return Response.serverError().entity(ex).build();
         }
 
         finally {
@@ -160,11 +188,18 @@ public class CompetitionResource {
             DataUtils.update(em, id, competition);
             trx.commit();
 
+            listener_.onUpdate(Competition.class, competition);
+            
             return RestUtils.ok();
         }
 
         catch (final EntityNotFoundException ex) {
             return RestUtils.notFound(Competition.class, id);
+        }
+
+        catch (final RuntimeException ex) {
+            LOG.log(Level.WARNING, "Competition update failed: ", ex);
+            return Response.serverError().entity(ex).build();
         }
 
         finally {
@@ -186,12 +221,19 @@ public class CompetitionResource {
             DataUtils.create(em, id, competition);
             trx.commit();
 
+            listener_.onCreate(Competition.class, competition);
+
             return RestUtils.created(UriBuilder.fromUri(
                     ui.getRequestUri()).build());
         }
 
         catch (final EntityExistsException ex) {
             return RestUtils.conflict(Competition.class, id);
+        }
+
+        catch (final RuntimeException ex) {
+            LOG.log(Level.WARNING, "Competition create failed: ", ex);
+            return Response.serverError().entity(ex).build();
         }
 
         finally {
@@ -207,11 +249,22 @@ public class CompetitionResource {
 
         try {
             trx.begin();
-            if (DataUtils.remove(em, id, Competition.class) == false)
+            final Competition competition =
+                    DataUtils.findWithLock(em, Competition.class, id);
+            if (competition == null)
                 return RestUtils.notFound(Competition.class, id);
+            
+            DataUtils.remove(em, id, Competition.class); //  == true
             trx.commit();
 
+            listener_.onRemove(Competition.class, competition);
+
             return RestUtils.ok();
+        }
+
+        catch (final RuntimeException ex) {
+            LOG.log(Level.WARNING, "Competition remove failed: ", ex);
+            return Response.serverError().entity(ex).build();
         }
 
         finally {
@@ -230,6 +283,11 @@ public class CompetitionResource {
                 return RestUtils.notFound(Competition.class, id);
 
             return RestUtils.ok(c.getName());
+        }
+
+        catch (final RuntimeException ex) {
+            LOG.log(Level.WARNING, "Competition getName failed: ", ex);
+            return Response.serverError().entity(ex).build();
         }
 
         finally {
@@ -254,8 +312,14 @@ public class CompetitionResource {
             c.setName(name);
             em.merge(c);
             trx.commit();
-
+            
+            listener_.onUpdate(Competition.class, c);
             return RestUtils.ok();
+        }
+
+        catch (final RuntimeException ex) {
+            LOG.log(Level.WARNING, "Competition setName failed: ", ex);
+            return Response.serverError().entity(ex).build();
         }
 
         finally {
@@ -274,6 +338,11 @@ public class CompetitionResource {
                 return RestUtils.notFound(Competition.class, id);
 
             return RestUtils.ok(c.getTime());
+        }
+
+        catch (final RuntimeException ex) {
+            LOG.log(Level.WARNING, "Competition getTime failed: ", ex);
+            return Response.serverError().entity(ex).build();
         }
 
         finally {
@@ -296,9 +365,16 @@ public class CompetitionResource {
                 return RestUtils.notFound(Competition.class, id);
 
             c.setTime(time);
+            em.merge(c);
             trx.commit();
-
+            
+            listener_.onUpdate(Competition.class, c);
             return RestUtils.ok();
+        }
+
+        catch (final RuntimeException ex) {
+            LOG.log(Level.WARNING, "Competition setTime failed: ", ex);
+            return Response.serverError().entity(ex).build();
         }
 
         finally {
@@ -317,6 +393,11 @@ public class CompetitionResource {
                 return RestUtils.notFound(Competition.class, id);
 
             return RestUtils.ok(c.getOrganizer());
+        }
+
+        catch (final RuntimeException ex) {
+            LOG.log(Level.WARNING, "Competition getOrganizer failed: ", ex);
+            return Response.serverError().entity(ex).build();
         }
 
         finally {
@@ -340,8 +421,15 @@ public class CompetitionResource {
 
             c.setOrganizer(organizer);
             em.merge(c);
+            trx.commit();
 
+            listener_.onUpdate(Competitor.class, c);
             return RestUtils.ok();
+        }
+
+        catch (final RuntimeException ex) {
+            LOG.log(Level.WARNING, "Competition setOrganizer failed: ", ex);
+            return Response.serverError().entity(ex).build();
         }
 
         finally {
@@ -352,18 +440,18 @@ public class CompetitionResource {
     @Path("{id}/group")
     public GroupResource getGroupResource(
             @PathParam("id") final String id) {
-        return new GroupResource(emf_, id);
+        return new GroupResource(emf_, listener_, id);
     }
 
     @Path("{id}/class")
     public ClazzResource getClazzResource(
             @PathParam("id") final String id) {
-        return new ClazzResource(emf_, id);
+        return new ClazzResource(emf_, listener_, id);
     }
 
     @Path("{id}/competitor")
     public CompetitorResource getCompetitorResource(
             @PathParam("id") final String id) {
-        return new CompetitorResource(emf_, id);
+        return new CompetitorResource(emf_, listener_, id);
     }
 }

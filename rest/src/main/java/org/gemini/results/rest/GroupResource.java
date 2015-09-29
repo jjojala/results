@@ -4,6 +4,8 @@
 package org.gemini.results.rest;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -31,12 +33,18 @@ import org.gemini.results.model.GroupList;
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class GroupResource {
 
+    private static final Logger LOG = Logger.getLogger(
+            GroupResource.class.getName());
+
     private final EntityManagerFactory emf_;
+    private final ResourceListener listener_;
     private final String competitionId_;
 
     public GroupResource(final EntityManagerFactory emf,
+            final ResourceListener listener,
             final String competitionId) {
         emf_ = emf;
+        listener_ = listener;
         competitionId_ = competitionId;
     }
 
@@ -52,6 +60,11 @@ public class GroupResource {
                     .setParameter(1, competitionId_).getResultList();
 
             return RestUtils.ok(new GroupList(groups));
+        }
+
+        catch (final RuntimeException ex) {
+            LOG.log(Level.WARNING, "Group list failed: ", ex);
+            return Response.serverError().entity(ex).build();
         }
 
         finally {
@@ -73,6 +86,11 @@ public class GroupResource {
                 return Response.ok(group).build();
 
             return RestUtils.notFound(Group.class, id);
+        }
+
+        catch (final RuntimeException ex) {
+            LOG.log(Level.WARNING, "Group get failed: ", ex);
+            return Response.serverError().entity(ex).build();
         }
 
         finally {
@@ -97,16 +115,21 @@ public class GroupResource {
 
             group.setId(id);
             group.setCompetitionId(competitionId_);
-
             DataUtils.create(em, id, group);
             trx.commit();
 
+            listener_.onCreate(Group.class, group);
             return RestUtils.created(UriBuilder.fromUri(
                     ui.getRequestUri()).build());
         }
 
         catch (final EntityExistsException ex) {
             return RestUtils.conflict(Group.class, id);
+        }
+
+        catch (final RuntimeException ex) {
+            LOG.log(Level.WARNING, "Group create failed: ", ex);
+            return Response.serverError().entity(ex).build();
         }
 
         finally {
@@ -135,11 +158,17 @@ public class GroupResource {
 
             trx.commit();
 
+            listener_.onUpdate(Group.class, group);
             return RestUtils.ok();
         }
 
         catch (final EntityNotFoundException ex) {
             return RestUtils.notFound(Group.class, id);
+        }
+
+        catch (final RuntimeException ex) {
+            LOG.log(Level.WARNING, "Group update failed: ", ex);
+            return Response.serverError().entity(ex).build();
         }
 
         finally {
@@ -158,12 +187,21 @@ public class GroupResource {
                 return RestUtils.notFound(Competition.class, competitionId_);
 
             trx.begin();
-            if (DataUtils.remove(em, id, Group.class) == false)
+            final Group group = DataUtils.findWithLock(em, Group.class, id);
+            if (group == null)
                 return RestUtils.notFound(Group.class, id);
+
+            DataUtils.remove(em, id, Group.class); // == true
 
             trx.commit();
 
+            listener_.onRemove(Group.class, group);
             return Response.ok().build();
+        }
+
+        catch (final RuntimeException ex) {
+            LOG.log(Level.WARNING, "Group remove failed: ", ex);
+            return Response.serverError().entity(ex).build();
         }
 
         finally {
@@ -182,6 +220,11 @@ public class GroupResource {
                 return RestUtils.notFound(Group.class, id);
 
             return RestUtils.ok(group.getName());
+        }
+
+        catch (final RuntimeException ex) {
+            LOG.log(Level.WARNING, "Group getName failed: ", ex);
+            return Response.serverError().entity(ex).build();
         }
 
         finally {
@@ -207,7 +250,13 @@ public class GroupResource {
 
             trx.commit();
 
+            listener_.onUpdate(Group.class, group);
             return Response.ok().build();
+        }
+
+        catch (final RuntimeException ex) {
+            LOG.log(Level.WARNING, "Group setName failed: ", ex);
+            return Response.serverError().entity(ex).build();
         }
 
         finally {

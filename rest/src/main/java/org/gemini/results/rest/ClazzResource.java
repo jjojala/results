@@ -4,6 +4,8 @@
 package org.gemini.results.rest;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -33,12 +35,18 @@ import org.gemini.results.model.Group;
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class ClazzResource {
 
+    private static final Logger LOG = Logger.getLogger(
+            ClazzResource.class.getName());
+
     private final EntityManagerFactory emf_;
+    private final ResourceListener listener_;
     private final String competitionId_;
 
     public ClazzResource(final EntityManagerFactory emf,
+            final ResourceListener listener,
             final String competitionId) {
         emf_ = emf;
+        listener_ = listener;
         competitionId_ = competitionId;
     }
 
@@ -60,6 +68,11 @@ public class ClazzResource {
             return RestUtils.ok(new ClazzList(classes));
         }
 
+        catch (final RuntimeException ex) {
+            LOG.log(Level.WARNING, "Class list failed: ", ex);
+            return Response.serverError().entity(ex).build();
+        }
+
         finally {
             DataUtils.close(em);
         }
@@ -79,6 +92,11 @@ public class ClazzResource {
                 return RestUtils.ok(clazz);
 
             return RestUtils.notFound(Clazz.class, id);
+        }
+
+        catch (final RuntimeException ex) {
+            LOG.log(Level.WARNING, "Class get failed: ", ex);
+            return Response.serverError().entity(ex).build();
         }
 
         finally {
@@ -106,17 +124,21 @@ public class ClazzResource {
 
             clazz.setId(id);
             clazz.setCompetitionId(competitionId_);
-
             DataUtils.create(em, id, clazz);
-
             trx.commit();
 
+            listener_.onCreate(Clazz.class, clazz);
             return RestUtils.created(UriBuilder.fromUri(
                     ui.getRequestUri()).build());
         }
 
         catch (final EntityExistsException ex) {
             return RestUtils.conflict(Clazz.class, id);
+        }
+
+        catch (final RuntimeException ex) {
+            LOG.log(Level.WARNING, "Class create failed: ", ex);
+            return Response.serverError().entity(ex).build();
         }
 
         finally {
@@ -144,16 +166,20 @@ public class ClazzResource {
 
             clazz.setId(id);
             clazz.setCompetitionId(competitionId_);
-
             DataUtils.update(em, id, clazz);
-
             trx.commit();
-
+            
+            listener_.onUpdate(Clazz.class, clazz);
             return RestUtils.ok();
         }
 
         catch (final EntityNotFoundException ex) {
             return RestUtils.notFound(Clazz.class, id);
+        }
+
+        catch (final RuntimeException ex) {
+            LOG.log(Level.WARNING, "Class update failed: ", ex);
+            return Response.serverError().entity(ex).build();
         }
 
         finally {
@@ -172,11 +198,21 @@ public class ClazzResource {
                 return RestUtils.notFound(Competition.class, competitionId_);
 
             trx.begin();
-            if (DataUtils.remove(em, id, Clazz.class) == false)
+
+            final Clazz clazz = DataUtils.findWithLock(em, Clazz.class, id);
+            if (clazz == null)
                 return RestUtils.notFound(Clazz.class, id);
+
+            DataUtils.remove(em, id, Clazz.class); // == true
             trx.commit();
 
+            listener_.onRemove(Clazz.class, clazz);
             return RestUtils.ok();
+        }
+
+        catch (final RuntimeException ex) {
+            LOG.log(Level.WARNING, "Class remove failed: ", ex);
+            return Response.serverError().entity(ex).build();
         }
 
         finally {

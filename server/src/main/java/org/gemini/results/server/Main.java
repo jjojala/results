@@ -4,13 +4,11 @@
 package org.gemini.results.server;
 
 import java.net.URI;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.ws.rs.core.UriBuilder;
 import org.gemini.results.rest.CompetitionResource;
-import org.glassfish.grizzly.filterchain.Filter;
 import org.glassfish.grizzly.filterchain.FilterChain;
 import org.glassfish.grizzly.http.server.CLStaticHttpHandler;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -34,8 +32,12 @@ public class Main {
             final URI restUri = UriBuilder.fromUri(
                     "http://0.0.0.0:8800/rest/").build();
             
+            final NotificationService notifications =
+                    new NotificationService();
+
             final ResourceConfig config = new ResourceConfig()
-                    .register(new CompetitionResource(emf))
+                    .register(new CompetitionResource(
+                            emf, notifications.getResourceListener()))
                     .register(JacksonFeature.class);
 
             final HttpServer server =
@@ -82,7 +84,7 @@ public class Main {
             }
             
             WebSocketEngine.getEngine().register("", "/notifications",
-                    new NotificationService());
+                    notifications);
             
             server.start();
 

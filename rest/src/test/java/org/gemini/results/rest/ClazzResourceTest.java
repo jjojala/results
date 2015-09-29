@@ -89,7 +89,7 @@ public class ClazzResourceTest extends JerseyTest {
 
     @Override
     protected Application configure() {
-        return new ResourceConfig().register(new CompetitionResource(emf));
+        return new ResourceConfig().register(new CompetitionResource(emf, null));
     }
 
     @Test
