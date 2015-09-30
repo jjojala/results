@@ -32,8 +32,8 @@ public class Main {
             final URI restUri = UriBuilder.fromUri(
                     "http://0.0.0.0:8800/rest/").build();
             
-            final NotificationService notifications =
-                    new NotificationService();
+            final RcnpService notifications =
+                    new RcnpService();
 
             final ResourceConfig config = new ResourceConfig()
                     .register(new CompetitionResource(
@@ -83,7 +83,7 @@ public class Main {
                 }
             }
             
-            WebSocketEngine.getEngine().register("", "/notifications",
+            WebSocketEngine.getEngine().register("", "/notifications/*",
                     notifications);
             
             server.start();
