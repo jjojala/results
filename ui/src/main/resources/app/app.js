@@ -52,7 +52,15 @@ app.controller('CompetitionMainController',
 
         $scope.current = { class: null, group: null, competitor:null };
 
-        var ws = $websocket.$new('ws://localhost:8080/notifications');
+        var ws = $websocket.$new({
+                url: 'ws://localhost:8080/notifications',
+                subprotocol: [ 'base64' ]
+            });
+/*
+        var ws = $websocket.$new(
+                'ws://localhost:8080/notifications',
+                [ 'base64' ]);
+*/
         ws.$on('$open', function() {
             console.log('on$open!');
         });
@@ -231,7 +239,9 @@ app.controller('CompetitionListController', function ($scope, $http, $websocket,
     $scope.current = {};
     $scope.competitions = [];
 
-    var ws = $websocket.$new('ws://localhost:8800/notifications');
+    var ws = $websocket.$new(
+        'ws://localhost:8800/notifications/?clientId=abc&contentType=application/json',
+        [ 'x-rcnp' ]);
     ws.$on('$open', function(data) {
         console.log('on$open: ' + data);
     });
