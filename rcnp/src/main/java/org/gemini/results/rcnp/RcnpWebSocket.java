@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2015 Jari Ojala (jari.ojala@iki.fi).
  */
-package org.gemini.results.server;
+package org.gemini.results.rcnp;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;

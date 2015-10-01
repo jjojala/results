@@ -3,12 +3,14 @@
  */
 package org.gemini.results.server;
 
+import org.gemini.results.rcnp.RcnpService;
 import java.net.URI;
 import java.util.logging.Logger;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.ws.rs.core.UriBuilder;
 import org.gemini.results.rest.CompetitionResource;
+import org.gemini.results.rest.ResourceListener;
 import org.glassfish.grizzly.filterchain.FilterChain;
 import org.glassfish.grizzly.http.server.CLStaticHttpHandler;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -37,7 +39,7 @@ public class Main {
 
             final ResourceConfig config = new ResourceConfig()
                     .register(new CompetitionResource(
-                            emf, notifications.getResourceListener()))
+                            emf, new RcnpResourceListener(notifications)))
                     .register(JacksonFeature.class);
 
             final HttpServer server =
@@ -102,4 +104,29 @@ public class Main {
             System.exit(1);
         }
     }
+}
+
+class RcnpResourceListener implements ResourceListener {
+
+    private final RcnpService broker;
+
+    public RcnpResourceListener(final RcnpService broker) {
+        this.broker = broker;
+    }
+
+    @Override
+    public void onCreate(Class<?> resourceType, Object resultingResource) {
+        broker.notify(resultingResource);
+    }
+
+    @Override
+    public void onUpdate(Class<?> resourceType, Object resultingResource) {
+        broker.notify(resultingResource);
+    }
+
+    @Override
+    public void onRemove(Class<?> resourceType, Object removedResource) {
+        broker.notify(removedResource);
+    }
+    
 }

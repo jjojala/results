@@ -18,5 +18,6 @@
         <module>data</module>
         <module>server</module>
         <module>ui</module>
+	<module>rcnp</module>
     </modules>
 </project>

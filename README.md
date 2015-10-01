@@ -57,6 +57,13 @@ backend for storing. This approach keeps things pretty clear - on both
 ends in fact, and reduces the unnecessary interactions and the backend load
 too (one example of "edge computing" approach).
 
+### results-rcnp
+
+Implements a WebSocket -based, self-invented /Resource Change Notification Protocol/. The
+package contains the data model, Grizzly WebSockets -based broker implementation, which is
+used to notify results's clients about data changes. The protocol is briefly described in
+RcnpService's javadoc.
+
 ### results-server
 
 A thin wrapper that binds everything into a single executable jar. Fundamentally results-server is a lightweight web- and REST service container (Jersey + Grizzly2, or something). Fundamentally results-server hosts two kind of stuff:

@@ -1,14 +1,13 @@
 /*
  * Copyright (C) 2015 Jari Ojala (jari.ojala@iki.fi)
  */
-package org.gemini.results.server;
+package org.gemini.results.rcnp;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import org.gemini.results.rest.ResourceListener;
 import org.glassfish.grizzly.http.HttpRequestPacket;
 import org.glassfish.grizzly.websockets.ProtocolHandler;
 import org.glassfish.grizzly.websockets.WebSocket;
@@ -211,25 +210,9 @@ public class RcnpService extends WebSocketApplication
     private static final List<String> SUPPORTED_PROTOCOLS =
             Collections.singletonList(
                     "x-rcnp" /* Resource Change Notification Protocol */);
-            
-    public ResourceListener getResourceListener() {
-        return new ResourceListener() {
 
-            @Override
-            public void onCreate(Class<?> resourceType, Object resultingResource) {
-                broadcast(getWebSockets(), resultingResource);
-            }
-
-            @Override
-            public void onUpdate(Class<?> resourceType, Object resultingResource) {
-                broadcast(getWebSockets(), resultingResource);
-            }
-
-            @Override
-            public void onRemove(Class<?> resourceType, Object removedResource) {
-                broadcast(getWebSockets(), removedResource);
-            }
-        };
+    public void notify(final Object msg) {
+        broadcast(getWebSockets(), msg);
     }
     
     private static void broadcast(final Set<WebSocket> sockets, final Object msg) {
