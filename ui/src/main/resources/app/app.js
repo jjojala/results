@@ -52,6 +52,27 @@ app.controller('CompetitionMainController',
 
         $scope.current = { class: null, group: null, competitor:null };
 
+        var wsUrl = 
+                (window.location.protocol === 'https:' ? 'wss://' : 'ws://')
+                + window.location.host + '/notifications/' + Uuid.randomUUID();
+
+        var ws = $websocket.$new(wsUrl, [ 'x-rcnp' ]);
+        ws.$on('$open', function(data) {
+            console.log('opened: ' + wsUrl);
+        });
+
+        ws.$on('$close', function(data) {
+            console.log('onClose: ' + data);
+        });
+
+        ws.$on('$message', function(msg) {
+            console.log('onMessage: ' + JSON.stringify(msg));
+        });
+
+        ws.$on('$error', function(err) {
+            console.log('onError: ' + err);
+        })
+
         $http.get("rest/competition/" + $routeParams.competitionId)
             .success(function (data) {
                 $scope.competition = data;
@@ -215,88 +236,91 @@ app.controller('CompetitionMainController',
             }
             return id;       
         };
-    });
-
-app.controller('CompetitionListController', function ($scope, $http, $websocket, Uuid) {
-
-    $scope.current = {};
-    $scope.competitions = [];
-
-    var wsUrl = 
-            (window.location.protocol === 'https:' ? 'wss://' : 'ws://')
-            + window.location.host + '/notifications/' + Uuid.randomUUID();
-
-    var ws = $websocket.$new(wsUrl, [ 'x-rcnp' ]);
-    ws.$on('$open', function(data) {
-        console.log('opened: ' + wsUrl);
-    });
-
-    ws.$on('$close', function(data) {
-        console.log('onClose: ' + data);
-    });
-
-    ws.$on('$message', function(msg) {
-        console.log('onMessage: ' + JSON.stringify(msg));
-    });
-
-    ws.$on('$error', function(err) {
-        console.log('onError: ' + err);
-    })
-    
-
-    $http.get("rest/competition").success(function (data) {
-        for (i = 0; i < data.length; ++i)
-            data[i].timeObject = new Date(data[i].time);
-
-        $scope.competitions = data;
-    }).error(function (err, status) {
-        alert(status);
-    });
-
-    $scope.onSelect = function(c) {
-        $scope.current = {
-            id: c.id,
-            time: new Date(c.time),
-            name: c.name,
-            organizer: c.organizer
-        };
     }
+);
 
-    $scope.onCreate = function(c) {
-        c.id = Uuid.randomUUID();
-        alert('TODO: Create: ' + angular.toJson(c, true));
-        $http.post("rest/competition/" + c.id, c).success(function() {
-            $scope.competitions.push(c);
+app.controller('CompetitionListController',
+    function ($scope, $http, $websocket, Uuid) {
+
+        $scope.current = {};
+        $scope.competitions = [];
+
+        var wsUrl = 
+                (window.location.protocol === 'https:' ? 'wss://' : 'ws://')
+                + window.location.host + '/notifications/' + Uuid.randomUUID();
+
+        var ws = $websocket.$new(wsUrl, [ 'x-rcnp' ]);
+        ws.$on('$open', function(data) {
+            console.log('opened: ' + wsUrl);
+        });
+
+        ws.$on('$close', function(data) {
+            console.log('onClose: ' + data);
+        });
+
+        ws.$on('$message', function(msg) {
+            console.log('onMessage: ' + JSON.stringify(msg));
+        });
+
+        ws.$on('$error', function(err) {
+            console.log('onError: ' + err);
+        })
+
+
+        $http.get("rest/competition").success(function (data) {
+            for (i = 0; i < data.length; ++i)
+                data[i].timeObject = new Date(data[i].time);
+
+            $scope.competitions = data;
         }).error(function (err, status) {
-            alert("Adding competition failed: \nerr: " + err + "\nstatus: "
-                    + status + "\nCompetition:"+ angular.toJson(c, true));
+            alert(status);
         });
-    }
-    
-    $scope.onSave = function(c) {
-        delete c.timeObject;
-        alert('TODO: Updating: ' + angular.toJson(c, true));
-        $http.put("rest/competition/" + c.id, c).success(function() {
-            console.log("Great, succeeded!");
-        }).error(function (err, status) {
-            alert("Updating competition failed: \nerr: " + err + "\nstatus: "
-                    + status + "\nCompetition:"+ angular.toJson(c, true));
-        });
-    }
 
-    $scope.onDestroy = function(c, i) {
-        alert('TODO: Destroy: ' + angular.toJson(c, true));
-        $http.delete("rest/competition/" + c.id).success(function () {
-            $scope.competitions.splice(i, 1);
-        }).error(function (err) {
-            alert("Deleting competition failed: " + err.statusText);
-        });
-    }
+        $scope.onSelect = function(c) {
+            $scope.current = {
+                id: c.id,
+                time: new Date(c.time),
+                name: c.name,
+                organizer: c.organizer
+            };
+        }
 
-    $scope.onDownload = function(c) {
-        alert('TODO: Download: ' + angular.toJson(c, true));
-        $http.get("rest/competition/export/" + c.id);
-    }
+        $scope.onCreate = function(c) {
+            c.id = Uuid.randomUUID();
+            alert('TODO: Create: ' + angular.toJson(c, true));
+            $http.post("rest/competition/" + c.id, c).success(function() {
+                $scope.competitions.push(c);
+            }).error(function (err, status) {
+                alert("Adding competition failed: \nerr: " + err + "\nstatus: "
+                        + status + "\nCompetition:"+ angular.toJson(c, true));
+            });
+        }
 
-    $scope.sortCriteria = 'time';
-});
+        $scope.onSave = function(c) {
+            delete c.timeObject;
+            alert('TODO: Updating: ' + angular.toJson(c, true));
+            $http.put("rest/competition/" + c.id, c).success(function() {
+                console.log("Great, succeeded!");
+            }).error(function (err, status) {
+                alert("Updating competition failed: \nerr: " + err + "\nstatus: "
+                        + status + "\nCompetition:"+ angular.toJson(c, true));
+            });
+        }
+
+        $scope.onDestroy = function(c, i) {
+            alert('TODO: Destroy: ' + angular.toJson(c, true));
+            $http.delete("rest/competition/" + c.id).success(function () {
+                $scope.competitions.splice(i, 1);
+            }).error(function (err) {
+                alert("Deleting competition failed: " + err.statusText);
+            });
+        }
+
+        $scope.onDownload = function(c) {
+            alert('TODO: Download: ' + angular.toJson(c, true));
+            $http.get("rest/competition/export/" + c.id);
+        }
+
+        $scope.sortCriteria = 'time';
+    }
+);
