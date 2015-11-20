@@ -3,6 +3,7 @@
  */
 package org.gemini.results.server;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.gemini.results.rcnp.RcnpService;
 import java.net.URI;
 import java.util.logging.Logger;
@@ -25,6 +26,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 public class Main {
 
     private final static Logger LOG = Logger.getLogger(Main.class.getName());
+    private final static String NOTIFICATIONS = "/notifications/";
 
     public static void main(final String[] args) {
         try {
@@ -35,7 +37,7 @@ public class Main {
                     "http://0.0.0.0:8800/rest/").build();
             
             final RcnpService notifications =
-                    new RcnpService();
+                    new RcnpService(NOTIFICATIONS);
 
             final ResourceConfig config = new ResourceConfig()
                     .register(new CompetitionResource(
@@ -85,8 +87,8 @@ public class Main {
                 }
             }
             
-            WebSocketEngine.getEngine().register("", "/notifications/*",
-                    notifications);
+            WebSocketEngine.getEngine().register("",
+                    notifications.getContext() + "*", notifications);
             
             server.start();
 
@@ -108,25 +110,40 @@ public class Main {
 
 class RcnpResourceListener implements ResourceListener {
 
-    private final RcnpService broker;
+    private final RcnpService broker_;
 
     public RcnpResourceListener(final RcnpService broker) {
-        this.broker = broker;
+        this.broker_ = broker;
     }
 
     @Override
-    public void onCreate(Class<?> resourceType, Object resultingResource) {
-        broker.notify(resultingResource);
+    public void onCreate(Class<?> resourceType, Object resultingResource,
+            final Object resourceId) {
+        submit("CREATED", resultingResource, resourceId);
     }
 
     @Override
-    public void onUpdate(Class<?> resourceType, Object resultingResource) {
-        broker.notify(resultingResource);
+    public void onUpdate(Class<?> resourceType, Object resultingResource,
+            final Object resourceId) {
+        submit("UPDATED", resultingResource, resourceId);
     }
 
     @Override
-    public void onRemove(Class<?> resourceType, Object removedResource) {
-        broker.notify(removedResource);
+    public void onRemove(Class<?> resourceType, Object removedResource,
+            final Object resourceId) {
+        submit("REMOVED", removedResource, resourceId);
     }
-    
+
+    private void submit(final String eventType, final Object content,
+            final Object resourceId) {
+        try {
+            broker_.submit(String.format("%s %s %s", eventType, 
+                        content.getClass().getName(), resourceId), 
+                    content);
+        }
+        
+        catch (final JsonProcessingException ex) {
+            ex.printStackTrace(System.err); // TODO: Log
+        }
+    }
 }

@@ -153,7 +153,7 @@ public class CompetitorResource {
             DataUtils.create(em, id, competitor);
             trx.commit();
 
-            listener_.onCreate(Competitor.class, competitor);
+            listener_.onCreate(Competitor.class, competitor, id);
             return RestUtils.created(UriBuilder.fromUri(
                     ui.getRequestUri()).build());
         }
@@ -195,7 +195,7 @@ public class CompetitorResource {
 
             trx.commit();
 
-            listener_.onUpdate(Competitor.class, competitor);
+            listener_.onUpdate(Competitor.class, competitor, id);
             return RestUtils.ok();
         }
 
@@ -234,7 +234,7 @@ public class CompetitorResource {
             DataUtils.remove(em, id, Competitor.class); // == true
             trx.commit();
 
-            listener_.onRemove(Competitor.class, competitor);
+            listener_.onRemove(Competitor.class, competitor, id);
             return RestUtils.ok();
         }
 

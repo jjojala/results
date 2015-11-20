@@ -23,27 +23,29 @@ public class ResourceListenerWrapper implements ResourceListener {
     }
     
     @Override
-    public void onCreate(Class<?> resourceType, Object resultingResource) {
+    public void onCreate(final Class<?> resourceType,
+            final Object resultingResource, final Object resourceId) {
         LOG.log(Level.INFO, "onCreate: {0}: {1}", new Object[] {
             resourceType.getName(), resultingResource });
         if (delegate_ != null)
-            delegate_.onCreate(resourceType, resultingResource);
+            delegate_.onCreate(resourceType, resultingResource, resourceId);
     }
 
     @Override
-    public void onUpdate(Class<?> resourceType, Object resultingResource) {
+    public void onUpdate(final Class<?> resourceType,
+            final Object resultingResource, final Object resourceId) {
         LOG.log(Level.INFO, "onUpdate: {0}: {1}:", new Object[] {
             resourceType.getName(), resultingResource });
         if (delegate_ != null)
-            delegate_.onUpdate(resourceType, resultingResource);
+            delegate_.onUpdate(resourceType, resultingResource, resourceId);
     }
 
     @Override
-    public void onRemove(Class<?> resourceType, Object removedResource) {
+    public void onRemove(final Class<?> resourceType,
+            final Object removedResource, final Object resourceId) {
         LOG.log(Level.INFO, "onRemove: {0}: {1}:", new Object[] {
             resourceType.getName(), removedResource });
         if (delegate_ != null)
-            delegate_.onRemove(resourceType, removedResource);
+            delegate_.onRemove(resourceType, removedResource, resourceId);
     }
-    
 }

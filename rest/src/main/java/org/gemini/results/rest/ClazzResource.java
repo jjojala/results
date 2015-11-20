@@ -127,7 +127,7 @@ public class ClazzResource {
             DataUtils.create(em, id, clazz);
             trx.commit();
 
-            listener_.onCreate(Clazz.class, clazz);
+            listener_.onCreate(Clazz.class, clazz, id);
             return RestUtils.created(UriBuilder.fromUri(
                     ui.getRequestUri()).build());
         }
@@ -169,7 +169,7 @@ public class ClazzResource {
             DataUtils.update(em, id, clazz);
             trx.commit();
             
-            listener_.onUpdate(Clazz.class, clazz);
+            listener_.onUpdate(Clazz.class, clazz, id);
             return RestUtils.ok();
         }
 
@@ -206,7 +206,7 @@ public class ClazzResource {
             DataUtils.remove(em, id, Clazz.class); // == true
             trx.commit();
 
-            listener_.onRemove(Clazz.class, clazz);
+            listener_.onRemove(Clazz.class, clazz, id);
             return RestUtils.ok();
         }
 

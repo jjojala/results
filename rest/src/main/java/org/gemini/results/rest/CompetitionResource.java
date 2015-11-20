@@ -188,7 +188,7 @@ public class CompetitionResource {
             DataUtils.update(em, id, competition);
             trx.commit();
 
-            listener_.onUpdate(Competition.class, competition);
+            listener_.onUpdate(Competition.class, competition, id);
             
             return RestUtils.ok();
         }
@@ -221,7 +221,7 @@ public class CompetitionResource {
             DataUtils.create(em, id, competition);
             trx.commit();
 
-            listener_.onCreate(Competition.class, competition);
+            listener_.onCreate(Competition.class, competition, id);
 
             return RestUtils.created(UriBuilder.fromUri(
                     ui.getRequestUri()).build());
@@ -257,7 +257,7 @@ public class CompetitionResource {
             DataUtils.remove(em, id, Competition.class); //  == true
             trx.commit();
 
-            listener_.onRemove(Competition.class, competition);
+            listener_.onRemove(Competition.class, competition, id);
 
             return RestUtils.ok();
         }
@@ -313,7 +313,7 @@ public class CompetitionResource {
             em.merge(c);
             trx.commit();
             
-            listener_.onUpdate(Competition.class, c);
+            listener_.onUpdate(Competition.class, c, c.getId());
             return RestUtils.ok();
         }
 
@@ -368,7 +368,7 @@ public class CompetitionResource {
             em.merge(c);
             trx.commit();
             
-            listener_.onUpdate(Competition.class, c);
+            listener_.onUpdate(Competition.class, c, c.getId());
             return RestUtils.ok();
         }
 
@@ -423,7 +423,7 @@ public class CompetitionResource {
             em.merge(c);
             trx.commit();
 
-            listener_.onUpdate(Competitor.class, c);
+            listener_.onUpdate(Competitor.class, c, c.getId());
             return RestUtils.ok();
         }
 

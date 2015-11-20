@@ -52,23 +52,6 @@ app.controller('CompetitionMainController',
 
         $scope.current = { class: null, group: null, competitor:null };
 
-        var ws = $websocket.$new({
-                url: 'ws://localhost:8080/notifications',
-                subprotocol: [ 'base64' ]
-            });
-/*
-        var ws = $websocket.$new(
-                'ws://localhost:8080/notifications',
-                [ 'base64' ]);
-*/
-        ws.$on('$open', function() {
-            console.log('on$open!');
-        });
-        
-        ws.$on('pong', function(data) {
-            console.log('onPong: ' + data);
-        });
-
         $http.get("rest/competition/" + $routeParams.competitionId)
             .success(function (data) {
                 $scope.competition = data;
@@ -239,21 +222,23 @@ app.controller('CompetitionListController', function ($scope, $http, $websocket,
     $scope.current = {};
     $scope.competitions = [];
 
-    var ws = $websocket.$new(
-        'ws://localhost:8800/notifications/?clientId=abc&contentType=application/json',
-        [ 'x-rcnp' ]);
+    var wsUrl = 
+            (window.location.protocol === 'https:' ? 'wss://' : 'ws://')
+            + window.location.host + '/notifications/' + Uuid.randomUUID();
+
+    var ws = $websocket.$new(wsUrl, [ 'x-rcnp' ]);
     ws.$on('$open', function(data) {
-        console.log('on$open: ' + data);
+        console.log('opened: ' + wsUrl);
     });
 
     ws.$on('$close', function(data) {
         console.log('onClose: ' + data);
     });
-    
+
     ws.$on('$message', function(msg) {
-        console.log('onMessage: ' + msg);
+        console.log('onMessage: ' + JSON.stringify(msg));
     });
-    
+
     ws.$on('$error', function(err) {
         console.log('onError: ' + err);
     })

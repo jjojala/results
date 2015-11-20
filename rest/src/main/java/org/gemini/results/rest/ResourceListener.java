@@ -16,8 +16,10 @@ public interface ResourceListener {
      * @param resultingResource the end result of the creation.
      *   The run-time type of {@code resultingResource} is always
      *   assignable to object of type {@code resourceType}.
+     * @param resourceId identifier of the {@code resultingResource}.
      */
-    void onCreate(final Class<?> resourceType, final Object resultingResource);
+    void onCreate(final Class<?> resourceType, final Object resultingResource,
+            final Object resourceId);
     
     /**
      * Invoked when a resource has been successfully updated.
@@ -26,8 +28,10 @@ public interface ResourceListener {
      * @param resultingResource the end result of the update. The run-time
      *   type of {@code resultingResource} is always assignable to object
      *   of type {@code resourceType}.
+     * @param resourceId identifier of the {@code resultingResource}.
      */
-    void onUpdate(final Class<?> resourceType, final Object resultingResource);
+    void onUpdate(final Class<?> resourceType, final Object resultingResource,
+            final Object resourceId);
     
     /**
      * Invoked when a resource has been successfully removed.
@@ -36,6 +40,8 @@ public interface ResourceListener {
      * @param removedResource the resource being removed. The run-time
      *   type of {@code removedResource} is always assignable to object
      *   of type {@code resourceType}.
+     * @param resourceId identifier of the {@code resultingResource}.
      */
-    void onRemove(final Class<?> resourceType, final Object removedResource);
+    void onRemove(final Class<?> resourceType, final Object removedResource,
+            final Object resourceId);
 }

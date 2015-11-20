@@ -118,7 +118,7 @@ public class GroupResource {
             DataUtils.create(em, id, group);
             trx.commit();
 
-            listener_.onCreate(Group.class, group);
+            listener_.onCreate(Group.class, group, id);
             return RestUtils.created(UriBuilder.fromUri(
                     ui.getRequestUri()).build());
         }
@@ -158,7 +158,7 @@ public class GroupResource {
 
             trx.commit();
 
-            listener_.onUpdate(Group.class, group);
+            listener_.onUpdate(Group.class, group, id);
             return RestUtils.ok();
         }
 
@@ -195,7 +195,7 @@ public class GroupResource {
 
             trx.commit();
 
-            listener_.onRemove(Group.class, group);
+            listener_.onRemove(Group.class, group, id);
             return Response.ok().build();
         }
 
@@ -250,7 +250,7 @@ public class GroupResource {
 
             trx.commit();
 
-            listener_.onUpdate(Group.class, group);
+            listener_.onUpdate(Group.class, group, id);
             return Response.ok().build();
         }
 
