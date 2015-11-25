@@ -111,6 +111,117 @@ app.controller('CompetitionMainController',
                 });
             },
             'REMOVED', 'org.gemini.results.model.Competition');
+            
+        Rcnp.register(function (g) {
+                $scope.$apply(function() {
+                    if (g.competitionId === $scope.competition.id) {
+                        $scope.groups.push(g);
+                    }
+                });
+            },
+            'CREATED', 'org.gemini.results.model.Group');
+
+        Rcnp.register(function (g) {
+                $scope.$apply(function() {
+                    if (g.competitionId === $scope.competition.id) {
+                        for (var i = 0; i < $scope.groups.length; i++) {
+                            if (g.id === $scope.groups[i].id) {
+                                $scope.groups[i] = g;
+                                break;
+                            }
+                        }
+                    }
+                });
+            },
+            'UPDATED', 'org.gemini.results.model.Group');
+
+        Rcnp.register(function (g) {
+                $scope.$apply(function() {
+                    if (g.competitionId === $scope.competition.id) {
+                        for (var i = 0; i < $scope.groups.length; i++) {
+                            if (g.id === $scope.groups[i].id) {
+                                $scope.groups.splice(i, 1);
+                                break;
+                            }
+                        }
+                    }
+                });
+            },
+            'REMOVED', 'org.gemini.results.model.Group');
+
+        Rcnp.register(function (cl) {
+                $scope.$apply(function() {
+                    if (cl.competitionId === $scope.competition.id) {
+                        $scope.classes.push(cl);
+                    }
+                });
+            },
+            'CREATED', 'org.gemini.results.model.Clazz');
+
+        Rcnp.register(function (cl) {
+                $scope.$apply(function() {
+                    if (cl.competitionId === $scope.competition.id) {
+                        for (var i = 0; i < $scope.classes.length; i++) {
+                            if (cl.id === $scope.classes[i].id) {
+                                $scope.classes[i] = cl;
+                                break;
+                            }
+                        }
+                    }
+                });
+            },
+            'UPDATED', 'org.gemini.results.model.Clazz');
+
+        Rcnp.register(function (cl) {
+                $scope.$apply(function() {
+                    if (cl.competitionId === $scope.competition.id) {
+                        for (var i = 0; i < $scope.classes.length; i++) {
+                            if (cl.id === $scope.classes[i].id) {
+                                $scope.classes.splice(i, 1);
+                                break;
+                            }
+                        }
+                    }
+                })
+            },
+            'REMOVED', 'org.gemini.results.model.Clazz');
+
+        Rcnp.register(function (co) {
+                $scope.$apply(function() {
+                    if (co.competitionId === $scope.competition.id) {
+                        $scope.competitors.push(co);
+                    }
+                });
+            },
+            'CREATED', 'org.gemini.results.model.Competitor');
+
+        Rcnp.register(function (co) {
+                $scope.$apply(function() {
+                    if (co.competitionId === $scope.competition.id) {
+                        for (var i = 0; i < $scope.competitions.length; i++) {
+                            if (co.id === $scope.competitors[i].id) {
+                                $scope.competitors[i] = co;
+                                break;
+                            }
+                        }
+                    }
+                });
+            },
+            'UPDATED', 'org.gemini.results.model.Competitor');
+
+        Rcnp.register(function (co) {
+                $scope.$apply(function() {
+                    if (co.competitionId === $scope.competition.id) {
+                        for (var i = 0; i < $scope.competitors.length; i++) {
+                            if (co.id === $scope.competitors[i].id) {
+                                $scope.competitors.splice(i, 1);
+                                break;
+                            }
+                        }
+                    }
+                })
+            },
+            'REMOVED', 'org.gemini.results.model.Competitor');
 
         $http.get("rest/competition/" + $routeParams.competitionId)
             .success(function (data) {
@@ -149,9 +260,7 @@ app.controller('CompetitionMainController',
             g.id = Uuid.randomUUID();
             $http.post("rest/competition/" + $scope.competition.id
                     + "/group/" + g.id, g)
-                .success(function() {
-                    $scope.groups.push(g);
-                })
+                .success(function() { $scope.current.group = null; })
                 .error(function(err, status) {
                     alert("Adding group failed: \nerr: " + err + "\nstatus: "
                             + status + "\nGroup: " + angular.toJson(g, true));
@@ -164,9 +273,7 @@ app.controller('CompetitionMainController',
 
             $http.post("rest/competition/" + $scope.competition.id
                     + "/class/" + c.id, c)
-                .success(function() {
-                    $scope.classes.push(c);
-                })
+                .success(function() { $scope.current.class = null; })
                 .error(function(err, status) {
                     alert("Adding class failed: \nerr: " + err + "\nstatus: "
                             + status + "\nClass: " + angular.toJson(c, true));
@@ -175,21 +282,21 @@ app.controller('CompetitionMainController',
 
         $scope.onCompetitorCreate = function(c) {
             c.id = Uuid.randomUUID();
-            alert('TODO: Create: ' + angular.toJson(c, true));
+
             $http.post("rest/competition/" + $scope.competition.id
-                    + "/competitor/" + c.id, c).success(function() {
-                $scope.competitors.push(c);
-            }).error(function (err, status) {
-                alert("Adding competitor failed: \nerr: " + err + "\nstatus: "
+                    + "/competitor/" + c.id, c)
+                .success(function() { $scope.current.competitor = null; })
+                .error(function (err, status) {
+                    alert("Adding competitor failed: \nerr: " + err + "\nstatus: "
                         + status + "\nCompetitor:"+ angular.toJson(c, true));
-            });
+                });
         };
 
         $scope.onGroupDestroy = function(g, i) {
             $http.delete("rest/competition/" + $scope.competition.id
                     + "/group/" + g.id)
                 .success(function () {
-                    $scope.groups.splice(i, 1);
+                    $scope.current.group = null;
                 }).error(function (err) {
                     alert("Deleting group failed: " + err.statusText);
                 });
@@ -198,9 +305,7 @@ app.controller('CompetitionMainController',
         $scope.onClassDestroy = function(c, i) {
             $http.delete("rest/competition/" + $scope.competition.id
                     + "/class/" + c.id)
-                .success(function () {
-                    $scope.classes.splice(i, 1);
-                }).error(function (err) {
+                .error(function (err) {
                     alert("Deleting class failed: " + err.statusText);
                 });
         }
@@ -208,9 +313,7 @@ app.controller('CompetitionMainController',
         $scope.onCompetitorDestroy = function(c, i) {
             $http.delete("rest/competition/" + $scope.competition.id
                     + "/competitor/" + c.id)
-                .success(function () {
-                    $scope.competitors.splice(i, 1);
-                }).error(function (err) {
+                .error(function (err) {
                     alert("Deleting competitor failed: " + err.statusText);
                 });
         }
@@ -219,6 +322,7 @@ app.controller('CompetitionMainController',
             c.clazzId = clz.id;
             $http.put("rest/competition/" + $scope.competition.id
                     + "/competitor/" + c.id, c)
+                .success(function() { $scope.current.competitor = null; })
                 .error(function(err, status) {
                     alert("Updating competitor failed: \nerr: " + err + "\nstatus: "
                         + status + "\nCompetitor: " + angular.toJson(c, true));
@@ -229,6 +333,7 @@ app.controller('CompetitionMainController',
             c.groupId = g.id;
             $http.put("rest/competition/" + $scope.competition.id
                     + "/class/" + c.id, c)
+                .success(function() { $scope.current.class = null; })
                 .error(function(err, status) {
                     alert("Updating class failed: \nerr: " + err + "\nstatus: "
                     + status + "\nClass: " + angular.toJson(c, true));
@@ -238,6 +343,7 @@ app.controller('CompetitionMainController',
         $scope.onGroupUpdate = function(g) {
             $http.put("rest/competition/" + $scope.competition.id
                     + "/group/" + g.id, g)
+                .success(function() { $scope.current.group = null; })
                 .error(function(err, status) {
                     alert("Updating group failed: \nerr: " + err + "\nstatus: "
                             + status + "\nGroup: " + angular.toJson(g, true));
