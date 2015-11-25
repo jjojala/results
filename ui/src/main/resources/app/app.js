@@ -198,7 +198,7 @@ app.controller('CompetitionMainController',
         Rcnp.register(function (co) {
                 $scope.$apply(function() {
                     if (co.competitionId === $scope.competition.id) {
-                        for (var i = 0; i < $scope.competitions.length; i++) {
+                        for (var i = 0; i < $scope.competitors.length; i++) {
                             if (co.id === $scope.competitors[i].id) {
                                 $scope.competitors[i] = co;
                                 break;
@@ -280,10 +280,11 @@ app.controller('CompetitionMainController',
                 });
         };
 
-        $scope.onCompetitorCreate = function(c) {
+        $scope.onCompetitorCreate = function(c, cl) {
             c.id = Uuid.randomUUID();
+            c.classId = cl.id;
 
-            $http.post("rest/competition/" + $scope.competition.id
+                $http.post("rest/competition/" + $scope.competition.id
                     + "/competitor/" + c.id, c)
                 .success(function() { $scope.current.competitor = null; })
                 .error(function (err, status) {
