@@ -46,6 +46,12 @@
                            title="Create new competition with this data.">
                             <i class="glyphicon glyphicon-plus"></i>
                         </a>
+                        <a href ng-show="current.id"
+                           ng-click="onSave(current); current = {}"
+                           data-toggle="tooltip" data-placement="left"
+                           title="Update the competition with this data.">
+                            <i class="glyphicon glyphicon-edit"></i>
+                        </a>
                     </td>
                 </tr>
                 <tr ng-repeat="c in competitions | filter:filter 
