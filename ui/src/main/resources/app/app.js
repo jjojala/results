@@ -92,12 +92,25 @@ app.controller('CompetitionMainController',
 
         $scope.current = { class: null, group: null, competitor:null };
 
-        Rcnp.register(function (data, entityId, event, entity) {
-            console.log('CompetitionController: received event: '
-                    + event + '\n\tentity: ' + entity
-                    + '\n\tentityId: ' + entityId
-                    + '\n\tdata:\n' + JSON.stringify(data));
-        });
+        Rcnp.register(function(c) {
+                $scope.$apply(function() {
+                    if (c.id === $scope.competition.id)
+                        $scope.competition = c;
+                });
+            },
+            'UPDATED', 'org.gemini.results.model.Competition');
+
+        Rcnp.register(function (c) {
+                $scope.$apply(function() {
+                    if (c.id === $scope.competition.id) {
+                        alert('This competition is unexpectedly removed! '
+                            + 'Please return back to competition list.');
+                        $scope.current = { class: null, group: null, competitor: null };
+                        $scope.competition = null;
+                    }
+                });
+            },
+            'REMOVED', 'org.gemini.results.model.Competition');
 
         $http.get("rest/competition/" + $routeParams.competitionId)
             .success(function (data) {
