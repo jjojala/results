@@ -69,7 +69,7 @@ app.service('Rcnp', function(Uuid, $websocket) {
         register: function(f, e, c) {
             handlers.push({ handler: f, event: e, class: c });
         }
-    }
+    };
 });
 
 app.directive('rs-typeahead', function() {
@@ -90,7 +90,32 @@ app.directive('rs-typeahead', function() {
 app.controller('CompetitionMainController',
     function($scope, $http, $routeParams, Uuid, Rcnp) {
 
-        $scope.current = { class: null, group: null, competitor:null };
+        $scope.current = { class: null, group: null, competitor: null };
+        $scope.competition = null;
+        $scope.groups = [];
+        $scope.classes = [];
+        $scope.competitors = [];
+
+        var getClassName = function(classes, id) {
+            if (classes) {
+                for (i = 0; i < classes.length; ++i) {
+                    if (classes[i].id === id)
+                        return classes[i].name;
+                }
+            }
+            return id;
+        };
+
+        var getClassId = function(classes, name) {
+            if (classes) {
+                for (var i = 0; classes.length; i++) {
+                    if (name.name === classes[i].name)
+                        return classes[i].id;
+                }
+            }
+            
+            console.log('Cannot determine class by name: ' + name);
+        }
 
         Rcnp.register(function(c) {
                 $scope.$apply(function() {
@@ -189,7 +214,10 @@ app.controller('CompetitionMainController',
         Rcnp.register(function (co) {
                 $scope.$apply(function() {
                     if (co.competitionId === $scope.competition.id) {
-                        $scope.competitors.push(co);
+                        $scope.competitors.push({
+                            _clazzName: getClassName($scope.classes, co.clazzId),
+                            _ref: co
+                        });
                     }
                 });
             },
@@ -199,8 +227,11 @@ app.controller('CompetitionMainController',
                 $scope.$apply(function() {
                     if (co.competitionId === $scope.competition.id) {
                         for (var i = 0; i < $scope.competitors.length; i++) {
-                            if (co.id === $scope.competitors[i].id) {
-                                $scope.competitors[i] = co;
+                            if (co.id === $scope.competitors[i]._ref.id) {
+                                $scope.competitors[i] = {
+                                    _clazzName: getClassName($scope.classes, co.clazzId),
+                                    _ref: co
+                                };
                                 break;
                             }
                         }
@@ -213,7 +244,7 @@ app.controller('CompetitionMainController',
                 $scope.$apply(function() {
                     if (co.competitionId === $scope.competition.id) {
                         for (var i = 0; i < $scope.competitors.length; i++) {
-                            if (co.id === $scope.competitors[i].id) {
+                            if (co.id === $scope.competitors[i]._ref.id) {
                                 $scope.competitors.splice(i, 1);
                                 break;
                             }
@@ -223,30 +254,41 @@ app.controller('CompetitionMainController',
             },
             'REMOVED', 'org.gemini.results.model.Competitor');
 
-        $http.get("rest/competition/" + $routeParams.competitionId)
+        var baseUrl = 'rest/competition/' + $routeParams.competitionId;
+        
+        $http.get(baseUrl)
             .success(function (data) {
                 $scope.competition = data;
-                $http.get("rest/competition/" + $scope.competition.id
-                        + "/competitor/")
-                    .success(function (data) {
-                        $scope.competitors = data;
-                    })
-                    .error(function (err, status) {
-                        alert(err + ' ' + status);
-                    });
-                $http.get("rest/competition/"
-                        + $scope.competition.id
-                        + "/group/")
+        
+                $http.get(baseUrl + "/group/")
                     .success(function (data) {
                         $scope.groups = data;
-                    })
-                    .error(function (err, status) {
-                        alert(err + ' ' + status);
-                    });
-                $http.get("rest/competition/" + $scope.competition.id
-                        + "/class/")
-                    .success(function (data) {
-                        $scope.classes = data;
+                
+                        $http.get(baseUrl + "/class/")
+                            .success(function (data) {
+                                $scope.classes = data;
+
+                                $http.get(baseUrl + "/competitor/")
+                                    .success(function (data) {
+                                        var _competitors = [];
+                                        for (var i = 0; i < data.length; i++)
+                                            _competitors.push({
+                                                _clazzName: getClassName(
+                                                        $scope.classes, data[i].clazzId),
+                                                _ref: data[i]
+                                            });
+
+                                        $scope.competitors = _competitors;
+                                    })
+                                    .error(function (err, status) {
+                                        alert(err + ' ' + status);
+                                    });
+
+                            })
+                            .error(function (err, status) {
+                                alert(err + ' ' + status);
+                            });
+                
                     })
                     .error(function (err, status) {
                         alert(err + ' ' + status);
@@ -258,11 +300,28 @@ app.controller('CompetitionMainController',
 
         $scope.onGroupCreate = function(g) {
             g.id = Uuid.randomUUID();
-            $http.post("rest/competition/" + $scope.competition.id
-                    + "/group/" + g.id, g)
+            $http.post(baseUrl + "/group/" + g.id, g)
                 .success(function() { $scope.current.group = null; })
                 .error(function(err, status) {
                     alert("Adding group failed: \nerr: " + err + "\nstatus: "
+                            + status + "\nGroup: " + angular.toJson(g, true));
+                });
+        };        
+        
+        $scope.onGroupDestroy = function(g, i) {
+            $http.delete(baseUrl +  "/group/" + g.id)
+                .success(function () {
+                    $scope.current.group = null;
+                }).error(function (err) {
+                    alert("Deleting group failed: " + err.statusText);
+                });
+        }
+
+        $scope.onGroupUpdate = function(g) {
+            $http.put(baseUrl + "/group/" + g.id, g)
+                .success(function() { $scope.current.group = null; })
+                .error(function(err, status) {
+                    alert("Updating group failed: \nerr: " + err + "\nstatus: "
                             + status + "\nGroup: " + angular.toJson(g, true));
                 });
         };        
@@ -271,8 +330,7 @@ app.controller('CompetitionMainController',
             c.id = Uuid.randomUUID();
             c.groupId = g.id;
 
-            $http.post("rest/competition/" + $scope.competition.id
-                    + "/class/" + c.id, c)
+            $http.post(baseUrl + "/class/" + c.id, c)
                 .success(function() { $scope.current.class = null; })
                 .error(function(err, status) {
                     alert("Adding class failed: \nerr: " + err + "\nstatus: "
@@ -280,60 +338,16 @@ app.controller('CompetitionMainController',
                 });
         };
 
-        $scope.onCompetitorCreate = function(c, cl) {
-            c.id = Uuid.randomUUID();
-            c.classId = cl.id;
-
-                $http.post("rest/competition/" + $scope.competition.id
-                    + "/competitor/" + c.id, c)
-                .success(function() { $scope.current.competitor = null; })
-                .error(function (err, status) {
-                    alert("Adding competitor failed: \nerr: " + err + "\nstatus: "
-                        + status + "\nCompetitor:"+ angular.toJson(c, true));
-                });
-        };
-
-        $scope.onGroupDestroy = function(g, i) {
-            $http.delete("rest/competition/" + $scope.competition.id
-                    + "/group/" + g.id)
-                .success(function () {
-                    $scope.current.group = null;
-                }).error(function (err) {
-                    alert("Deleting group failed: " + err.statusText);
-                });
-        }
-
         $scope.onClassDestroy = function(c, i) {
-            $http.delete("rest/competition/" + $scope.competition.id
-                    + "/class/" + c.id)
+            $http.delete(baseUrl + "/class/" + c.id)
                 .error(function (err) {
                     alert("Deleting class failed: " + err.statusText);
                 });
         }
 
-        $scope.onCompetitorDestroy = function(c, i) {
-            $http.delete("rest/competition/" + $scope.competition.id
-                    + "/competitor/" + c.id)
-                .error(function (err) {
-                    alert("Deleting competitor failed: " + err.statusText);
-                });
-        }
-
-        $scope.onCompetitorUpdate = function(c, clz) {
-            c.clazzId = clz.id;
-            $http.put("rest/competition/" + $scope.competition.id
-                    + "/competitor/" + c.id, c)
-                .success(function() { $scope.current.competitor = null; })
-                .error(function(err, status) {
-                    alert("Updating competitor failed: \nerr: " + err + "\nstatus: "
-                        + status + "\nCompetitor: " + angular.toJson(c, true));
-                });
-        };
-
         $scope.onClassUpdate = function(c, g) {
             c.groupId = g.id;
-            $http.put("rest/competition/" + $scope.competition.id
-                    + "/class/" + c.id, c)
+            $http.put(baseUrl + "/class/" + c.id, c)
                 .success(function() { $scope.current.class = null; })
                 .error(function(err, status) {
                     alert("Updating class failed: \nerr: " + err + "\nstatus: "
@@ -341,15 +355,36 @@ app.controller('CompetitionMainController',
                 });
         };
 
-        $scope.onGroupUpdate = function(g) {
-            $http.put("rest/competition/" + $scope.competition.id
-                    + "/group/" + g.id, g)
-                .success(function() { $scope.current.group = null; })
-                .error(function(err, status) {
-                    alert("Updating group failed: \nerr: " + err + "\nstatus: "
-                            + status + "\nGroup: " + angular.toJson(g, true));
+        $scope.onCompetitorCreate = function(c) {
+            c._ref.id = Uuid.randomUUID();
+            c._ref.clazzId = getClassId($scope.classes, c._clazzName);
+
+            $http.post(baseUrl + "/competitor/" + c._ref.id, c._ref)
+                .success(function() { $scope.current.competitor = null; })
+                .error(function (err, status) {
+                    alert("Adding competitor failed: \nerr: " + err + "\nstatus: "
+                        + status + "\nCompetitor:"+ angular.toJson(c, true));
                 });
-        };        
+        };
+
+        $scope.onCompetitorDestroy = function(c) {
+            $http.delete(baseUrl + "/competitor/" + c._ref.id)
+                .error(function (err) {
+                    alert("Deleting competitor failed: " + err.statusText);
+                });
+        }
+
+        $scope.onCompetitorUpdate = function(c) {
+            console.log('c._clazzName: ' + c._clazzName);
+            c._ref.clazzId = getClassId($scope.classes, c._clazzName);
+
+            $http.put(baseUrl + "/competitor/" + c._ref.id, c._ref)
+                .success(function() { $scope.current.competitor = null; })
+                .error(function(err, status) {
+                    alert("Updating competitor failed: \nerr: " + err + "\nstatus: "
+                        + status + "\nCompetitor: " + angular.toJson(c._ref, true));
+                });
+        };
 
         $scope.onCompetitorSelect = function(c) {
             $scope.current.competitor = c;
@@ -361,16 +396,6 @@ app.controller('CompetitionMainController',
 
         $scope.onGroupSelect = function(g) {
             $scope.current.group = g;
-        };
-
-        $scope.getClassName = function(classes, id) {
-            if (classes) {
-                for (i = 0; i < classes.length; ++i) {
-                    if (classes[i].id === id)
-                        return classes[i].name;
-                }
-            }
-            return id;
         };
 
         $scope.getGroupName = function(groups, id) {

@@ -58,7 +58,7 @@
                     <tr>
                         <td>
                             <input type="text"
-                                   ng-model="current.competitorClass"
+                                   ng-model="current.competitor._clazzName"
                                    typehead-min-length=0
                                    typeahead="clz as (clz.name) for clz in classes  | filter:$viewValue"
                                    placeholder="<competitor's class>" bs-typeahead/>
@@ -66,28 +66,27 @@
                         <td>
                             <input type="text"
                                    placeholder="<competitor's number>"
-                                   ng-model='current.competitor.number'/>
+                                   ng-model='current.competitor._ref.number'/>
                         </td>
                         <td>
                             <input type="text"
                                    placeholder="<competitor's start time>"
-                                   ng-model='current.competitor.offset'/>
+                                   ng-model='current.competitor._ref.offset'/>
                         </td>
 
                         <td>
                             <input type="text"
                                    placeholder="<competitor's name>"
-                                   ng-model='current.competitor.name'/>
+                                   ng-model='current.competitor._ref.name'/>
                         </td>
                         <td>
-                            <a href ng-click="onCompetitorCreate(current.competitor, current.competitorClass); 
-                                            current.competitor = {}"
+                            <a href ng-click="onCompetitorCreate(current.competitor)"
                                     data-toggle="tooltip" data-placement="left"
                                     title="Create new competitor with this data.">
                                 <i class="glyphicon glyphicon-plus"></i>
                             </a>
-                            <a href ng-show="current.competitor['id']"
-                                    ng-click="onCompetitorUpdate(current.competitor, current.competitorClass)"
+                            <a href ng-show="current.competitor._ref['id']"
+                                    ng-click="onCompetitorUpdate(current.competitor)"
                                     data-toggle="tooltip" data-placement="left"
                                     title="Update the competitor with this data.">
                                 <i class="glyphicon glyphicon-edit"></i>
@@ -97,10 +96,11 @@
                     <tr ng-repeat="c in competitors | filter:competitor.filter
                             | orderBy:competitor.sortCriteria"
                         ng-click="onCompetitorSelect(c)">
-                        <td>{{getClassName(classes, c.clazzId)}}</td>
-                        <td>{{c.number}}</td>
-                        <td>{{c.offset}}</td>
-                        <td>{{c.name}}</td>
+
+                        <td>{{c._clazzName}}</td>
+                        <td>{{c._ref.number}}</td>
+                        <td>{{c._ref.offset}}</td>
+                        <td>{{c._ref.name}}</td>
                         <td>
                             <a href ng-click="onCompetitorDestroy(c, $index)"
                                     data-togglse="tooltip" data-placement="left"
