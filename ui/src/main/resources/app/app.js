@@ -96,14 +96,24 @@ app.controller('CompetitionMainController',
         $scope.classes = [];
         $scope.competitors = [];
 
+        var getGroupById = function(groupId) {
+            for (var i = 0; i < $scope.groups.length; i++) {
+                if ($scope.groups[i].id === groupId)
+                    return $scope.groups[i];
+            }
+
+            console.log('No group found with id: ' + groupId);
+            return null;
+        }
+
         var getClassById = function(classes, id) {
             if (classes) {
                 for (var i = 0; i < classes.length; i++) {
-                    if (classes[i].id === id)
-                        return classes[i];
+                    if (classes[i]._ref.id === id)
+                        return classes[i]._ref;
                 }
             }
-            console.log('null')
+
             return null;
         };
 
@@ -167,18 +177,25 @@ app.controller('CompetitionMainController',
         Rcnp.register(function (cl) {
                 $scope.$apply(function() {
                     if (cl.competitionId === $scope.competition.id) {
-                        $scope.classes.push(cl);
+                        $scope.classes.push({
+                            _group: getGroupById(cl.groupId),
+                            _ref: cl
+                        });
                     }
                 });
             },
             'CREATED', 'org.gemini.results.model.Clazz');
 
         Rcnp.register(function (cl) {
+                console.log('UPDATED Clazz: ' + angular.toJson(cl, true));
                 $scope.$apply(function() {
                     if (cl.competitionId === $scope.competition.id) {
                         for (var i = 0; i < $scope.classes.length; i++) {
                             if (cl.id === $scope.classes[i].id) {
-                                $scope.classes[i] = cl;
+                                $scope.classes[i] = {
+                                    _group: getGroupById(cl.groupId),
+                                    _ref: cl
+                                };
                                 break;
                             }
                         }
@@ -188,6 +205,7 @@ app.controller('CompetitionMainController',
             'UPDATED', 'org.gemini.results.model.Clazz');
 
         Rcnp.register(function (cl) {
+                console.log('REMOVED Clazz: ' + angular.toJson(cl, true));
                 $scope.$apply(function() {
                     if (cl.competitionId === $scope.competition.id) {
                         for (var i = 0; i < $scope.classes.length; i++) {
@@ -256,7 +274,13 @@ app.controller('CompetitionMainController',
                 
                         $http.get(baseUrl + "/class/")
                             .success(function (data) {
-                                $scope.classes = data;
+                                var _classes = [];
+                                for (var i = 0; i < data.length; i++)
+                                    _classes.push({
+                                        _group: getGroupById(data[i].groupId),
+                                        _ref: data[i]
+                                    });
+                                $scope.classes = _classes;
 
                                 $http.get(baseUrl + "/competitor/")
                                     .success(function (data) {
@@ -316,11 +340,11 @@ app.controller('CompetitionMainController',
                 });
         };        
 
-        $scope.onClassCreate = function(c, g) {
-            c.id = Uuid.randomUUID();
-            c.groupId = g.id;
+        $scope.onClassCreate = function(c) {
+            c._ref.id = Uuid.randomUUID();
+            c._ref.groupId = c._group.id;
 
-            $http.post(baseUrl + "/class/" + c.id, c)
+            $http.post(baseUrl + "/class/" + c._ref.id, c._ref)
                 .success(function() { $scope.current.class = null; })
                 .error(function(err, status) {
                     alert("Adding class failed: \nerr: " + err + "\nstatus: "
@@ -328,16 +352,16 @@ app.controller('CompetitionMainController',
                 });
         };
 
-        $scope.onClassDestroy = function(c, i) {
-            $http.delete(baseUrl + "/class/" + c.id)
+        $scope.onClassDestroy = function(c) {
+            $http.delete(baseUrl + "/class/" + c._ref.id)
                 .error(function (err) {
                     alert("Deleting class failed: " + err.statusText);
                 });
         }
 
-        $scope.onClassUpdate = function(c, g) {
-            c.groupId = g.id;
-            $http.put(baseUrl + "/class/" + c.id, c)
+        $scope.onClassUpdate = function(c) {
+            c._ref.groupId = c._group.id;
+            $http.put(baseUrl + "/class/" + c._ref.id, c._ref)
                 .success(function() { $scope.current.class = null; })
                 .error(function(err, status) {
                     alert("Updating class failed: \nerr: " + err + "\nstatus: "
