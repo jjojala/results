@@ -96,26 +96,16 @@ app.controller('CompetitionMainController',
         $scope.classes = [];
         $scope.competitors = [];
 
-        var getClassName = function(classes, id) {
+        var getClassById = function(classes, id) {
             if (classes) {
-                for (i = 0; i < classes.length; ++i) {
+                for (var i = 0; i < classes.length; i++) {
                     if (classes[i].id === id)
-                        return classes[i].name;
+                        return classes[i];
                 }
             }
-            return id;
+            console.log('null')
+            return null;
         };
-
-        var getClassId = function(classes, name) {
-            if (classes) {
-                for (var i = 0; classes.length; i++) {
-                    if (name.name === classes[i].name)
-                        return classes[i].id;
-                }
-            }
-            
-            console.log('Cannot determine class by name: ' + name);
-        }
 
         Rcnp.register(function(c) {
                 $scope.$apply(function() {
@@ -215,7 +205,7 @@ app.controller('CompetitionMainController',
                 $scope.$apply(function() {
                     if (co.competitionId === $scope.competition.id) {
                         $scope.competitors.push({
-                            _clazzName: getClassName($scope.classes, co.clazzId),
+                            _clazz: getClassById($scope.classes, co.classId),
                             _ref: co
                         });
                     }
@@ -229,7 +219,7 @@ app.controller('CompetitionMainController',
                         for (var i = 0; i < $scope.competitors.length; i++) {
                             if (co.id === $scope.competitors[i]._ref.id) {
                                 $scope.competitors[i] = {
-                                    _clazzName: getClassName($scope.classes, co.clazzId),
+                                    _clazz: getClassById($scope.classes, co.classId),
                                     _ref: co
                                 };
                                 break;
@@ -273,7 +263,7 @@ app.controller('CompetitionMainController',
                                         var _competitors = [];
                                         for (var i = 0; i < data.length; i++)
                                             _competitors.push({
-                                                _clazzName: getClassName(
+                                                _clazz: getClassById(
                                                         $scope.classes, data[i].clazzId),
                                                 _ref: data[i]
                                             });
@@ -357,7 +347,7 @@ app.controller('CompetitionMainController',
 
         $scope.onCompetitorCreate = function(c) {
             c._ref.id = Uuid.randomUUID();
-            c._ref.clazzId = getClassId($scope.classes, c._clazzName);
+            c._ref.clazzId = c._clazz.id;
 
             $http.post(baseUrl + "/competitor/" + c._ref.id, c._ref)
                 .success(function() { $scope.current.competitor = null; })
@@ -375,8 +365,7 @@ app.controller('CompetitionMainController',
         }
 
         $scope.onCompetitorUpdate = function(c) {
-            console.log('c._clazzName: ' + c._clazzName);
-            c._ref.clazzId = getClassId($scope.classes, c._clazzName);
+            c._ref.clazzId = c._clazz.id;
 
             $http.put(baseUrl + "/competitor/" + c._ref.id, c._ref)
                 .success(function() { $scope.current.competitor = null; })

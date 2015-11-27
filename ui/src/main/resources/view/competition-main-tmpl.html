@@ -58,7 +58,7 @@
                     <tr>
                         <td>
                             <input type="text"
-                                   ng-model="current.competitor._clazzName"
+                                   ng-model="current.competitor._clazz"
                                    typehead-min-length=0
                                    typeahead="clz as (clz.name) for clz in classes  | filter:$viewValue"
                                    placeholder="<competitor's class>" bs-typeahead/>
@@ -97,7 +97,7 @@
                             | orderBy:competitor.sortCriteria"
                         ng-click="onCompetitorSelect(c)">
 
-                        <td>{{c._clazzName}}</td>
+                        <td>{{c._clazz.name}}</td>
                         <td>{{c._ref.number}}</td>
                         <td>{{c._ref.offset}}</td>
                         <td>{{c._ref.name}}</td>
