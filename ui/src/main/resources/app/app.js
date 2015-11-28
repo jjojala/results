@@ -106,17 +106,15 @@ app.controller('CompetitionMainController',
             return null;
         }
 
-        var getClassById = function(classes, id) {
-            if (classes) {
-                for (var i = 0; i < classes.length; i++) {
-                    if (classes[i]._ref.id === id)
-                        return classes[i]._ref;
+        var getClassById = function(classId) {
+            for (var i = 0; i < $scope.classes.length; i++) {
+                    if ($scope.classes[i]._ref.id === classId)
+                        return $scope.classes[i]._ref;
                 }
-            }
 
             return null;
         };
-
+        
         Rcnp.register(function(c) {
                 $scope.$apply(function() {
                     if (c.id === $scope.competition.id)
@@ -223,7 +221,7 @@ app.controller('CompetitionMainController',
                 $scope.$apply(function() {
                     if (co.competitionId === $scope.competition.id) {
                         $scope.competitors.push({
-                            _clazz: getClassById($scope.classes, co.classId),
+                            _clazz: getClassById(co.classId),
                             _ref: co
                         });
                     }
@@ -237,7 +235,7 @@ app.controller('CompetitionMainController',
                         for (var i = 0; i < $scope.competitors.length; i++) {
                             if (co.id === $scope.competitors[i]._ref.id) {
                                 $scope.competitors[i] = {
-                                    _clazz: getClassById($scope.classes, co.classId),
+                                    _clazz: getClassById(co.classId),
                                     _ref: co
                                 };
                                 break;
@@ -287,8 +285,7 @@ app.controller('CompetitionMainController',
                                         var _competitors = [];
                                         for (var i = 0; i < data.length; i++)
                                             _competitors.push({
-                                                _clazz: getClassById(
-                                                        $scope.classes, data[i].clazzId),
+                                                _clazz: getClassById(data[i].clazzId),
                                                 _ref: data[i]
                                             });
 
