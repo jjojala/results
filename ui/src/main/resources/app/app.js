@@ -55,7 +55,7 @@ app.service('Rcnp', function(Uuid, $websocket) {
             
             for (var i = 0; i < handlers.length; i++) {
                 if ((!handlers[i].event || handlers[i].event === parts[0]) &&
-                        (!handlers[i].class || handlers[i].class === parts[1]))
+                        (!handlers[i].entityClass || handlers[i].entityClass === parts[1]))
                     handlers[i].handler(msg.data, parts[2], parts[0], parts[1]);
             }
         }
@@ -67,7 +67,7 @@ app.service('Rcnp', function(Uuid, $websocket) {
 
     return {
         register: function(f, e, c) {
-            handlers.push({ handler: f, event: e, class: c });
+            handlers.push({ handler: f, event: e, entityClass: c });
         }
     };
 });
@@ -90,10 +90,10 @@ app.directive('rs-typeahead', function() {
 app.controller('CompetitionMainController',
     function($scope, $http, $routeParams, Uuid, Rcnp) {
 
-        $scope.current = { class: null, group: null, competitor: null };
+        $scope.current = { clazz: null, group: null, competitor: null };
         $scope.competition = null;
         $scope.groups = [];
-        $scope.classes = [];
+        $scope.clazzes = [];
         $scope.competitors = [];
 
         var getGroupById = function(groupId) {
@@ -102,18 +102,18 @@ app.controller('CompetitionMainController',
                     return $scope.groups[i];
             }
 
-            console.log('No group found with id: ' + groupId);
             return null;
         }
 
-        var getClassById = function(classId) {
-            for (var i = 0; i < $scope.classes.length; i++) {
-                    if ($scope.classes[i]._ref.id === classId)
-                        return $scope.classes[i]._ref;
+        var getClazzById = function(clazzId) {
+            for (var i = 0; i < $scope.clazzes.length; i++) {
+                    if ($scope.clazzes[i]._ref.id === clazzId)
+                        return $scope.clazzes[i]._ref;
                 }
 
             return null;
         };
+
         
         Rcnp.register(function(c) {
                 $scope.$apply(function() {
@@ -128,8 +128,11 @@ app.controller('CompetitionMainController',
                     if (c.id === $scope.competition.id) {
                         alert('This competition is unexpectedly removed! '
                             + 'Please return back to competition list.');
-                        $scope.current = { class: null, group: null, competitor: null };
+                        $scope.current = { clazz: null, group: null, competitor: null };
                         $scope.competition = null;
+                        $scope.groups = [];
+                        $scope.clazzes = [];
+                        $scope.competitors = [];
                     }
                 });
             },
@@ -167,6 +170,11 @@ app.controller('CompetitionMainController',
                                 break;
                             }
                         }
+
+                        for (var i = 0; i < $scope.clazzes.length; i++) {
+                            if (g.id === $scope.clazzes[i]._group.id)
+                                $scope.clazzes[i]._group = null;
+                        }
                     }
                 });
             },
@@ -175,7 +183,7 @@ app.controller('CompetitionMainController',
         Rcnp.register(function (cl) {
                 $scope.$apply(function() {
                     if (cl.competitionId === $scope.competition.id) {
-                        $scope.classes.push({
+                        $scope.clazzes.push({
                             _group: getGroupById(cl.groupId),
                             _ref: cl
                         });
@@ -185,12 +193,11 @@ app.controller('CompetitionMainController',
             'CREATED', 'org.gemini.results.model.Clazz');
 
         Rcnp.register(function (cl) {
-                console.log('UPDATED Clazz: ' + angular.toJson(cl, true));
                 $scope.$apply(function() {
                     if (cl.competitionId === $scope.competition.id) {
-                        for (var i = 0; i < $scope.classes.length; i++) {
-                            if (cl.id === $scope.classes[i].id) {
-                                $scope.classes[i] = {
+                        for (var i = 0; i < $scope.clazzes.length; i++) {
+                            if (cl.id === $scope.clazzes[i]._ref.id) {
+                                $scope.clazzes[i] = {
                                     _group: getGroupById(cl.groupId),
                                     _ref: cl
                                 };
@@ -203,14 +210,19 @@ app.controller('CompetitionMainController',
             'UPDATED', 'org.gemini.results.model.Clazz');
 
         Rcnp.register(function (cl) {
-                console.log('REMOVED Clazz: ' + angular.toJson(cl, true));
                 $scope.$apply(function() {
                     if (cl.competitionId === $scope.competition.id) {
-                        for (var i = 0; i < $scope.classes.length; i++) {
-                            if (cl.id === $scope.classes[i].id) {
-                                $scope.classes.splice(i, 1);
+                        for (var i = 0; i < $scope.clazzes.length; i++) {
+                            if (cl.id === $scope.clazzes[i]._ref.id) {
+                                $scope.clazzes.splice(i, 1);
                                 break;
                             }
+                        }
+
+                        for (var i = 0; i < $scope.competitors.length; i++) {
+                            if ($scope.competitors[i]._clazz &&
+                                    cl.id === $scope.competitors[i]._clazz.id)
+                                $scope.competitors[i]._clazz = null;
                         }
                     }
                 })
@@ -221,7 +233,7 @@ app.controller('CompetitionMainController',
                 $scope.$apply(function() {
                     if (co.competitionId === $scope.competition.id) {
                         $scope.competitors.push({
-                            _clazz: getClassById(co.classId),
+                            _clazz: getClazzById(co.clazzId),
                             _ref: co
                         });
                     }
@@ -235,7 +247,7 @@ app.controller('CompetitionMainController',
                         for (var i = 0; i < $scope.competitors.length; i++) {
                             if (co.id === $scope.competitors[i]._ref.id) {
                                 $scope.competitors[i] = {
-                                    _clazz: getClassById(co.classId),
+                                    _clazz: getClazzById(co.clazzId),
                                     _ref: co
                                 };
                                 break;
@@ -272,20 +284,20 @@ app.controller('CompetitionMainController',
                 
                         $http.get(baseUrl + "/class/")
                             .success(function (data) {
-                                var _classes = [];
+                                var _clazzes = [];
                                 for (var i = 0; i < data.length; i++)
-                                    _classes.push({
+                                    _clazzes.push({
                                         _group: getGroupById(data[i].groupId),
                                         _ref: data[i]
                                     });
-                                $scope.classes = _classes;
+                                $scope.clazzes = _clazzes;
 
                                 $http.get(baseUrl + "/competitor/")
                                     .success(function (data) {
                                         var _competitors = [];
                                         for (var i = 0; i < data.length; i++)
                                             _competitors.push({
-                                                _clazz: getClassById(data[i].clazzId),
+                                                _clazz: getClazzById(data[i].clazzId),
                                                 _ref: data[i]
                                             });
 
@@ -337,29 +349,29 @@ app.controller('CompetitionMainController',
                 });
         };        
 
-        $scope.onClassCreate = function(c) {
+        $scope.onClazzCreate = function(c) {
             c._ref.id = Uuid.randomUUID();
             c._ref.groupId = c._group.id;
 
             $http.post(baseUrl + "/class/" + c._ref.id, c._ref)
-                .success(function() { $scope.current.class = null; })
+                .success(function() { $scope.current.clazz = null; })
                 .error(function(err, status) {
                     alert("Adding class failed: \nerr: " + err + "\nstatus: "
                             + status + "\nClass: " + angular.toJson(c, true));
                 });
         };
 
-        $scope.onClassDestroy = function(c) {
+        $scope.onClazzDestroy = function(c) {
             $http.delete(baseUrl + "/class/" + c._ref.id)
                 .error(function (err) {
                     alert("Deleting class failed: " + err.statusText);
                 });
         }
 
-        $scope.onClassUpdate = function(c) {
+        $scope.onClazzUpdate = function(c) {
             c._ref.groupId = c._group.id;
             $http.put(baseUrl + "/class/" + c._ref.id, c._ref)
-                .success(function() { $scope.current.class = null; })
+                .success(function() { $scope.current.clazz = null; })
                 .error(function(err, status) {
                     alert("Updating class failed: \nerr: " + err + "\nstatus: "
                     + status + "\nClass: " + angular.toJson(c, true));
@@ -397,15 +409,21 @@ app.controller('CompetitionMainController',
         };
 
         $scope.onCompetitorSelect = function(c) {
-            $scope.current.competitor = c;
+            $scope.current.competitor = {
+                _clazz: c._clazz,
+                _ref: JSON.parse(JSON.stringify(c._ref))
+            };
         };
 
-        $scope.onClassSelect = function(c) {
-            $scope.current.class = c;
+        $scope.onClazzSelect = function(c) {
+            $scope.current.clazz = {
+                _group: c._group,
+                _ref: JSON.parse(JSON.stringify(c._ref))
+            };
         };
 
         $scope.onGroupSelect = function(g) {
-            $scope.current.group = g;
+            $scope.current.group = JSON.parse(JSON.stringify(g));
         };
 
         $scope.getGroupName = function(groups, id) {

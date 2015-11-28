@@ -144,9 +144,9 @@ public class CompetitorResource {
                     em, Competition.class, competitionId_) == null)
                 return RestUtils.notFound(Competition.class, competitionId_);
 
-            if (competitor.getClassId() != null && DataUtils.findWithLock(
-                    em, Clazz.class, competitor.getClassId()) == null)
-                return RestUtils.notFound(Clazz.class, competitor.getClassId());
+            if (competitor.getClazzId() != null && DataUtils.findWithLock(
+                    em, Clazz.class, competitor.getClazzId()) == null)
+                return RestUtils.notFound(Clazz.class, competitor.getClazzId());
 
             competitor.setId(id);
             competitor.setCompetitionId(competitionId_);
@@ -185,9 +185,9 @@ public class CompetitorResource {
                     em, Competition.class, competitionId_) == null)
                 return RestUtils.notFound(Competition.class, competitionId_);
 
-            if (competitor.getClassId() != null && DataUtils.findWithLock(
-                    em, Clazz.class, competitor.getClassId()) == null)
-                return RestUtils.notFound(Clazz.class, competitor.getClassId());
+            if (competitor.getClazzId() != null && DataUtils.findWithLock(
+                    em, Clazz.class, competitor.getClazzId()) == null)
+                return RestUtils.notFound(Clazz.class, competitor.getClazzId());
 
             competitor.setId(id);
             competitor.setCompetitionId(competitionId_);

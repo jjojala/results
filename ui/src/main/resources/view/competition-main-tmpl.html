@@ -60,7 +60,7 @@
                             <input type="text"
                                    ng-model="current.competitor._clazz"
                                    typehead-min-length=0
-                                   typeahead="clz._ref as (clz._ref.name) for clz in classes  | filter:$viewValue"
+                                   typeahead="clz._ref as (clz._ref.name) for clz in clazzes  | filter:$viewValue"
                                    placeholder="<competitor's class>" bs-typeahead/>
                         </td>
                         <td>
@@ -115,10 +115,10 @@
 
         <div ng-show="option == 2">
             <div>
-                Search: <input ng-model="class.filter">
+                Search: <input ng-model="clazz.filter">
 
                 Sort by:
-                <select ng-model="class.sortCriteria">
+                <select ng-model="clazz.sortCriteria">
                     <option value="name">Name</option>
                     <option value="offset">Offset</option>
                     <option value="group">Group</option>
@@ -139,28 +139,28 @@
                         <td>
                             <input type='text'
                                    placeholder="<class name>"
-                                   ng-model="current.class._ref.name"/>
+                                   ng-model="current.clazz._ref.name"/>
                         </td>
                         <td>
                             <input type="text"
                                    placeholder="<class offset>"
-                                   ng-model='current.class._ref.offset'/>
+                                   ng-model='current.clazz._ref.offset'/>
                         </td>
                         <td>
                             <input type="text"
-                                   ng-model="current._group"
+                                   ng-model="current.clazz._group"
                                    typehead-min-length=0
                                    typeahead="g as (g.name) for g in groups  | filter:$viewValue"
                                    placeholder="<class's group>" bs-typeahead/>
                         </td>
                         <td>
-                            <a href ng-click="onClassCreate(current.class)"
+                            <a href ng-click="onClazzCreate(current.clazz)"
                                     data-toggle="tooltip" data-placement="left"
                                     title="Create new competitor with this data.">
                                 <i class="glyphicon glyphicon-plus"></i>
                             </a>
-                            <a href ng-show="current.class['id']"
-                                    ng-click="onClassUpdate(current.class)"
+                            <a href ng-show="current.clazz._ref['id']"
+                                    ng-click="onClazzUpdate(current.clazz)"
                                     data-toggle="tooltip" data-placement="left"
                                     title="Update the class with this data.">
                                 <i class="glyphicon glyphicon-edit"></i>
@@ -168,14 +168,14 @@
                         </td>
                     </tr>
 
-                    <tr ng-repeat="c in classes | filter:class.filter
-                            | orderBy:class.sortCriteria"
-                        ng-click="onClassSelect(c)">
+                    <tr ng-repeat="c in clazzes | filter:clazz.filter
+                            | orderBy:clazz.sortCriteria"
+                        ng-click="onClazzSelect(c)">
                         <td>{{c._ref.name}}</td>
                         <td>{{c._ref.offset}}</td>
                         <td>{{c._group.name}}</td>
                         <td>
-                            <a href ng-click="onClassDestroy(c)"
+                            <a href ng-click="onClazzDestroy(c)"
                                     data-togglse="tooltip" data-placement="left"
                                     title="Permanently remove the class.">
                                 <i class="glyphicon glyphicon-remove-sign"></i>

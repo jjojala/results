@@ -74,11 +74,11 @@ public class Competitor {
         return this.name;
     }
 
-    public void setClassId(final String clazzId) {
+    public void setClazzId(final String clazzId) {
         this.clazzId = clazzId;
     }
 
-    public String getClassId() {
+    public String getClazzId() {
         return this.clazzId;
     }
 

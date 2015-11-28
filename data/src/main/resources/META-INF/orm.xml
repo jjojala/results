@@ -116,7 +116,7 @@
         <named-query name="Competitor.listByClassId">
             <query>
                 SELECT c FROM Competitor c
-                    WHERE competitionId=?1 AND classId=?2 ORDER BY number
+                    WHERE competitionId=?1 AND clazzId=?2 ORDER BY number
             </query>
         </named-query>
 
@@ -135,9 +135,9 @@
                         FOREIGN KEY REFERENCES PUBLIC.A_COMPETITION(id)
                         ON DELETE CASCADE"/>
             </basic>
-            <basic name="classId">
+            <basic name="clazzId">
                 <column column-definition="
-                    VARCHAR(255) CONSTRAINT classId_fk
+                    VARCHAR(255) CONSTRAINT clazzId_fk
                         FOREIGN KEY REFERENCES PUBLIC.C_CLASS(id)
                         ON DELETE SET NULL"/>
             </basic>
