@@ -429,7 +429,7 @@ app.controller('CompetitionMainController',
 
         $scope.debug = function(what) {
             console.log('DEBUG: ' + angular.toJson(what, true));
-        };
+        };        
     }
 );
 
