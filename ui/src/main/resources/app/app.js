@@ -413,6 +413,7 @@ app.controller('CompetitionMainController',
                 _clazz: c._clazz,
                 _ref: JSON.parse(JSON.stringify(c._ref))
             };
+            console.log('onCompetitorSelect: ' + angular.toJson($scope.current.competitor));
         };
 
         $scope.onClazzSelect = function(c) {
