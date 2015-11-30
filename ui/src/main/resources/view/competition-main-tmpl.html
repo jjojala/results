@@ -60,15 +60,10 @@
                             <input type="text"
                                    ng-model="current.competitor._clazz"
                                    typehead-min-length=0
-                                   typeahead="c as c._ref.name for c in clazzes | filter:$viewValue"
-                                   placeholder="<competitor's class>" bs-typeahead/>
+                                   uib-typeahead="c as (c._ref.name) for c in clazzes | filter:$viewValue"
+                                   placeholder="<competitor's class>"/>
                             </input>
-<!--                            <input type="text"
-                                   ng-model="current.competitor._clazz"
-                                   typehead-min-length=0
-                                   typeahead="c as (c._ref.name) for c in clazzes | filter:$viewValue"
-                                   placeholder="<competitor's class>" bs-typeahead/>
--->                        </td>
+                        </td>
                         <td>
                             <input type="text"
                                    placeholder="<competitor's number>"
@@ -156,8 +151,8 @@
                             <input type="text"
                                    ng-model="current.clazz._group"
                                    typehead-min-length=0
-                                   typeahead="g as (g.name) for g in groups  | filter:$viewValue"
-                                   placeholder="<class's group>" bs-typeahead/>
+                                   uib-typeahead="g as (g.name) for g in groups  | filter:$viewValue"
+                                   placeholder="<class's group>"/>
                         </td>
                         <td>
                             <a href ng-click="onClazzCreate(current.clazz)"
