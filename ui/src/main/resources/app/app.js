@@ -426,14 +426,8 @@ app.controller('CompetitionMainController',
             $scope.current.group = JSON.parse(JSON.stringify(g));
         };
 
-        $scope.getGroupName = function(groups, id) {
-            if (groups) {
-                for (i = 0; i < groups.length; ++i) {
-                    if (groups[i].id === id)
-                        return groups[i].name;
-                }
-            }
-            return id;       
+        $scope.debug = function(what) {
+            console.log('DEBUG: ' + angular.toJson(what, true));
         };
     }
 );
