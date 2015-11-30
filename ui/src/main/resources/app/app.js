@@ -380,7 +380,7 @@ app.controller('CompetitionMainController',
 
         $scope.onCompetitorCreate = function(c) {
             c._ref.id = Uuid.randomUUID();
-            c._ref.clazzId = c._clazz.id;
+            c._ref.clazzId = c._clazz._ref.id;
 
             $http.post(baseUrl + "/competitor/" + c._ref.id, c._ref)
                 .success(function() { $scope.current.competitor = null; })
@@ -398,7 +398,7 @@ app.controller('CompetitionMainController',
         }
 
         $scope.onCompetitorUpdate = function(c) {
-            c._ref.clazzId = c._clazz.id;
+            c._ref.clazzId = c._clazz._ref.id;
 
             $http.put(baseUrl + "/competitor/" + c._ref.id, c._ref)
                 .success(function() { $scope.current.competitor = null; })
