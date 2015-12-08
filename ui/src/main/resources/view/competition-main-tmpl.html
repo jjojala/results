@@ -31,11 +31,12 @@
 
             <label>
                 Sort by:
-                <select ng-model="competitor.sortCriteria">
-                    <option value="class">Class</option>
-                    <option value="number">Number</option>
-                    <option value="offset">Start time</option>
-                    <option value="name">Name</option>
+                <select ng-model="competitor.orderBy">
+                    <option value="_ref.clazz">Class</option>
+                    <option value="_ref.number">Number</option>
+                    <option value="_ref.offset">Start time</option>
+                    <option value="_ref.result">Finish time</option>
+                    <option value="_ref.name">Name</option>
                 </select>
             </label>
 
@@ -50,6 +51,7 @@
                         <td>Class</td>
                         <td>Number</td>
                         <td>Start time</td>
+                        <td>Finish time</td>
                         <td>Name</td>
                         <td></td>
                     </tr>
@@ -59,7 +61,8 @@
                         <td>
                             <input type="text"
                                    ng-model="current.competitor._clazz"
-                                   uib-typeahead="c as c._ref.name for c in clazzes | filter:{_ref:{name:$viewValue}}"
+                                   uib-typeahead="c as c._ref.name for c in clazzes 
+                                        | filter:{_ref:{name:$viewValue}}"
                                    placeholder="<competitor's class>">
                         </td>
                         <td>
@@ -72,7 +75,11 @@
                                    placeholder="<competitor's start time>"
                                    ng-model='current.competitor._ref.offset'/>
                         </td>
-
+                        <td>
+                            <input type="text"
+                                   placeholder="<competitor's finish time>"
+                                   ng-model='current.competitor._ref.result'/>
+                        </td>
                         <td>
                             <input type="text"
                                    placeholder="<competitor's name>"
@@ -92,13 +99,15 @@
                             </a>
                         </td>
                     </tr>
-                    <tr ng-repeat="c in competitors | filter:competitor.filter
-                            | orderBy:competitor.sortCriteria"
+                    <tr ng-repeat="c in competitors
+                            | filter:competitor.filter
+                            | orderBy:competitor.orderBy"
                         ng-click="onCompetitorSelect(c)">
 
                         <td>{{c._clazz.name}}</td>
                         <td>{{c._ref.number}}</td>
                         <td>{{c._ref.offset}}</td>
+                        <td>{{c._ref.result}}</td>
                         <td>{{c._ref.name}}</td>
                         <td>
                             <a href ng-click="onCompetitorDestroy(c, $index)"
