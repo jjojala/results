@@ -35,7 +35,7 @@
                     <option value="_ref.clazz">Class</option>
                     <option value="_ref.number">Number</option>
                     <option value="_ref.offset">Start time</option>
-                    <option value="_ref.result">Finish time</option>
+                    <option value="_ref.finish">Finish time</option>
                     <option value="_ref.name">Name</option>
                 </select>
             </label>
@@ -78,7 +78,7 @@
                         <td>
                             <input type="text"
                                    placeholder="<competitor's finish time>"
-                                   ng-model='current.competitor._ref.result'/>
+                                   ng-model='current.competitor._ref.finish'/>
                         </td>
                         <td>
                             <input type="text"
@@ -107,7 +107,7 @@
                         <td>{{c._clazz.name}}</td>
                         <td>{{c._ref.number}}</td>
                         <td>{{c._ref.offset}}</td>
-                        <td>{{c._ref.result}}</td>
+                        <td>{{c._ref.finish}}</td>
                         <td>{{c._ref.name}}</td>
                         <td>
                             <a href ng-click="onCompetitorDestroy(c, $index)"

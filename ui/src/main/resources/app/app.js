@@ -114,7 +114,6 @@ app.controller('CompetitionMainController',
             return null;
         };
 
-        
         Rcnp.register(function(c) {
                 $scope.$apply(function() {
                     if (c.id === $scope.competition.id)

@@ -33,21 +33,21 @@ public class Competitor {
     private Long offset;
 
     @XmlAttribute
-    private Long result;
+    private Long finish;
 
     protected Competitor() {
     }
 
     public Competitor(final String id, final String competitionId,
             final String name, final String clazzId, final short number,
-            final Long offset, final Long result) {
+            final Long offset, final Long finish) {
         this.id = id;
         this.competitionId = competitionId;
         this.name = name;
         this.clazzId = clazzId;
         this.number = number;
         this.offset = offset;
-        this.result = result;
+        this.finish = finish;
     }
 
     public void setId(final String id) {
@@ -98,11 +98,11 @@ public class Competitor {
         return this.offset;
     }
 
-    public void setResult(final Long result) {
-        this.result = result;
+    public void setFinish(final Long finish) {
+        this.finish = finish;
     }
 
-    public Long getResult() {
-        return this.result;
+    public Long getFinish() {
+        return this.finish;
     }
 }
