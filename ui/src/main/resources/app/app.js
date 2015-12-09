@@ -87,6 +87,25 @@ app.directive('rs-typeahead', function() {
     };
 });
 
+// timestamp:duration_in_msecs:format
+app.filter('timestamp', function() {
+    return function(duration, format) {
+        if (duration) {
+            // TODO: support for format
+            var fractions = (duration % 1000 / 1000).toFixed(0);
+            var seconds = Math.floor(duration / 1000) % 60;
+            var minutes = Math.floor(duration / 60000) % 60;
+            var hours = Math.floor(duration / 3600000);
+
+            seconds = seconds < 10 ? '0' + seconds : String(seconds);
+            minutes = minutes < 10 ? '0' + minutes : String(minutes);
+            
+            return hours + ':' + minutes + ':' + seconds + '.' + fractions;
+        }
+        return null;
+    };
+});
+
 app.controller('CompetitionMainController',
     function($scope, $http, $routeParams, Uuid, Rcnp) {
 
@@ -108,16 +127,32 @@ app.controller('CompetitionMainController',
         var getClazzById = function(clazzId) {
             for (var i = 0; i < $scope.clazzes.length; i++) {
                     if ($scope.clazzes[i]._ref.id === clazzId)
-                        return $scope.clazzes[i]._ref;
+                        return $scope.clazzes[i];
                 }
 
             return null;
         };
 
+        // getResult(competitor): Number 
+        var getResult = function(c) {
+            if (c._ref.finish) {
+                return c._ref.finish - $scope.competition.time
+                    + c._clazz._group.offset + c._clazz._ref.offset
+                    + c._ref.offset;
+            } else {
+                console.log('Finishtime not set!');
+                return null;
+            }
+        }
+
         Rcnp.register(function(c) {
                 $scope.$apply(function() {
-                    if (c.id === $scope.competition.id)
+                    if (c.id === $scope.competition.id) {
+                        if (c.time !== $scope.competition.time) {
+                            console.log('TODO: recalulcate results on competion time change.');
+                        }
                         $scope.competition = c;
+                    }
                 });
             },
             'UPDATED', 'org.gemini.results.model.Competition');
@@ -151,6 +186,10 @@ app.controller('CompetitionMainController',
                     if (g.competitionId === $scope.competition.id) {
                         for (var i = 0; i < $scope.groups.length; i++) {
                             if (g.id === $scope.groups[i].id) {
+                                if (g.offset !== $scope.groups[i].offset) {
+                                    console.log('TODO: recalulate results on Group offset change!');
+                                }
+
                                 $scope.groups[i] = g;
                                 break;
                             }
@@ -171,8 +210,11 @@ app.controller('CompetitionMainController',
                         }
 
                         for (var i = 0; i < $scope.clazzes.length; i++) {
-                            if (g.id === $scope.clazzes[i]._group.id)
+                            if (g.id === $scope.clazzes[i]._group.id) {
                                 $scope.clazzes[i]._group = null;
+                            
+                                console.log('TODO: remove results on Group removal');
+                            }
                         }
                     }
                 });
@@ -200,6 +242,11 @@ app.controller('CompetitionMainController',
                                     _group: getGroupById(cl.groupId),
                                     _ref: cl
                                 };
+
+                                if (cl.offset !== $scope.clazzes[i]._ref.offset) {
+                                    console.log('TODO: Recalculate results on Clazz change')
+                                }
+
                                 break;
                             }
                         }
@@ -220,8 +267,11 @@ app.controller('CompetitionMainController',
 
                         for (var i = 0; i < $scope.competitors.length; i++) {
                             if ($scope.competitors[i]._clazz &&
-                                    cl.id === $scope.competitors[i]._clazz.id)
+                                    cl.id === $scope.competitors[i]._clazz.id) {
                                 $scope.competitors[i]._clazz = null;
+
+                                console.log('TODO: Remove results on Clazz remove');
+                            }
                         }
                     }
                 })
@@ -231,10 +281,13 @@ app.controller('CompetitionMainController',
         Rcnp.register(function (co) {
                 $scope.$apply(function() {
                     if (co.competitionId === $scope.competition.id) {
-                        $scope.competitors.push({
+                        var context = {
                             _clazz: getClazzById(co.clazzId),
                             _ref: co
-                        });
+                        };
+                        context._result = getResult(context);
+
+                        $scope.competitors.push(context);
                     }
                 });
             },
@@ -245,10 +298,12 @@ app.controller('CompetitionMainController',
                     if (co.competitionId === $scope.competition.id) {
                         for (var i = 0; i < $scope.competitors.length; i++) {
                             if (co.id === $scope.competitors[i]._ref.id) {
-                                $scope.competitors[i] = {
+                                var context = {
                                     _clazz: getClazzById(co.clazzId),
                                     _ref: co
                                 };
+                                context._result = getResult(context);
+                                $scope.competitors[i] = context;
                                 break;
                             }
                         }
@@ -294,11 +349,14 @@ app.controller('CompetitionMainController',
                                 $http.get(baseUrl + "/competitor/")
                                     .success(function (data) {
                                         var _competitors = [];
-                                        for (var i = 0; i < data.length; i++)
-                                            _competitors.push({
+                                        for (var i = 0; i < data.length; i++) {
+                                            var context = {
                                                 _clazz: getClazzById(data[i].clazzId),
                                                 _ref: data[i]
-                                            });
+                                            };
+                                            context._result = getResult(context);
+                                            _competitors.push(context);
+                                        }
 
                                         $scope.competitors = _competitors;
                                     })
@@ -414,6 +472,11 @@ app.controller('CompetitionMainController',
             };
             console.log('onCompetitorSelect: ' + angular.toJson($scope.current.competitor));
         };
+        
+        $scope.onCompetitorFinish = function(c) {
+            c._ref.finish = Date.now();
+            c._result = getResult(c);
+        }
 
         $scope.onClazzSelect = function(c) {
             $scope.current.clazz = {

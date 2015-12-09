@@ -36,6 +36,7 @@
                     <option value="_ref.number">Number</option>
                     <option value="_ref.offset">Start time</option>
                     <option value="_ref.finish">Finish time</option>
+                    <option value="_result">Result</option>
                     <option value="_ref.name">Name</option>
                 </select>
             </label>
@@ -52,6 +53,8 @@
                         <td>Number</td>
                         <td>Start time</td>
                         <td>Finish time</td>
+                        <td class="glyphicon glyphicon-time"/>
+                        <td>Result</td>
                         <td>Name</td>
                         <td></td>
                     </tr>
@@ -80,6 +83,9 @@
                                    placeholder="<competitor's finish time>"
                                    ng-model='current.competitor._ref.finish'/>
                         </td>
+                        <td class="glyphicon glyphicon-time"
+                            ng-click="onCompetitorFinish(current.competitor)"/>
+                        <td/>
                         <td>
                             <input type="text"
                                    placeholder="<competitor's name>"
@@ -104,10 +110,12 @@
                             | orderBy:competitor.orderBy"
                         ng-click="onCompetitorSelect(c)">
 
-                        <td>{{c._clazz.name}}</td>
+                        <td>{{c._clazz._ref.name}}</td>
                         <td>{{c._ref.number}}</td>
                         <td>{{c._ref.offset}}</td>
                         <td>{{c._ref.finish}}</td>
+                        <td/>
+                        <td>{{c._result | timestamp:'HH:mm:ss.sss'}}</td>
                         <td>{{c._ref.name}}</td>
                         <td>
                             <a href ng-click="onCompetitorDestroy(c, $index)"
