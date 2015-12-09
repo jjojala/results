@@ -137,8 +137,8 @@ app.controller('CompetitionMainController',
         var getResult = function(c) {
             if (c._ref.finish) {
                 return c._ref.finish - $scope.competition.time
-                    + c._clazz._group.offset + c._clazz._ref.offset
-                    + c._ref.offset;
+                    - c._clazz._group.offset - c._clazz._ref.offset
+                    - c._ref.offset;
             } else {
                 console.log('Finishtime not set!');
                 return null;
