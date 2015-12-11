@@ -52,6 +52,7 @@
                         <td>Class</td>
                         <td>Number</td>
                         <td>Start time</td>
+                        <td class="glyphicon glyphicon-time"/>
                         <td>Finish time</td>
                         <td class="glyphicon glyphicon-time"/>
                         <td>Result</td>
@@ -78,6 +79,8 @@
                                    placeholder="<competitor's start time>"
                                    ng-model='current.competitor._ref.offset'/>
                         </td>
+                        <td class="glyphicon glyphicon-time"
+                            ng-click="onCompetitorStart(current.competitor)"/>
                         <td>
                             <input type="text"
                                    placeholder="<competitor's finish time>"
@@ -113,6 +116,7 @@
                         <td>{{c._clazz._ref.name}}</td>
                         <td>{{c._ref.number}}</td>
                         <td>{{c._ref.offset}}</td>
+                        <td/>
                         <td>{{c._ref.finish}}</td>
                         <td/>
                         <td>{{c._result | timestamp:'HH:mm:ss.sss'}}</td>
@@ -146,6 +150,7 @@
                     <tr>
                         <td>Name</td>
                         <td>Offset</td>
+                        <td class="glyphicon glyphicon-time"/>
                         <td>Group</td>
                         <td></td>
                     </tr>
@@ -162,6 +167,8 @@
                                    placeholder="<class offset>"
                                    ng-model='current.clazz._ref.offset'/>
                         </td>
+                        <td class="glyphicon glyphicon-time"
+                            ng-click="onClazzStart(current.clazz)"/>
                         <td>
                             <input type="text"
                                    ng-model="current.clazz._group"
@@ -188,6 +195,7 @@
                         ng-click="onClazzSelect(c)">
                         <td>{{c._ref.name}}</td>
                         <td>{{c._ref.offset}}</td>
+                        <td/>
                         <td>{{c._group.name}}</td>
                         <td>
                             <a href ng-click="onClazzDestroy(c)"
@@ -218,6 +226,7 @@
                         <td>Name</td>
                         <td>Min. number</td>
                         <td>Offset</td>
+                        <td class="glyphicon glyphicon-time"/>
                         <td></td>
                     </tr>
                 </thead>
@@ -238,6 +247,8 @@
                                    placeholder="<group's offset>"
                                    ng-model='current.group.offset'/>
                         </td>
+                        <td class="glyphicon glyphicon-time"
+                            ng-click="onGroupStart(current.group)"/>
                         <td>
                             <a href ng-click="onGroupCreate(current.group); 
                                             current.group = {}"
@@ -259,6 +270,7 @@
                         <td>{{g.name}}</td>
                         <td>{{g.minNumber}}</td>
                         <td>{{g.offset}}</td>
+                        <td/>
                         <td>
                             <a href ng-click="onGroupDestroy(g, $index)"
                                     data-togglse="tooltip" data-placement="left"

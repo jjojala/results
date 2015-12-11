@@ -122,7 +122,7 @@ app.controller('CompetitionMainController',
             }
 
             return null;
-        }
+        };
 
         var getClazzById = function(clazzId) {
             for (var i = 0; i < $scope.clazzes.length; i++) {
@@ -133,17 +133,33 @@ app.controller('CompetitionMainController',
             return null;
         };
 
+        // Return group's start time as milliseconds since EPOC
+        // getGroupStart(group): Number
+        var getGroupStart = function(g) {
+            return $scope.competition.time + g.offset;
+        };
+
+        // Return clazz's start time as msecs since EPOC
+        // getClazzStart(clazz): Number
+        var getClazzStart = function(c) {
+            return getGroupStart(c._group) + c._ref.offset;
+        };
+        
+        // Return competitor's start time as msecs since EPOC
+        // getCompetitorStart(competitor): Number
+        var getCompetitorStart = function(c) {
+            return getClazzStart(c._clazz) + c._ref.offset;
+        };
+
         // getResult(competitor): Number 
         var getResult = function(c) {
             if (c._ref.finish) {
-                return c._ref.finish - $scope.competition.time
-                    - c._clazz._group.offset - c._clazz._ref.offset
-                    - c._ref.offset;
+                return c._ref.finish - getCompetitorStart(c);
             } else {
                 console.log('Finishtime not set!');
                 return null;
             }
-        }
+        };
 
         Rcnp.register(function(c) {
                 $scope.$apply(function() {
@@ -395,7 +411,7 @@ app.controller('CompetitionMainController',
                 }).error(function (err) {
                     alert("Deleting group failed: " + err.statusText);
                 });
-        }
+        };
 
         $scope.onGroupUpdate = function(g) {
             $http.put(baseUrl + "/group/" + g.id, g)
@@ -404,7 +420,11 @@ app.controller('CompetitionMainController',
                     alert("Updating group failed: \nerr: " + err + "\nstatus: "
                             + status + "\nGroup: " + angular.toJson(g, true));
                 });
-        };        
+        };
+        
+        $scope.onGroupStart = function(g) {
+            g.offset = Date.now() - $scope.competition.time;
+        };
 
         $scope.onClazzCreate = function(c) {
             c._ref.id = Uuid.randomUUID();
@@ -423,7 +443,7 @@ app.controller('CompetitionMainController',
                 .error(function (err) {
                     alert("Deleting class failed: " + err.statusText);
                 });
-        }
+        };
 
         $scope.onClazzUpdate = function(c) {
             c._ref.groupId = c._group.id;
@@ -433,6 +453,10 @@ app.controller('CompetitionMainController',
                     alert("Updating class failed: \nerr: " + err + "\nstatus: "
                     + status + "\nClass: " + angular.toJson(c, true));
                 });
+        };
+
+        $scope.onClazzStart = function(c) {
+            c._ref.offset = Date.now() - getGroupStart(c._group);
         };
 
         $scope.onCompetitorCreate = function(c) {
@@ -452,7 +476,7 @@ app.controller('CompetitionMainController',
                 .error(function (err) {
                     alert("Deleting competitor failed: " + err.statusText);
                 });
-        }
+        };
 
         $scope.onCompetitorUpdate = function(c) {
             c._ref.clazzId = c._clazz._ref.id;
@@ -472,11 +496,15 @@ app.controller('CompetitionMainController',
             };
             console.log('onCompetitorSelect: ' + angular.toJson($scope.current.competitor));
         };
-        
+
+        $scope.onCompetitorStart = function(c) {
+            c._ref.offset = Date.now() - getClazzStart(c._clazz);
+        };
+
         $scope.onCompetitorFinish = function(c) {
             c._ref.finish = Date.now();
             c._result = getResult(c);
-        }
+        };
 
         $scope.onClazzSelect = function(c) {
             $scope.current.clazz = {
