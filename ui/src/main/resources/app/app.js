@@ -2,6 +2,8 @@
  * Copyright (C) 2015 Jari Ojala (jari.ojala@iki.fi).
  */
 
+'use strict';
+
 var app = angular.module('ResultsApplication', [ 
     'ngRoute', 'ui.bootstrap', 'ngWebsocket']);
 
