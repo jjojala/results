@@ -4,7 +4,7 @@
 
 'use strict';
 
-var app = angular.module('ResultsApplication', [ 
+var app = angular.module('ResultsApplication', [ 'utils',
     'ngRoute', 'ui.bootstrap', 'ngWebsocket']);
 
 app.config(['$routeProvider', function($routeProvider) {
