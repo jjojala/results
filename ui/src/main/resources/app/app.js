@@ -62,21 +62,6 @@ app.service('Rcnp', function(Uuid, $websocket) {
     };
 });
 
-app.directive('rs-typeahead', function() {
-    return {
-        replace: true,
-        restrict: 'A',
-        scope: {
-            ngModel: '=',
-            typehead: '=',
-            placeholder: '='
-        },
-        template: "<input type='text' ng-model='ng-model' "
-            + "typehead-min-length='0' typeahead='typehead' "
-            + " placeholder='placeholder' bs-typeahead/>"
-    };
-});
-
 // timestamp:duration_in_msecs:format
 app.filter('timestamp', function() {
     return function(duration, format) {
@@ -549,7 +534,7 @@ app.controller('CompetitionListController',
         }, 'REMOVED', 'org.gemini.results.model.Competition');
         
         $http.get("rest/competition").success(function (data) {
-            for (i = 0; i < data.length; ++i)
+            for (var i = 0; i < data.length; ++i)
                 data[i].timeObject = new Date(data[i].time);
 
             $scope.competitions = data;
