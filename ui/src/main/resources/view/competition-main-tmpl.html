@@ -6,7 +6,11 @@
                     <small>{{competition.time | date:"dd.M.yyyy HH.mm"}}</small>
                 </span>
                 <span>{{competition.name}}</span><br/>
-                <span><small>{{competition.organizer}}</span>
+                <span><small>{{competition.organizer}}</small></span>
+<!-- TODO: Remove the following -->
+<br/>
+<span><small><time-editor basetime=0 ng-model="testTime"/></small></span>
+<span><small>{{testTime}}</small></span>
             </legend>
         </fieldset>
     </form>
