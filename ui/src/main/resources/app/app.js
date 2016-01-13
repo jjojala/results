@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2015 Jari Ojala (jari.ojala@iki.fi).
+ * Copyright (C) 2015-2016 Jari Ojala (jari.ojala@iki.fi).
  */
 
 'use strict';
@@ -21,85 +21,6 @@ app.config(['$routeProvider', function($routeProvider) {
                     redirectTo: '/competition-list'
                 });
 }]);
-
-app.directive('timeEditor', function() {
-
-    var timeArrayToMSecs = function(a) {
-        return  (a[0] * 10 + a[1]) * 60 * 60 * 1000 // hours    --> msecs
-            +   (a[2] * 10 + a[3]) * 60 * 1000      // minutes  --> msecs
-            +   (a[4] * 10 + a[5]) * 1000           // seconds  --> msecs
-            +   (a[6]) * 100;                       // tenths   --> msecs
-    };
-
-    var timeArrayToString = function(a) {
-        return [
-                    a[0], a[1], // hours
-            ':',    a[2], a[3], // minutes
-            ':',    a[4], a[5], // seconds
-            '.',    a[6]        // tenths
-        ].join('');
-    };
-    
-    var stringToTimeArray = function(s) {
-        var a = s.split('');
-        return [a[0], a[1], a[3], a[4], a[6], a[7], a[9]];
-    }
-    
-    var isDigit = function(ch) {
-        return !(ch < '0'.charCodeAt(0) || ch > '9'.charCodeAt(0));
-    };
-    
-    return {
-        scope: {
-            basetime: '@',
-            ngModel: '='
-        },
-        template: '<input type="text"/>',
-        link: function(scope, element /*, attrs */) {
-            var input = element.children();
-            input.val('__:__:__._');
-
-            var value = stringToTimeArray(input.val());
-            var backlog = [];
-            var position = value.length - 1;
-
-            element.bind('blur', function(event) {
-                console.log('onBlur');
-            });
-            
-            element.bind('keypress keydown', function(event) {
-                
-                if (backlog.length > 0 && event.which === 8 /* backspace */) {
-                    position = position + 1;
-                    value.splice(position, 0, backlog.pop());
-                    input.val(timeArrayToString(value));
-                }
-                
-                else if (position >= 0 && isDigit(event.which)) {
-                    backlog.push(value[position]);
-                    value.splice(position, 1);
-                    value.push(String.fromCharCode(event.which));
-                    
-                    input.val(timeArrayToString(value));
-                    position = position - 1;
-                }
-
-                if (position < 0) {
-                    scope.$apply(function() {
-                        scope.ngModel = (scope.basetime ? scope.basetime : 0)
-                                + timeArrayToMSecs(value);
-                    });
-                }
-                
-                else {
-                    console.log('key: ' + event.which);
-                }
-
-                event.preventDefault();
-            });
-        }
-    };
-});
 
 app.controller('CompetitionMainController',
     function($scope, $http, $routeParams, Uuid, Rcnp) {
