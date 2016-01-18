@@ -13,11 +13,15 @@
                 <span><small>{{competition.organizer}}</small></span>
 <!-- TODO: Remove the following -->
 <br/>
-<span><small><time-editor basetime=0 ng-init="testTime='00:00:00.0'" ng-model="testTime"></time-editor></small></span>
-<span><small>{{testTime}}</small></span>
-<br>
-<span><small><time-editor basetime=0 ng-model="testTime2"></time-editor></small></span>
-<span><small>{{testTime2}}</small></span>
+<span>
+    <small>
+        <time-editor time="current.competitor._ref.finish"></time-editor>
+        <!--
+        <time-editor ng-model="current.competitor._ref.finish"></time-editor>
+        -->
+        {{current.competitor._ref.finish | timestamp:'HH:mm:ss.sss'}}
+    </small>
+</span>
             </legend>
         </fieldset>
     </form>

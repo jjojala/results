@@ -24,7 +24,6 @@ app.config(['$routeProvider', function($routeProvider) {
 
 app.controller('CompetitionMainController',
     function($scope, $http, $routeParams, Uuid, Rcnp) {
-
         $scope.current = { clazz: null, group: null, competitor: null };
         $scope.competition = null;
         $scope.groups = [];

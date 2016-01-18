@@ -10,10 +10,11 @@
         return function(duration, format) {
             if (duration) {
                 // TODO: support for format
-                var fractions = (duration % 1000 / 1000).toFixed(0);
+                var base = new Date(duration).setHours(0, 0, 0, 0);
+                var fractions = Math.round(duration / 100) % 10;
                 var seconds = Math.floor(duration / 1000) % 60;
                 var minutes = Math.floor(duration / 60000) % 60;
-                var hours = Math.floor(duration / 3600000);
+                var hours = Math.floor((duration - base) / 3600000);
 
                 seconds = seconds < 10 ? '0' + seconds : String(seconds);
                 minutes = minutes < 10 ? '0' + minutes : String(minutes);

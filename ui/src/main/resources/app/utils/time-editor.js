@@ -12,11 +12,25 @@
             && (isDigit(a[6]));
         */
     }
+    
+    var msecsToTimeArray = function(t) {
+        var tenths = Math.round(t / 100) % 10;
+        var seconds = Math.floor(t / 1000) % 60;
+        var minutes = Math.floor(t / 60000) % 60;
+        var hours = Math.floor(t / (3600000));
+        
+        return [
+            Math.floor(hours / 10).toString(), (hours % 10).toString(),
+            Math.floor(minutes / 10).toString(), (minutes % 10).toString(),
+            Math.floor(seconds / 10).toString(), (seconds % 10).toString(),
+            tenths.toString()
+        ];
+    }
 
-    var timeArrayToMSecs = function(a) {
-        return  (a[0] * 10 + a[1]) * 60 * 60 * 1000 // hours    --> msecs
-            +   (a[2] * 10 + a[3]) * 60 * 1000      // minutes  --> msecs
-            +   (a[4] * 10 + a[5]) * 1000           // seconds  --> msecs
+    var timeArrayToMsecs = function(a) {
+        return  (a[0] * 10 + +a[1]) * 60 * 60 * 1000 // hours    --> msecs
+            +   (a[2] * 10 + +a[3]) * 60 * 1000      // minutes  --> msecs
+            +   (a[4] * 10 + +a[5]) * 1000           // seconds  --> msecs
             +   (a[6]) * 100;                       // tenths   --> msecs
     };
 
@@ -37,80 +51,62 @@
     var isDigit = function(ch) {
         return !(ch < '0'.charCodeAt(0) || ch > '9'.charCodeAt(0));
     };
-    
+
     var timeEditor = function() {
+        
         return {
             scope: {
                 basetime: '@',
-                ngModel: '='
+                time: '='
             },
             template: '<input type="text"></input>',
-            link: function(scope, element, attrs) {
+            link: function(scope, element) {
                 var input = element.children();
-                var initialModel = '__:__:__._';
-
-    /*            scope.$watch('ngModel', function(val) {
-                    console.log('ngModel: ' + val);
-                    initialModel = val ? val : '__:__:__._';
-                    input.val(initialModel);
-                });
-    */
-                var value = stringToTimeArray(initialModel);
+                var values = [];
                 var backlog = [];
-                var position = value.length - 1;
+                var position = 6;
+                
+                scope.$watch('time', function(time) {
 
-                input.val(initialModel);
-                input.css('background',
-                    (isTimeArrayValid(value) ? 'none' : 'red'));
+                    if (!scope.basetime)
+                        scope.basetime = new Date(scope.time).setHours(0, 0, 0, 0);
 
+                    values = msecsToTimeArray(scope.time - scope.basetime);
+                    input.val(timeArrayToString(values));
+                    backlog = [];
+                    position = 6;
+
+                });
+                
                 input.bind('keypress keydown', function(event) {
-
-                    console.log('before key: ' + event.which
-                        + '\t\tvalue: ' + value
-                        + '\tbacklog: ' + backlog
-                        + '\t\tposition: ' + position);
-
-                    if (backlog.length > 0 && event.which === 8 /* backspace */) {
+                    if (backlog.length > 0 && event.which === 8) { // backspace
                         position = position + 1;
-                        value.splice(6, 1);
-                        value.splice(position, 0, backlog.pop());
-                        input.val(timeArrayToString(value));
+                        values.splice(6, 1);
+                        values.splice(position, 0, backlog.pop());
+                        input.val(timeArrayToString(values));
                     }
 
                     else if (position >= 0 && isDigit(event.which)) {
-                        backlog.push(value[position]);
-                        value.splice(position, 1);
-                        value.push(String.fromCharCode(event.which));
-                        input.val(timeArrayToString(value));
+                        backlog.push(values[position]);
+                        values.splice(position, 1);
+                        values.push(String.fromCharCode(event.which));
+                        input.val(timeArrayToString(values));
                         position = position - 1;
                     }
-/*                    
-                    else if (position < 0 && isDigit(event.which)) {
-                        position = 6;
-                        backlog = [ value[position] ];
-                        value.splice(position, 1);
-                        value.push(String.fromCharCode(event.which));
-                        input.val(timeArrayToString(value));
-                        position = position - 1;
-                    }
-*/
-                    if (isTimeArrayValid(value)) {
-                        input.css('background', 'none');
+
+                    if (!(event.which === 9 || event.which === 13))
+                        event.preventDefault();
+                });
+
+                input.bind('blur', function() {
+                    if (isTimeArrayValid(values)) {
                         scope.$apply(function() {
-                            scope.ngModel = ((scope.basetime ? scope.basetime : 0)
-                                    + timeArrayToMSecs(value)); 
-                            });
+                            scope.time =
+                                    scope.basetime + timeArrayToMsecs(values);
+                        })
                     } else {
-                        console.log('not valid!');
-                        input.css('background', 'red');
+                        
                     }
-
-                    event.preventDefault();
-
-                    console.log('after\t\t'
-                        + '\t\tvalue: ' + value
-                        + '\tbacklog: ' + backlog
-                        + '\t\tposition: ' + position);
                 });
             }
         };
