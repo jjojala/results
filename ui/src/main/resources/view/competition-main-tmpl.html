@@ -11,17 +11,6 @@
                 </span>
                 <span>{{competition.name}}</span><br/>
                 <span><small>{{competition.organizer}}</small></span>
-<!-- TODO: Remove the following -->
-<br/>
-<span>
-    <small>
-        <time-editor time="current.competitor._ref.finish"></time-editor>
-        <!--
-        <time-editor ng-model="current.competitor._ref.finish"></time-editor>
-        -->
-        {{current.competitor._ref.finish | timestamp:'HH:mm:ss.sss'}}
-    </small>
-</span>
             </legend>
         </fieldset>
     </form>
@@ -97,9 +86,7 @@
                         <td class="glyphicon glyphicon-time"
                             ng-click="onCompetitorStart(current.competitor)"/>
                         <td>
-                            <input type="text"
-                                   placeholder="<competitor's finish time>"
-                                   ng-model='current.competitor._ref.finish'/>
+                            <time-editor time="current.competitor._ref.finish"></time-editor>
                         </td>
                         <td class="glyphicon glyphicon-time"
                             ng-click="onCompetitorFinish(current.competitor)"/>
@@ -132,7 +119,7 @@
                         <td>{{c._ref.number}}</td>
                         <td>{{c._ref.offset}}</td>
                         <td/>
-                        <td>{{c._ref.finish}}</td>
+                        <td>{{c._ref.finish | timestamp:'HH:mm:ss.sss'}}</td>
                         <td/>
                         <td>{{c._result | timestamp:'HH:mm:ss.sss'}}</td>
                         <td>{{c._ref.name}}</td>

@@ -14,6 +14,9 @@
     }
     
     var msecsToTimeArray = function(t) {
+        if (!t)
+            return null;
+        
         var tenths = Math.round(t / 100) % 10;
         var seconds = Math.floor(t / 1000) % 60;
         var minutes = Math.floor(t / 60000) % 60;
@@ -43,11 +46,6 @@
         ].join('');
     };
 
-    var stringToTimeArray = function(s) {
-        var a = s.split('');
-        return [a[0], a[1], a[3], a[4], a[6], a[7], a[9]];
-    };
-
     var isDigit = function(ch) {
         return !(ch < '0'.charCodeAt(0) || ch > '9'.charCodeAt(0));
     };
@@ -56,7 +54,6 @@
         
         return {
             scope: {
-                basetime: '@',
                 time: '='
             },
             template: '<input type="text"></input>',
@@ -65,17 +62,22 @@
                 var values = [];
                 var backlog = [];
                 var position = 6;
+                var basetime = null;
                 
                 scope.$watch('time', function(time) {
 
-                    if (!scope.basetime)
-                        scope.basetime = new Date(scope.time).setHours(0, 0, 0, 0);
+                    basetime = scope.time
+                        ? new Date(scope.time).setHours(0, 0, 0, 0)
+                        : new Date(0);
 
-                    values = msecsToTimeArray(scope.time - scope.basetime);
-                    input.val(timeArrayToString(values));
+                    console.log('scope.time    : ' + 
+                                (scope.time ? new Date(scope.time) : basetime)
+                            + '\nbasetime: ' + new Date(basetime));
+
+                    values = msecsToTimeArray(scope.time - basetime);
+                    input.val(values ? timeArrayToString(values) : null);
                     backlog = [];
                     position = 6;
-
                 });
                 
                 input.bind('keypress keydown', function(event) {
@@ -102,10 +104,11 @@
                     if (isTimeArrayValid(values)) {
                         scope.$apply(function() {
                             scope.time =
-                                    scope.basetime + timeArrayToMsecs(values);
+                                    basetime + timeArrayToMsecs(values);
+                            console.log('time:  ' + new Date(timeArrayToMsecs(values)));
+                            console.log('basetime: ' + basetime);
                         })
                     } else {
-                        
                     }
                 });
             }
