@@ -441,8 +441,18 @@ app.controller('CompetitionMainController',
 app.controller('CompetitionListController',
     function ($scope, $http, Uuid, Rcnp) {
 
-        $scope.current = {};
+        $scope.current = null;
         $scope.competitions = [];
+        $scope.competitionDetailsShow = false;
+        
+        $scope.openCompetitionDetails = function (c, i) {
+            $scope.competitionDetailsShow = true;
+        }
+        
+        $scope.hideCompetitionDetails = function() {
+            $scope.current = null;
+            $scope.competitionDetailsShow = false;
+        }
         
         Rcnp.register(function(c) {
                 $scope.$apply(function() {

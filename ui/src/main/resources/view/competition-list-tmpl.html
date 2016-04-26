@@ -1,10 +1,69 @@
 <div class="container">
 
+    <div id="competitionDetailsDialog" class="modal fade" ng-show="competitionDetailsShow">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" ng-click="hideCompetitionDetails()">&times;</button>
+                    <h4 ng-hide="current.id" class="modal-title">New Competition</h4>
+                    <h4 ng-show="current.id" class="modal-title">Competition Details</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="time">Competition time:</label>
+                            <input  id="time" class="form-control"
+                                    type="datetime-local"
+                                    placeholder="yyyy-MM-ddTHH:mm"
+                                    ng-model="current.time"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="name">Competition name:</label>
+                            <input  id="name" class="form-control" type="text"
+                                    placeholder="<competition's name>"
+                                    ng-model="current.name"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="organizer">Organizer's name:</label>
+                            <input  id="organizer" class="form-control"
+                                    type="text"
+                                    placeholder="<competition's organizer>"
+                                    ng-model="current.organizer"/>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn"
+                            ng-click="hideCompetitionDetails()">
+                        Cancel
+                    </button>
+                    <button type="button" class="btn btn-default"
+                            ng-show="current.id"
+                            ng-click="onSave(current); hideCompetitionDetails()">
+                        Update
+                    </button>
+                    <button type="button" class="btn btn-default"
+                            ng-hide="current.id"
+                            ng-click="onCreate(current); hideCompetitionDetails()">
+                        Create
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <h2>Competitions</h2>
 
+    <div class="input-group">
+        <span class="input-group-addon" id="search-icon">
+            <i class="glyphicon glyphicon-search"></i>
+        </span>
+        <input type="text" class="form-control"
+               placeholder="<pattern>" aria-describedby="search-icon"
+               ng-model="filter">
+    </div>
+    
     <div>
-        Search: <input ng-model="filter">
-        
         Sort by:
         <select ng-model="sortCriteria">
             <option value="time">Time</option>
@@ -17,7 +76,7 @@
         <table class="table table-hover">
             <thead>
                 <tr>
-                    <th>Time</th>
+                    <th><i class="glyphicon glyphicon-sort-by-alphabet">Time</i></th>
                     <th>Name</th>
                     <th>Organizer</th>
                     <th></th>
@@ -25,32 +84,11 @@
             </thead>
             <tbody>
                 <tr>
-                    <td>
-                        <input type="datetime-local"
-                               placeholder="yyyy-MM-ddTHH:mm"
-                               ng-model="current.time"/>
-                    </td>
-                    <td>
-                        <input type="text"
-                               placeholder="<competition's name>"
-                               ng-model="current.name"/>
-                    </td>
-                    <td>
-                        <input type="text"
-                               placeholder="<competition's organizer>"
-                               ng-model="current.organizer"/>    
-                    </td>
-                    <td>
-                        <a href ng-click="onCreate(current); current = {}"
-                           data-toggle="tooltip" data-placement="left"
-                           title="Create new competition with this data.">
+                    <td colspan="4">
+                        <a href ng-click="openCompetitionDetails(null)"
+                                data-toggle="tooltip" data-placement="left"
+                                title="Create a new competition...">
                             <i class="glyphicon glyphicon-plus"></i>
-                        </a>
-                        <a href ng-show="current.id"
-                           ng-click="onSave(current); current = {}"
-                           data-toggle="tooltip" data-placement="left"
-                           title="Update the competition with this data.">
-                            <i class="glyphicon glyphicon-edit"></i>
                         </a>
                     </td>
                 </tr>
@@ -67,7 +105,7 @@
                             <i class="glyphicon glyphicon-download"></i>
                         </a>
                         <a href ng-click="onDestroy(c, $index)"
-                           data-togglse="tooltip" data-placement="left"
+                           data-toggle="tooltip" data-placement="left"
                            title="Permanently remove the competition.">
                             <i class="glyphicon glyphicon-remove-sign"></i>
                         </a>
@@ -75,6 +113,11 @@
                            data-toggle="tooltip" data-placement="left"
                            title="Pick this competition and continue...">
                             <i class="glyphicon glyphicon-chevron-right"></i>
+                        </a>
+                        <a href ng-click="openCompetitionDetails(c, $index)"
+                           data-toggle="tooltip" data-placement="left"
+                           title="Modify details of this competition...">
+                            <i class="glyphicon glyphicon-edit"></i>
                         </a>
                     </td>
                 </tr>
