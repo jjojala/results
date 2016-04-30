@@ -436,19 +436,19 @@ public class EventResource {
         }
     }
 
-    @Path("{id}/group")
+    @Path("{id}/groups")
     public GroupResource getGroupResource(
             @PathParam("id") final String id) {
         return new GroupResource(emf_, listener_, id);
     }
 
-    @Path("{id}/class")
+    @Path("{id}/classes")
     public ClazzResource getClazzResource(
             @PathParam("id") final String id) {
         return new ClazzResource(emf_, listener_, id);
     }
 
-    @Path("{id}/competitor")
+    @Path("{id}/competitors")
     public CompetitorResource getCompetitorResource(
             @PathParam("id") final String id) {
         return new CompetitorResource(emf_, listener_, id);

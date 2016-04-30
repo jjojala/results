@@ -263,11 +263,11 @@ app.controller('CompetitionMainController',
             .success(function (data) {
                 $scope.competition = data;
         
-                $http.get(baseUrl + "/group/")
+                $http.get(baseUrl + "/groups/")
                     .success(function (data) {
                         $scope.groups = data;
                 
-                        $http.get(baseUrl + "/class/")
+                        $http.get(baseUrl + "/classes/")
                             .success(function (data) {
                                 var _clazzes = [];
                                 for (var i = 0; i < data.length; i++)
@@ -277,7 +277,7 @@ app.controller('CompetitionMainController',
                                     });
                                 $scope.clazzes = _clazzes;
 
-                                $http.get(baseUrl + "/competitor/")
+                                $http.get(baseUrl + "/competitors/")
                                     .success(function (data) {
                                         var _competitors = [];
                                         for (var i = 0; i < data.length; i++) {
@@ -311,7 +311,7 @@ app.controller('CompetitionMainController',
 
         $scope.onGroupCreate = function(g) {
             g.id = Uuid.randomUUID();
-            $http.post(baseUrl + "/group/" + g.id, g)
+            $http.post(baseUrl + "/groups/" + g.id, g)
                 .success(function() { $scope.current.group = null; })
                 .error(function(err, status) {
                     alert("Adding group failed: \nerr: " + err + "\nstatus: "
@@ -320,7 +320,7 @@ app.controller('CompetitionMainController',
         };        
         
         $scope.onGroupDestroy = function(g, i) {
-            $http.delete(baseUrl +  "/group/" + g.id)
+            $http.delete(baseUrl +  "/groups/" + g.id)
                 .success(function () {
                     $scope.current.group = null;
                 }).error(function (err) {
@@ -329,7 +329,7 @@ app.controller('CompetitionMainController',
         };
 
         $scope.onGroupUpdate = function(g) {
-            $http.put(baseUrl + "/group/" + g.id, g)
+            $http.put(baseUrl + "/groups/" + g.id, g)
                 .success(function() { $scope.current.group = null; })
                 .error(function(err, status) {
                     alert("Updating group failed: \nerr: " + err + "\nstatus: "
@@ -345,7 +345,7 @@ app.controller('CompetitionMainController',
             c._ref.id = Uuid.randomUUID();
             c._ref.groupId = c._group.id;
 
-            $http.post(baseUrl + "/class/" + c._ref.id, c._ref)
+            $http.post(baseUrl + "/classes/" + c._ref.id, c._ref)
                 .success(function() { $scope.current.clazz = null; })
                 .error(function(err, status) {
                     alert("Adding class failed: \nerr: " + err + "\nstatus: "
@@ -354,7 +354,7 @@ app.controller('CompetitionMainController',
         };
 
         $scope.onClazzDestroy = function(c) {
-            $http.delete(baseUrl + "/class/" + c._ref.id)
+            $http.delete(baseUrl + "/classes/" + c._ref.id)
                 .error(function (err) {
                     alert("Deleting class failed: " + err.statusText);
                 });
@@ -362,7 +362,7 @@ app.controller('CompetitionMainController',
 
         $scope.onClazzUpdate = function(c) {
             c._ref.groupId = c._group.id;
-            $http.put(baseUrl + "/class/" + c._ref.id, c._ref)
+            $http.put(baseUrl + "/classes/" + c._ref.id, c._ref)
                 .success(function() { $scope.current.clazz = null; })
                 .error(function(err, status) {
                     alert("Updating class failed: \nerr: " + err + "\nstatus: "
@@ -378,7 +378,7 @@ app.controller('CompetitionMainController',
             c._ref.id = Uuid.randomUUID();
             c._ref.clazzId = c._clazz._ref.id;
 
-            $http.post(baseUrl + "/competitor/" + c._ref.id, c._ref)
+            $http.post(baseUrl + "/competitors/" + c._ref.id, c._ref)
                 .success(function() { $scope.current.competitor = null; })
                 .error(function (err, status) {
                     alert("Adding competitor failed: \nerr: " + err + "\nstatus: "
@@ -387,7 +387,7 @@ app.controller('CompetitionMainController',
         };
 
         $scope.onCompetitorDestroy = function(c) {
-            $http.delete(baseUrl + "/competitor/" + c._ref.id)
+            $http.delete(baseUrl + "/competitors/" + c._ref.id)
                 .error(function (err) {
                     alert("Deleting competitor failed: " + err.statusText);
                 });
@@ -396,7 +396,7 @@ app.controller('CompetitionMainController',
         $scope.onCompetitorUpdate = function(c) {
             c._ref.clazzId = c._clazz._ref.id;
 
-            $http.put(baseUrl + "/competitor/" + c._ref.id, c._ref)
+            $http.put(baseUrl + "/competitors/" + c._ref.id, c._ref)
                 .success(function() { $scope.current.competitor = null; })
                 .error(function(err, status) {
                     alert("Updating competitor failed: \nerr: " + err + "\nstatus: "

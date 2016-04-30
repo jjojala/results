@@ -300,7 +300,7 @@ public class CompetitionResourceTest extends JerseyTest {
                     "my-start-group-name", (short)-1, (short)-1, 0L);
 
             final WebTarget manager = target(String.format(
-                    "events/%s/group/%s",
+                    "events/%s/groups/%s",
                     competitionId, startGroupId));
 
             final Response response = manager.request().post(
@@ -313,7 +313,7 @@ public class CompetitionResourceTest extends JerseyTest {
 
         {
             final WebTarget manager = target(String.format(
-                    "events/%s/group/%s#name",
+                    "events/%s/groups/%s#name",
                     competitionId, startGroupId));
 
             final Response response = manager.request().get();
@@ -325,7 +325,7 @@ public class CompetitionResourceTest extends JerseyTest {
 
         {
             final WebTarget manager = target(String.format(
-                    "events/%s/group/%s#name",
+                    "events/%s/groups/%s#name",
                     competitionId, startGroupId));
 
             final Response response = manager.request().put(
@@ -336,7 +336,7 @@ public class CompetitionResourceTest extends JerseyTest {
 
         {
             final WebTarget manager = target(String.format(
-                    "events/%s/group/%s#name",
+                    "events/%s/groups/%s#name",
                     competitionId, startGroupId));
 
             final Response response = manager.request().get();
