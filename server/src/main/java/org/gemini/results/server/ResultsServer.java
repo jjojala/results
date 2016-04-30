@@ -9,7 +9,7 @@ import java.net.URI;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.ws.rs.core.UriBuilder;
-import org.gemini.results.rest.CompetitionResource;
+import org.gemini.results.rest.EventResource;
 import org.gemini.results.rest.ResourceListener;
 import org.glassfish.grizzly.filterchain.FilterChain;
 import org.glassfish.grizzly.http.server.CLStaticHttpHandler;
@@ -37,7 +37,7 @@ public class ResultsServer {
                 = new RcnpService(NOTIFICATIONS);
 
         final ResourceConfig config = new ResourceConfig()
-                .register(new CompetitionResource(
+                .register(new EventResource(
                                 emf, new RcnpResourceListener(notifications)))
                 .register(JacksonFeature.class);
 

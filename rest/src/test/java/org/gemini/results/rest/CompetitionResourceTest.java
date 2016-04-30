@@ -61,7 +61,7 @@ public class CompetitionResourceTest extends JerseyTest {
 
     @Override
     protected Application configure() {
-        return new ResourceConfig().register(new CompetitionResource(emf, null));
+        return new ResourceConfig().register(new EventResource(emf, null));
     }
 
     @Test
@@ -74,13 +74,13 @@ public class CompetitionResourceTest extends JerseyTest {
 
         {   // Create a competiont (so that we have at least one competition on
             // the list)
-            final Response response = target("competition/" + competition.getId())
+            final Response response = target("events/" + competition.getId())
                     .request().post(Entity.json(competition));
             Assert.assertEquals(201, response.getStatus());
         }
 
         {   // Get the just retrieved competition
-            final Response response = target("competition/" + competition.getId())
+            final Response response = target("events/" + competition.getId())
                     .request().accept("application/json").get();
             Assert.assertEquals(200, response.getStatus());
 
@@ -90,7 +90,7 @@ public class CompetitionResourceTest extends JerseyTest {
         }
 
         { // Get the list of competitions - and remove them one by one
-            final Response listResponse = target("competition").request().get();
+            final Response listResponse = target("events").request().get();
             Assert.assertEquals(200, listResponse.getStatus());
 
             final List<Competition> competitions =
@@ -99,13 +99,13 @@ public class CompetitionResourceTest extends JerseyTest {
 
             for (final Competition c: competitions) {
                 final Response deleteResponse = 
-                        target("competition/" + c.getId()).request().delete();
+                        target("events/" + c.getId()).request().delete();
                 Assert.assertEquals(200, deleteResponse.getStatus());
             }
         }
 
         { // Final get - nothing shouldn't returned (as we just removed them)
-            final Response listResponse = target("competition").request().get();
+            final Response listResponse = target("events").request().get();
             Assert.assertEquals(200, listResponse.getStatus());
 
             final List<Competition> competitions =
@@ -119,7 +119,7 @@ public class CompetitionResourceTest extends JerseyTest {
         final String nonId = UUID.randomUUID().toString();
 
         final Response response =
-                target("competition/" + nonId).request().get();
+                target("events/" + nonId).request().get();
         Assert.assertEquals(404, response.getStatus());
     }
 
@@ -133,14 +133,14 @@ public class CompetitionResourceTest extends JerseyTest {
 
         { // Create first
             final Response response =
-                    target("competition/" + competition.getId()).request()
+                    target("events/" + competition.getId()).request()
                     .post(Entity.xml(competition));
             Assert.assertEquals(201, response.getStatus());
         }
 
         {
             final Response response = 
-                    target("competition/" + competition.getId()).request()
+                    target("events/" + competition.getId()).request()
                     .post(Entity.xml(competition));
             Assert.assertEquals(409, response.getStatus());
         }
@@ -156,18 +156,18 @@ public class CompetitionResourceTest extends JerseyTest {
 
         { // Create first
             final Response response =
-                    target("competition/" + competition.getId()).request()
+                    target("events/" + competition.getId()).request()
                     .post(Entity.xml(competition));
             Assert.assertEquals(201, response.getStatus());
         }
 
         { // Update - should be fine..
-            final Competition c = target("competition/" + competition.getId())
+            final Competition c = target("events/" + competition.getId())
                     .request().get(Competition.class);
 
             Assert.assertEquals("my-name", c.getName());
             c.setName("my-new-name");
-            final Response response = target("competition/" + c.getId())
+            final Response response = target("events/" + c.getId())
                     .request().put(Entity.xml(c));
 
             Assert.assertEquals(200, response.getStatus());
@@ -176,7 +176,7 @@ public class CompetitionResourceTest extends JerseyTest {
         { // Update something that doesn't exist
             final String nonId = UUID.randomUUID().toString();
 
-            final Competition c = target("competition/" + competition.getId())
+            final Competition c = target("events/" + competition.getId())
                     .request().get(Competition.class);
 
             Assert.assertEquals("my-new-name", c.getName());
@@ -184,7 +184,7 @@ public class CompetitionResourceTest extends JerseyTest {
 
             c.setOrganizer("my-new-organizer");
 
-            final Response response = target("competition/" + nonId)
+            final Response response = target("events/" + nonId)
                     .request().put(Entity.xml(c));
 
             Assert.assertEquals(404, response.getStatus());
@@ -201,20 +201,20 @@ public class CompetitionResourceTest extends JerseyTest {
 
         { // Create first
             final Response response =
-                    target("competition/" + competition.getId()).request()
+                    target("events/" + competition.getId()).request()
                     .post(Entity.xml(competition));
             Assert.assertEquals(201, response.getStatus());
         }
 
         { // Remove
             final Response response = target(
-                    "competition/" + competition.getId()).request().delete();
+                    "events/" + competition.getId()).request().delete();
             Assert.assertEquals(200, response.getStatus());
         }
 
         { // Remove (non-existing competation at this point)
             final Response response = target(
-                    "competition/" + competition.getId()).request().delete();
+                    "events/" + competition.getId()).request().delete();
             Assert.assertEquals(404, response.getStatus());
         }
     }
@@ -230,7 +230,7 @@ public class CompetitionResourceTest extends JerseyTest {
                     "my-test-competition", "my-athletic-club", null, null, null);
 
             final WebTarget manager = target(String.format(
-                    "competition/%s", id));
+                    "events/%s", id));
 
             final Response response = manager.request().post(
                     Entity.xml(competition));
@@ -242,7 +242,7 @@ public class CompetitionResourceTest extends JerseyTest {
 
         {
             final WebTarget manager = target(String.format(
-                    "competition/%s#name", id));
+                    "events/%s#name", id));
 
             final Response response = manager.request().get();
 
@@ -253,7 +253,7 @@ public class CompetitionResourceTest extends JerseyTest {
 
         {
             final WebTarget manager = target(String.format(
-                    "competition/%s#name", id));
+                    "events/%s#name", id));
 
             final Response response = manager.request().put(
                     Entity.xml("my-new-competition-name"));
@@ -263,7 +263,7 @@ public class CompetitionResourceTest extends JerseyTest {
 
         {
             final WebTarget manager = target(String.format(
-                    "competition/%s#name", id));
+                    "events/%s#name", id));
 
             final Response response = manager.request().get();
 
@@ -285,7 +285,7 @@ public class CompetitionResourceTest extends JerseyTest {
                     "my-test-competition", "my-athletic-club", null, null, null);
 
             final WebTarget manager = target(String.format(
-                    "competition/%s", competitionId));
+                    "events/%s", competitionId));
 
             final Response response = manager.request().post(
                     Entity.xml(competition));
@@ -300,7 +300,7 @@ public class CompetitionResourceTest extends JerseyTest {
                     "my-start-group-name", (short)-1, (short)-1, 0L);
 
             final WebTarget manager = target(String.format(
-                    "competition/%s/group/%s",
+                    "events/%s/group/%s",
                     competitionId, startGroupId));
 
             final Response response = manager.request().post(
@@ -313,7 +313,7 @@ public class CompetitionResourceTest extends JerseyTest {
 
         {
             final WebTarget manager = target(String.format(
-                    "competition/%s/group/%s#name",
+                    "events/%s/group/%s#name",
                     competitionId, startGroupId));
 
             final Response response = manager.request().get();
@@ -325,7 +325,7 @@ public class CompetitionResourceTest extends JerseyTest {
 
         {
             final WebTarget manager = target(String.format(
-                    "competition/%s/group/%s#name",
+                    "events/%s/group/%s#name",
                     competitionId, startGroupId));
 
             final Response response = manager.request().put(
@@ -336,7 +336,7 @@ public class CompetitionResourceTest extends JerseyTest {
 
         {
             final WebTarget manager = target(String.format(
-                    "competition/%s/group/%s#name",
+                    "events/%s/group/%s#name",
                     competitionId, startGroupId));
 
             final Response response = manager.request().get();

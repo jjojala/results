@@ -99,7 +99,7 @@ public class CompetitorResourceTest extends JerseyTest {
 
     @Override
     protected Application configure() {
-        return new ResourceConfig().register(new CompetitionResource(emf, null));
+        return new ResourceConfig().register(new EventResource(emf, null));
     }
 
     @Test
@@ -124,7 +124,7 @@ public class CompetitorResourceTest extends JerseyTest {
         }
 
         final Response response = target(String.format(
-                "competition/%s/competitor/names", competitionId)).request().get();
+                "events/%s/competitor/names", competitionId)).request().get();
         Assert.assertEquals(200, response.getStatus());
         final List<String> names = response.readEntity(NameList.class);
         Assert.assertEquals(2, names.size());
@@ -160,7 +160,7 @@ public class CompetitorResourceTest extends JerseyTest {
         }
 
         final Response response = target(String.format(
-                "competition/%s/competitor/%s", competitionId, competitor.getId()))
+                "events/%s/competitor/%s", competitionId, competitor.getId()))
                 .request().get();
 
         Assert.assertEquals(200, response.getStatus());
@@ -201,7 +201,7 @@ public class CompetitorResourceTest extends JerseyTest {
 
         {
             final Response response = target(String.format(
-                    "competition/%s/competitor/", competitionId)).request().get();
+                    "events/%s/competitor/", competitionId)).request().get();
             Assert.assertEquals(200, response.getStatus());
             final List<Competitor> competitors =
                     response.readEntity(CompetitorList.class);
@@ -210,7 +210,7 @@ public class CompetitorResourceTest extends JerseyTest {
 
         {
             final Response response = target(String.format(
-                    "competition/%s/competitor/", competitionId))
+                    "events/%s/competitor/", competitionId))
                     .queryParam("classId", classBId).request().get();
             Assert.assertEquals(200, response.getStatus());
             final List<Competitor> competitors =
@@ -241,7 +241,7 @@ public class CompetitorResourceTest extends JerseyTest {
                 competitionId, "Ankka Aku", classAId, (short) -1, 0L, 0L);
 
             final Response response = target(String.format(
-                    "competition/huuhaa/competitor/%s", competitorId))
+                    "events/huuhaa/competitor/%s", competitorId))
                     .request().post(Entity.xml(c));
 
             Assert.assertEquals(404, response.getStatus());
@@ -256,7 +256,7 @@ public class CompetitorResourceTest extends JerseyTest {
                 competitionId, "Ankka Aku", "huuhaa", (short) -1, 0L, 0L);
 
             final Response response = target(String.format(
-                    "competition/%s/competitor/%s",
+                    "events/%s/competitor/%s",
                     competitionId, competitorId))
                     .request().post(Entity.xml(c));
 
@@ -272,7 +272,7 @@ public class CompetitorResourceTest extends JerseyTest {
                 competitionId, "Ankka Aku", classAId, (short) -1, 0L, 0L);
 
             final Response response = target(String.format(
-                    "competition/%s/competitor/%s", 
+                    "events/%s/competitor/%s", 
                     competitionId, competitorId)).request().post(
                     Entity.xml(c));
 
@@ -284,7 +284,7 @@ public class CompetitorResourceTest extends JerseyTest {
                 competitionId, "Ankka Aku", classAId, (short) -1, 0L, 0L);
 
             final Response response = target(String.format(
-                    "competition/%s/competitor/%s", 
+                    "events/%s/competitor/%s", 
                     competitionId, competitorId)).request().post(
                     Entity.xml(c));
 
@@ -295,7 +295,7 @@ public class CompetitorResourceTest extends JerseyTest {
 
         {
             final Response response = target(String.format(
-                    "competition/%s/competitor/%s",
+                    "events/%s/competitor/%s",
                     competitionId, competitorId)).request().get();
             Assert.assertEquals(200, response.getStatus());
             final Competitor c = response.readEntity(Competitor.class);
@@ -325,7 +325,7 @@ public class CompetitorResourceTest extends JerseyTest {
                 competitionId, "Ankka Aku", classAId, (short) -1, 0L, 0L);
 
             final Response response = target(String.format(
-                    "competition/%s/competitor/%s", 
+                    "events/%s/competitor/%s", 
                     competitionId, competitorId)).request().post(
                     Entity.xml(c));
 
@@ -337,7 +337,7 @@ public class CompetitorResourceTest extends JerseyTest {
                 competitionId, "Ankka Aku", classAId, (short) -1, 0L, 0L);
 
             final Response response = target(String.format(
-                    "competition/huuhaa/competitor/%s", competitorId))
+                    "events/huuhaa/competitor/%s", competitorId))
                     .request().put(Entity.xml(c));
 
             Assert.assertEquals(404, response.getStatus());
@@ -352,7 +352,7 @@ public class CompetitorResourceTest extends JerseyTest {
                 competitionId, "Ankka Aku", "huuhaa", (short) -1, 0L, 0L);
 
             final Response response = target(String.format(
-                    "competition/%s/competitor/%s",
+                    "events/%s/competitor/%s",
                     competitionId, competitorId))
                     .request().put(Entity.xml(c));
 
@@ -368,7 +368,7 @@ public class CompetitorResourceTest extends JerseyTest {
                 competitionId, "Ankka Aku", classAId, (short) -1, 0L, 0L);
 
             final Response response = target(String.format(
-                    "competition/%s/competitor/huuhaa", 
+                    "events/%s/competitor/huuhaa", 
                     competitionId)).request().put(
                     Entity.xml(c));
 
@@ -382,7 +382,7 @@ public class CompetitorResourceTest extends JerseyTest {
                 competitionId, "Jagger Mick", classAId, (short) -1, 0L, 0L);
 
             final Response response = target(String.format(
-                    "competition/%s/competitor/%s", 
+                    "events/%s/competitor/%s", 
                     competitionId, competitorId)).request().put(
                     Entity.xml(c));
 
@@ -391,7 +391,7 @@ public class CompetitorResourceTest extends JerseyTest {
 
         {
             final Response response = target(String.format(
-                    "competition/%s/competitor/%s",
+                    "events/%s/competitor/%s",
                     competitionId, competitorId)).request().get();
             Assert.assertEquals(200, response.getStatus());
             final Competitor c = response.readEntity(Competitor.class);
@@ -422,7 +422,7 @@ public class CompetitorResourceTest extends JerseyTest {
                 competitionId, "Ankka Aku", classAId, (short) -1, 0L, 0L);
 
             final Response response = target(String.format(
-                    "competition/%s/competitor/%s", 
+                    "events/%s/competitor/%s", 
                     competitionId, competitorId)).request().post(
                     Entity.xml(c));
 
@@ -431,7 +431,7 @@ public class CompetitorResourceTest extends JerseyTest {
 
         { // competition not found
             final Response response = target(String.format(
-                    "competition/huuhaa/competitor/%s", competitorId))
+                    "events/huuhaa/competitor/%s", competitorId))
                     .request().delete();
 
             Assert.assertEquals(404, response.getStatus());
@@ -443,7 +443,7 @@ public class CompetitorResourceTest extends JerseyTest {
 
         { // competitor not found
             final Response response = target(String.format(
-                    "competition/%s/competitor/huuhaa", 
+                    "events/%s/competitor/huuhaa", 
                     competitionId)).request().delete();
 
             Assert.assertEquals(404, response.getStatus());
@@ -453,7 +453,7 @@ public class CompetitorResourceTest extends JerseyTest {
 
         { // remove succeeds
             final Response response = target(String.format(
-                    "competition/%s/competitor/%s", 
+                    "events/%s/competitor/%s", 
                     competitionId, competitorId)).request().delete();
 
             Assert.assertEquals(200, response.getStatus());
@@ -461,7 +461,7 @@ public class CompetitorResourceTest extends JerseyTest {
 
         { // re-remove fails
             final Response response = target(String.format(
-                    "competition/%s/competitor/%s", 
+                    "events/%s/competitor/%s", 
                     competitionId, competitorId)).request().delete();
 
             Assert.assertEquals(404, response.getStatus());

@@ -257,7 +257,7 @@ app.controller('CompetitionMainController',
             },
             'REMOVED', 'org.gemini.results.model.Competitor');
 
-        var baseUrl = 'rest/competition/' + $routeParams.competitionId;
+        var baseUrl = 'rest/events/' + $routeParams.competitionId;
         
         $http.get(baseUrl)
             .success(function (data) {
@@ -483,7 +483,7 @@ app.controller('CompetitionListController',
             });
         }, 'REMOVED', 'org.gemini.results.model.Competition');
         
-        $http.get("rest/competition").success(function (data) {
+        $http.get("rest/events").success(function (data) {
             for (var i = 0; i < data.length; ++i)
                 data[i].timeObject = new Date(data[i].time);
 
@@ -505,7 +505,7 @@ app.controller('CompetitionListController',
 
         $scope.onCreate = function(c) {
             c.id = Uuid.randomUUID();
-            $http.post("rest/competition/" + c.id, c)
+            $http.post("rest/events/" + c.id, c)
                 .success(function() { $scope.current = {}; })
                 .error(function(err, status) {
                     alert('Adding competition failed: \n'
@@ -517,7 +517,7 @@ app.controller('CompetitionListController',
 
         $scope.onSave = function(c) {
             delete c.timeObject;
-            $http.put("rest/competition/" + c.id, c)
+            $http.put("rest/events/" + c.id, c)
                 .success(function() { $scope.current = {}; })
                 .error(function (err, status) {
                     alert('Updating competition failed: \n'
@@ -528,7 +528,7 @@ app.controller('CompetitionListController',
             };
 
         $scope.onDestroy = function(c, i) {
-            $http.delete("rest/competition/" + c.id)
+            $http.delete("rest/events/" + c.id)
                 .error(function (err, status) {
                     alert('Deleting competition failed: \n'
                         + 'err: ' + err + '\n'
@@ -538,7 +538,7 @@ app.controller('CompetitionListController',
         };
 
         $scope.onDownload = function(c) {
-            $http.get("rest/competition/export/" + c.id);
+            $http.get("rest/events/export/" + c.id);
         }
 
         $scope.sortCriteria = 'time';

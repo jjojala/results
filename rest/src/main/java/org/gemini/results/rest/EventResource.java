@@ -34,18 +34,17 @@ import org.gemini.results.model.Competitor;
 import org.gemini.results.model.Group;
 
 @Singleton
-@Path("competition")
+@Path("events")
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-public class CompetitionResource {
+public class EventResource {
 
-    private static final Logger LOG = Logger.getLogger(
-            CompetitionResource.class.getName());
+    private static final Logger LOG = Logger.getLogger(EventResource.class.getName());
     
     private final EntityManagerFactory emf_;
     private final ResourceListener listener_;
 
-    public CompetitionResource(final EntityManagerFactory emf,
+    public EventResource(final EntityManagerFactory emf,
             ResourceListener listener) {
         emf_ = emf;
         listener_ = new ResourceListenerWrapper(listener);
