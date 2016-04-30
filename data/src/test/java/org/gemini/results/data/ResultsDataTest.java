@@ -10,7 +10,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import org.gemini.results.model.Clazz;
-import org.gemini.results.model.Competition;
+import org.gemini.results.model.Event;
 import org.gemini.results.model.Competitor;
 import org.gemini.results.model.Group;
 import org.gemini.results.model.ModelUtils;
@@ -24,26 +24,26 @@ public class ResultsDataTest {
                 Persistence.createEntityManagerFactory("results-data");
 
         try {
-            final Competition competition = new Competition(
+            final Event event = new Event(
                     UUID.randomUUID().toString(),
                     ModelUtils.getDatatypeFactory().newXMLGregorianCalendar(
                         "2015-01-28T22:20:00.000+02:00"),
                     "Testikisa", "Meidän poppoo", null, null, null);
 
             final Group group = new Group(
-                    UUID.randomUUID().toString(), competition.getId(),
+                    UUID.randomUUID().toString(), event.getId(),
                     "group", (short)-1, (short)-1, 0L);
 
             final Clazz assignedClazz = new Clazz(
-                    UUID.randomUUID().toString(), competition.getId(), "H21",
+                    UUID.randomUUID().toString(), event.getId(), "H21",
                     1000L*60*1 /* 1 minute */, group.getId());
 
             final Clazz unassignedClazz = new Clazz(
-                    UUID.randomUUID().toString(), competition.getId(), "H21",
+                    UUID.randomUUID().toString(), event.getId(), "H21",
                     1000L*60*1 /* 1 minute */, null /* groupId */);
 
             final Competitor competitor = new Competitor(
-                    UUID.randomUUID().toString(), competition.getId(),
+                    UUID.randomUUID().toString(), event.getId(),
                     "Trump Donald", assignedClazz.getId(),
                     (short)0, null, null);
 
@@ -51,7 +51,7 @@ public class ResultsDataTest {
                 final EntityManager em = emf.createEntityManager();
                 final EntityTransaction trx = em.getTransaction();
                 trx.begin();
-                em.persist(competition);
+                em.persist(event);
                 em.persist(group);
                 em.persist(assignedClazz);
                 em.persist(unassignedClazz);
@@ -65,10 +65,10 @@ public class ResultsDataTest {
                 final EntityTransaction trx = em.getTransaction();
 
                 trx.begin();
-                final List<Competition> competitions =
-                        em.createNamedQuery("Competition.list").getResultList();
+                final List<Event> events =
+                        em.createNamedQuery("Event.list").getResultList();
 
-                for (final Competition c: competitions)
+                for (final Event c: events)
                     em.remove(c);
 
                 trx.commit();

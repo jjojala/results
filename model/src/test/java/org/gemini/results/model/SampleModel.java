@@ -37,7 +37,7 @@ public class SampleModel {
                         "national", (short)100, (short)500,
                         1000L*30*60 /* 60 mins */));
 
-            final Competition competition = new Competition(
+            final Event competition = new Event(
                     UUID.randomUUID().toString(),
                     time("2015-01-15T19:00:00.000+02:00"),
                     "Just local race", "Pirkkala Athletic Club",

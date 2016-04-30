@@ -28,7 +28,7 @@ import javax.ws.rs.core.UriInfo;
 import org.gemini.results.data.DataUtils;
 import org.gemini.results.model.Clazz;
 import org.gemini.results.model.ClazzList;
-import org.gemini.results.model.Competition;
+import org.gemini.results.model.Event;
 import org.gemini.results.model.Group;
 
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
@@ -40,14 +40,14 @@ public class ClazzResource {
 
     private final EntityManagerFactory emf_;
     private final ResourceListener listener_;
-    private final String competitionId_;
+    private final String eventId_;
 
     public ClazzResource(final EntityManagerFactory emf,
             final ResourceListener listener,
-            final String competitionId) {
+            final String eventId) {
         emf_ = emf;
         listener_ = listener;
-        competitionId_ = competitionId;
+        eventId_ = eventId;
     }
 
     @GET
@@ -55,14 +55,14 @@ public class ClazzResource {
         final EntityManager em = emf_.createEntityManager();
 
         try {
-            if (DataUtils.find(em, Competition.class, competitionId_) == null)
-                return RestUtils.notFound(Competition.class, competitionId_);
+            if (DataUtils.find(em, Event.class, eventId_) == null)
+                return RestUtils.notFound(Event.class, eventId_);
 
             final List<Clazz> classes = (groupId == null || groupId.isEmpty())
                     ? em.createNamedQuery("Clazz.list")
-                        .setParameter(1, competitionId_).getResultList()
+                        .setParameter(1, eventId_).getResultList()
                     : em.createNamedQuery("Clazz.listByGroupId")
-                        .setParameter(1, competitionId_)
+                        .setParameter(1, eventId_)
                         .setParameter(2, groupId).getResultList();
 
             return RestUtils.ok(new ClazzList(classes));
@@ -84,8 +84,8 @@ public class ClazzResource {
         final EntityManager em = emf_.createEntityManager();
 
         try {
-            if (DataUtils.find(em, Competition.class, competitionId_) == null)
-                return RestUtils.notFound(Competition.class, competitionId_);
+            if (DataUtils.find(em, Event.class, eventId_) == null)
+                return RestUtils.notFound(Event.class, eventId_);
 
             final Clazz clazz = DataUtils.find(em, Clazz.class, id);
             if (clazz != null)
@@ -114,16 +114,15 @@ public class ClazzResource {
         try {
             trx.begin();
 
-            if (DataUtils.findWithLock(
-                    em, Competition.class, competitionId_) == null)
-                return RestUtils.notFound(Competition.class, competitionId_);
+            if (DataUtils.findWithLock(em, Event.class, eventId_) == null)
+                return RestUtils.notFound(Event.class, eventId_);
 
             if (clazz.getGroupId() != null && DataUtils.findWithLock(
                     em, Group.class, clazz.getGroupId()) == null)
                 return RestUtils.notFound(Group.class, clazz.getGroupId());
 
             clazz.setId(id);
-            clazz.setCompetitionId(competitionId_);
+            clazz.setEventId(eventId_);
             DataUtils.create(em, id, clazz);
             trx.commit();
 
@@ -156,16 +155,15 @@ public class ClazzResource {
         try {
             trx.begin();
 
-            if (DataUtils.findWithLock(
-                    em, Competition.class, competitionId_) == null)
-                return RestUtils.notFound(Competition.class, competitionId_);
+            if (DataUtils.findWithLock(em, Event.class, eventId_) == null)
+                return RestUtils.notFound(Event.class, eventId_);
 
             if (clazz.getGroupId() != null && DataUtils.findWithLock(
                     em, Group.class, clazz.getGroupId()) == null)
                 return RestUtils.notFound(Group.class, clazz.getGroupId());
 
             clazz.setId(id);
-            clazz.setCompetitionId(competitionId_);
+            clazz.setEventId(eventId_);
             DataUtils.update(em, id, clazz);
             trx.commit();
             
@@ -194,8 +192,8 @@ public class ClazzResource {
         final EntityTransaction trx = em.getTransaction();
 
         try {
-            if (DataUtils.find(em, Competition.class, competitionId_) == null)
-                return RestUtils.notFound(Competition.class, competitionId_);
+            if (DataUtils.find(em, Event.class, eventId_) == null)
+                return RestUtils.notFound(Event.class, eventId_);
 
             trx.begin();
 

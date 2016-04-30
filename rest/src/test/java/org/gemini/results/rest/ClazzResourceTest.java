@@ -17,7 +17,7 @@ import javax.ws.rs.core.Response;
 import org.gemini.results.data.DataUtils;
 import org.gemini.results.model.Clazz;
 import org.gemini.results.model.ClazzList;
-import org.gemini.results.model.Competition;
+import org.gemini.results.model.Event;
 import org.gemini.results.model.Group;
 import org.gemini.results.model.ModelUtils;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -28,31 +28,31 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class ClazzResourceTest extends JerseyTest {
-    private static String competitionId;
+    private static String eventId;
     private static String groupId;
     private static EntityManagerFactory emf;
 
     @BeforeClass
     public static void setUpClass() {
-        competitionId = UUID.randomUUID().toString();
+        eventId = UUID.randomUUID().toString();
         groupId = UUID.randomUUID().toString();
 
         emf = Persistence.createEntityManagerFactory("results-data");
 
         {
-            final Competition competition = new Competition(
-                    competitionId,
+            final Event event = new Event(
+                    eventId,
                     ModelUtils.getDatatypeFactory().newXMLGregorianCalendar(
                     "2015-02-04T22:52:15.000+02:00"),
                     "my-name", "my-organizer", null, null, null);
 
-            final Group group = new Group(groupId, competitionId,
+            final Group group = new Group(groupId, eventId,
                     "my-group-name", (short) -1, (short) -1, 0L);
 
             final EntityManager em = emf.createEntityManager();
             final EntityTransaction trx = em.getTransaction();
             trx.begin();
-            DataUtils.create(em, competitionId, competition);
+            DataUtils.create(em, eventId, event);
             DataUtils.create(em, groupId, group);
             trx.commit();
 
@@ -69,10 +69,10 @@ public class ClazzResourceTest extends JerseyTest {
 
             trx.begin();
 
-            final List<Competition> competitions =
-                    em.createNamedQuery("Competition.list").getResultList();
+            final List<Event> competitions =
+                    em.createNamedQuery("Event.list").getResultList();
 
-            for (final Competition c: competitions) {
+            for (final Event c: competitions) {
                 em.remove(c);
             }
 
@@ -95,9 +95,9 @@ public class ClazzResourceTest extends JerseyTest {
     @Test
     public void testList() {
         final Clazz clazzWithGroup = new Clazz(UUID.randomUUID().toString(),
-                competitionId, "a-my-class", 0L, groupId);
+                eventId, "a-my-class", 0L, groupId);
         final Clazz clazzWithoutGroup = new Clazz(UUID.randomUUID().toString(),
-                competitionId, "b-my-class", 0L, null);
+                eventId, "b-my-class", 0L, null);
 
         { // setup
             final EntityManager em = emf.createEntityManager();
@@ -114,7 +114,7 @@ public class ClazzResourceTest extends JerseyTest {
 
         {
             final Response response = target(String.format(
-                    "events/%s/classes", competitionId)).request().get();
+                    "events/%s/classes", eventId)).request().get();
 
             Assert.assertEquals(200, response.getStatus());
             final List<Clazz> classes = response.readEntity(ClazzList.class);
@@ -125,7 +125,7 @@ public class ClazzResourceTest extends JerseyTest {
 
         {
             final Response response = target(String.format(
-                    "events/%s/classes", competitionId)).queryParam(
+                    "events/%s/classes", eventId)).queryParam(
                         "groupId", groupId).request().get();
 
             Assert.assertEquals(200, response.getStatus());
@@ -136,7 +136,7 @@ public class ClazzResourceTest extends JerseyTest {
 
         {
             final Response response = target(String.format(
-                    "events/%s/classes", competitionId)).queryParam(
+                    "events/%s/classes", eventId)).queryParam(
                     "groupId", "huuhaa").request().get();
 
             Assert.assertEquals(200, response.getStatus());
@@ -168,7 +168,7 @@ public class ClazzResourceTest extends JerseyTest {
     @Test
     public void testGet() {
         final Clazz clazz = new Clazz(UUID.randomUUID().toString(),
-                competitionId, "a-my-class", 0L, groupId);
+                eventId, "a-my-class", 0L, groupId);
 
         { // setup
             final EntityManager em = emf.createEntityManager();
@@ -184,7 +184,7 @@ public class ClazzResourceTest extends JerseyTest {
 
         {
             final Response response = target(String.format(
-                    "events/%s/classes/%s", competitionId, clazz.getId()))
+                    "events/%s/classes/%s", eventId, clazz.getId()))
                     .request().get();
 
             Assert.assertEquals(200, response.getStatus());
@@ -195,7 +195,7 @@ public class ClazzResourceTest extends JerseyTest {
 
         { // class not found
             final Response response = target(String.format(
-                    "events/%s/classes/huuhaa", competitionId))
+                    "events/%s/classes/huuhaa", eventId))
                     .request().get();
 
             Assert.assertEquals(404, response.getStatus());
@@ -215,7 +215,7 @@ public class ClazzResourceTest extends JerseyTest {
             final String body = response.readEntity(String.class);
             Assert.assertTrue(body.startsWith(
                     EntityNotFoundException.class.getSimpleName()));
-            Assert.assertTrue(body.contains(Competition.class.getName()));
+            Assert.assertTrue(body.contains(Event.class.getName()));
             Assert.assertTrue(body.contains("huuhaa"));
         }
 
@@ -238,10 +238,10 @@ public class ClazzResourceTest extends JerseyTest {
 
         {
             final Clazz clazz = new Clazz(validClassId,
-                    competitionId, "a-my-class", 0L, groupId);
+                    eventId, "a-my-class", 0L, groupId);
 
             final Response response = target(String.format(
-                    "events/%s/classes/%s", competitionId, validClassId))
+                    "events/%s/classes/%s", eventId, validClassId))
                     .request().post(Entity.xml(clazz));
 
             Assert.assertEquals(201, response.getStatus());
@@ -249,10 +249,10 @@ public class ClazzResourceTest extends JerseyTest {
 
         { // re-create
             final Clazz clazz = new Clazz(validClassId,
-                    competitionId, "a-my-class", 0L, groupId);
+                    eventId, "a-my-class", 0L, groupId);
 
             final Response response = target(String.format(
-                    "events/%s/classes/%s", competitionId, validClassId))
+                    "events/%s/classes/%s", eventId, validClassId))
                     .request().post(Entity.xml(clazz));
 
             Assert.assertEquals(409, response.getStatus());
@@ -275,16 +275,16 @@ public class ClazzResourceTest extends JerseyTest {
             final String body = response.readEntity(String.class);
             Assert.assertTrue(body.startsWith(
                     EntityNotFoundException.class.getSimpleName()));
-            Assert.assertTrue(body.contains(Competition.class.getName()));
+            Assert.assertTrue(body.contains(Event.class.getName()));
             Assert.assertTrue(body.contains("huuhaa"));
         }
 
         { // Group not found
             final Clazz clazz = new Clazz(validClassId,
-                    competitionId, "a-my-class", 0L, "huuhaa");
+                    eventId, "a-my-class", 0L, "huuhaa");
 
             final Response response = target(String.format(
-                    "events/%s/classes/%s", competitionId, validClassId))
+                    "events/%s/classes/%s", eventId, validClassId))
                     .request().post(Entity.xml(clazz));
 
             Assert.assertEquals(404, response.getStatus());
@@ -312,11 +312,11 @@ public class ClazzResourceTest extends JerseyTest {
     public void testUpdate() {
         final String clazzId = UUID.randomUUID().toString();
         final Clazz clazz = new Clazz(clazzId,
-                competitionId, "a-my-class", 0L, groupId);
+                eventId, "a-my-class", 0L, groupId);
 
         { // Create
             final Response response = target(String.format(
-                    "events/%s/classes/%s", competitionId, clazzId))
+                    "events/%s/classes/%s", eventId, clazzId))
                     .request().post(Entity.xml(clazz));
             Assert.assertEquals(201, response.getStatus());
         }
@@ -324,14 +324,14 @@ public class ClazzResourceTest extends JerseyTest {
         { // update
             clazz.setName("b-my-class");
             final Response response = target(String.format(
-                    "events/%s/classes/%s", competitionId, clazzId))
+                    "events/%s/classes/%s", eventId, clazzId))
                     .request().put(Entity.xml(clazz));
             Assert.assertEquals(200, response.getStatus());
         }
 
         { // Verify
             final Response response = target(String.format(
-                    "events/%s/classes/%s", competitionId, clazzId))
+                    "events/%s/classes/%s", eventId, clazzId))
                     .request().get();
             Assert.assertEquals(200, response.getStatus());
             final Clazz c = response.readEntity(Clazz.class);
@@ -348,14 +348,14 @@ public class ClazzResourceTest extends JerseyTest {
             final String body = response.readEntity(String.class);
             Assert.assertTrue(body.startsWith(
                     EntityNotFoundException.class.getSimpleName()));
-            Assert.assertTrue(body.contains(Competition.class.getName()));
+            Assert.assertTrue(body.contains(Event.class.getName()));
             Assert.assertTrue(body.contains("huuhaa"));
         }
 
         { // Group not found
             clazz.setGroupId("huuhaa");
             final Response response = target(String.format(
-                    "events/%s/classes/%s", competitionId, clazzId))
+                    "events/%s/classes/%s", eventId, clazzId))
                     .request().put(Entity.xml(clazz));
 
             Assert.assertEquals(404, response.getStatus());
@@ -370,7 +370,7 @@ public class ClazzResourceTest extends JerseyTest {
             clazz.setGroupId(null);
             clazz.setName("never-committed");
             final Response response = target(String.format(
-                    "events/%s/classes/huuhaa", competitionId))
+                    "events/%s/classes/huuhaa", eventId))
                     .request().put(Entity.xml(clazz));
 
             Assert.assertEquals(404, response.getStatus());
@@ -399,18 +399,18 @@ public class ClazzResourceTest extends JerseyTest {
     public void testRemove() {
         final String clazzId = UUID.randomUUID().toString();
         final Clazz clazz = new Clazz(clazzId,
-                competitionId, "a-my-class", 0L, groupId);
+                eventId, "a-my-class", 0L, groupId);
 
         { // Create
             final Response response = target(String.format(
-                    "events/%s/classes/%s", competitionId, clazzId))
+                    "events/%s/classes/%s", eventId, clazzId))
                     .request().post(Entity.xml(clazz));
             Assert.assertEquals(201, response.getStatus());
         }
 
         { // Verify
             final Response response = target(String.format(
-                    "events/%s/classes/%s", competitionId, clazzId))
+                    "events/%s/classes/%s", eventId, clazzId))
                     .request().get();
             Assert.assertEquals(200, response.getStatus());
             final Clazz c = response.readEntity(Clazz.class);
@@ -426,13 +426,13 @@ public class ClazzResourceTest extends JerseyTest {
             final String body = response.readEntity(String.class);
             Assert.assertTrue(body.startsWith(
                     EntityNotFoundException.class.getSimpleName()));
-            Assert.assertTrue(body.contains(Competition.class.getName()));
+            Assert.assertTrue(body.contains(Event.class.getName()));
             Assert.assertTrue(body.contains("huuhaa"));
         }
 
         { // Class not found
             final Response response = target(String.format(
-                    "events/%s/classes/huuhaa", competitionId))
+                    "events/%s/classes/huuhaa", eventId))
                     .request().delete();
 
             Assert.assertEquals(404, response.getStatus());
@@ -445,7 +445,7 @@ public class ClazzResourceTest extends JerseyTest {
 
         { // actual removal
             final Response response = target(String.format(
-                    "events/%s/classes/%s", competitionId, clazzId))
+                    "events/%s/classes/%s", eventId, clazzId))
                     .request().delete();
             Assert.assertEquals(200, response.getStatus());
         }

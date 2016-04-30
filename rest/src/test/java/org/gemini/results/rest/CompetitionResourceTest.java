@@ -14,8 +14,8 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
 import org.gemini.results.data.DataUtils;
-import org.gemini.results.model.Competition;
-import org.gemini.results.model.CompetitionList;
+import org.gemini.results.model.Event;
+import org.gemini.results.model.EventList;
 import org.gemini.results.model.ModelUtils;
 import org.gemini.results.model.Group;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -44,10 +44,10 @@ public class CompetitionResourceTest extends JerseyTest {
 
             trx.begin();
 
-            final List<Competition> competitions =
-                    em.createNamedQuery("Competition.list").getResultList();
+            final List<Event> events =
+                    em.createNamedQuery("Event.list").getResultList();
 
-            for (final Competition c: competitions) {
+            for (final Event c: events) {
                 em.remove(c);
             }
 
@@ -66,38 +66,38 @@ public class CompetitionResourceTest extends JerseyTest {
 
     @Test
     public void testList() {
-        final Competition competition = new Competition(
+        final Event event = new Event(
                 UUID.randomUUID().toString(),
                 ModelUtils.getDatatypeFactory().newXMLGregorianCalendar(
                         "2015-01-31T11:52:15.000+02:00"),
                 "my-name", "my-organizer", null, null, null);
 
-        {   // Create a competiont (so that we have at least one competition on
+        {   // Create a event (so that we have at least one event on
             // the list)
-            final Response response = target("events/" + competition.getId())
-                    .request().post(Entity.json(competition));
+            final Response response = target("events/" + event.getId())
+                    .request().post(Entity.json(event));
             Assert.assertEquals(201, response.getStatus());
         }
 
-        {   // Get the just retrieved competition
-            final Response response = target("events/" + competition.getId())
+        {   // Get the just retrieved event
+            final Response response = target("events/" + event.getId())
                     .request().accept("application/json").get();
             Assert.assertEquals(200, response.getStatus());
 
-            final Competition c = response.readEntity(Competition.class);
-            Assert.assertEquals(competition.getId(), c.getId());
-            Assert.assertEquals(competition.getTime(), c.getTime());
+            final Event c = response.readEntity(Event.class);
+            Assert.assertEquals(event.getId(), c.getId());
+            Assert.assertEquals(event.getTime(), c.getTime());
         }
 
-        { // Get the list of competitions - and remove them one by one
+        { // Get the list of events - and remove them one by one
             final Response listResponse = target("events").request().get();
             Assert.assertEquals(200, listResponse.getStatus());
 
-            final List<Competition> competitions =
-                    listResponse.readEntity(CompetitionList.class);
-            Assert.assertTrue(competitions.size() > 0);
+            final List<Event> events =
+                    listResponse.readEntity(EventList.class);
+            Assert.assertTrue(events.size() > 0);
 
-            for (final Competition c: competitions) {
+            for (final Event c: events) {
                 final Response deleteResponse = 
                         target("events/" + c.getId()).request().delete();
                 Assert.assertEquals(200, deleteResponse.getStatus());
@@ -108,9 +108,9 @@ public class CompetitionResourceTest extends JerseyTest {
             final Response listResponse = target("events").request().get();
             Assert.assertEquals(200, listResponse.getStatus());
 
-            final List<Competition> competitions =
-                    listResponse.readEntity(CompetitionList.class);
-            Assert.assertEquals(0, competitions.size());
+            final List<Event> events =
+                    listResponse.readEntity(EventList.class);
+            Assert.assertEquals(0, events.size());
         }
     }
 
@@ -125,7 +125,7 @@ public class CompetitionResourceTest extends JerseyTest {
 
     @Test
     public void testCreate() {
-        final Competition competition = new Competition(
+        final Event event = new Event(
                 UUID.randomUUID().toString(),
                 ModelUtils.getDatatypeFactory().newXMLGregorianCalendar(
                         "2015-01-31T13:07:15.000+02:00"),
@@ -133,22 +133,22 @@ public class CompetitionResourceTest extends JerseyTest {
 
         { // Create first
             final Response response =
-                    target("events/" + competition.getId()).request()
-                    .post(Entity.xml(competition));
+                    target("events/" + event.getId()).request()
+                    .post(Entity.xml(event));
             Assert.assertEquals(201, response.getStatus());
         }
 
         {
             final Response response = 
-                    target("events/" + competition.getId()).request()
-                    .post(Entity.xml(competition));
+                    target("events/" + event.getId()).request()
+                    .post(Entity.xml(event));
             Assert.assertEquals(409, response.getStatus());
         }
     }
 
     @Test
     public void testUpdate() {
-        final Competition competition = new Competition(
+        final Event event = new Event(
                 UUID.randomUUID().toString(),
                 ModelUtils.getDatatypeFactory().newXMLGregorianCalendar(
                         "2015-01-31T13:07:15.000+02:00"),
@@ -156,14 +156,14 @@ public class CompetitionResourceTest extends JerseyTest {
 
         { // Create first
             final Response response =
-                    target("events/" + competition.getId()).request()
-                    .post(Entity.xml(competition));
+                    target("events/" + event.getId()).request()
+                    .post(Entity.xml(event));
             Assert.assertEquals(201, response.getStatus());
         }
 
         { // Update - should be fine..
-            final Competition c = target("events/" + competition.getId())
-                    .request().get(Competition.class);
+            final Event c = target("events/" + event.getId())
+                    .request().get(Event.class);
 
             Assert.assertEquals("my-name", c.getName());
             c.setName("my-new-name");
@@ -176,8 +176,8 @@ public class CompetitionResourceTest extends JerseyTest {
         { // Update something that doesn't exist
             final String nonId = UUID.randomUUID().toString();
 
-            final Competition c = target("events/" + competition.getId())
-                    .request().get(Competition.class);
+            final Event c = target("events/" + event.getId())
+                    .request().get(Event.class);
 
             Assert.assertEquals("my-new-name", c.getName());
             Assert.assertEquals("my-organizer", c.getOrganizer());
@@ -193,7 +193,7 @@ public class CompetitionResourceTest extends JerseyTest {
 
     @Test
     public void testRemove() {
-        final Competition competition = new Competition(
+        final Event event = new Event(
                 UUID.randomUUID().toString(),
                 ModelUtils.getDatatypeFactory().newXMLGregorianCalendar(
                         "2015-01-31T13:07:15.000+02:00"),
@@ -201,20 +201,20 @@ public class CompetitionResourceTest extends JerseyTest {
 
         { // Create first
             final Response response =
-                    target("events/" + competition.getId()).request()
-                    .post(Entity.xml(competition));
+                    target("events/" + event.getId()).request()
+                    .post(Entity.xml(event));
             Assert.assertEquals(201, response.getStatus());
         }
 
         { // Remove
             final Response response = target(
-                    "events/" + competition.getId()).request().delete();
+                    "events/" + event.getId()).request().delete();
             Assert.assertEquals(200, response.getStatus());
         }
 
         { // Remove (non-existing competation at this point)
             final Response response = target(
-                    "events/" + competition.getId()).request().delete();
+                    "events/" + event.getId()).request().delete();
             Assert.assertEquals(404, response.getStatus());
         }
     }
@@ -224,7 +224,7 @@ public class CompetitionResourceTest extends JerseyTest {
         final String id = UUID.randomUUID().toString();
 
         {
-            final Competition competition = new Competition("my-id-overriden",
+            final Event event = new Event("my-id-overriden",
                     ModelUtils.getDatatypeFactory().newXMLGregorianCalendar(
                         "2015-01-19T22:45:15.000+02:00"),
                     "my-test-competition", "my-athletic-club", null, null, null);
@@ -233,7 +233,7 @@ public class CompetitionResourceTest extends JerseyTest {
                     "events/%s", id));
 
             final Response response = manager.request().post(
-                    Entity.xml(competition));
+                    Entity.xml(event));
 
             Assert.assertEquals(201, response.getStatus());
             Assert.assertEquals(manager.getUri().toASCIIString(),
@@ -275,20 +275,20 @@ public class CompetitionResourceTest extends JerseyTest {
 
     @Test
     public void testStartGroup() {
-        final String competitionId = UUID.randomUUID().toString();
+        final String eventId = UUID.randomUUID().toString();
         final String startGroupId = UUID.randomUUID().toString();
 
         {
-            final Competition competition = new Competition("my-id-overriden",
+            final Event event = new Event("my-id-overriden",
                     ModelUtils.getDatatypeFactory().newXMLGregorianCalendar(
                     "2015-01-19T22:45:15.000+02:00"),
                     "my-test-competition", "my-athletic-club", null, null, null);
 
             final WebTarget manager = target(String.format(
-                    "events/%s", competitionId));
+                    "events/%s", eventId));
 
             final Response response = manager.request().post(
-                    Entity.xml(competition));
+                    Entity.xml(event));
 
             Assert.assertEquals(201, response.getStatus());
             Assert.assertEquals(manager.getUri().toASCIIString(),
@@ -296,12 +296,12 @@ public class CompetitionResourceTest extends JerseyTest {
         }
 
         {
-            final Group group = new Group(startGroupId, competitionId,
+            final Group group = new Group(startGroupId, eventId,
                     "my-start-group-name", (short)-1, (short)-1, 0L);
 
             final WebTarget manager = target(String.format(
                     "events/%s/groups/%s",
-                    competitionId, startGroupId));
+                    eventId, startGroupId));
 
             final Response response = manager.request().post(
                     Entity.xml(group));
@@ -314,7 +314,7 @@ public class CompetitionResourceTest extends JerseyTest {
         {
             final WebTarget manager = target(String.format(
                     "events/%s/groups/%s#name",
-                    competitionId, startGroupId));
+                    eventId, startGroupId));
 
             final Response response = manager.request().get();
 
@@ -326,7 +326,7 @@ public class CompetitionResourceTest extends JerseyTest {
         {
             final WebTarget manager = target(String.format(
                     "events/%s/groups/%s#name",
-                    competitionId, startGroupId));
+                    eventId, startGroupId));
 
             final Response response = manager.request().put(
                     Entity.xml("my-new-start-group-name"));
@@ -337,7 +337,7 @@ public class CompetitionResourceTest extends JerseyTest {
         {
             final WebTarget manager = target(String.format(
                     "events/%s/groups/%s#name",
-                    competitionId, startGroupId));
+                    eventId, startGroupId));
 
             final Response response = manager.request().get();
 

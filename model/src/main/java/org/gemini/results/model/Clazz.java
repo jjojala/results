@@ -18,7 +18,7 @@ public class Clazz {
     private String id;
 
     @XmlAttribute(required = true)
-    private String competitionId;
+    private String eventId;
 
     @XmlAttribute(required = true)
     private String name;
@@ -33,11 +33,11 @@ public class Clazz {
     public Clazz() {
     }
 
-    public Clazz(final String id, final String competitionId,
+    public Clazz(final String id, final String eventId,
             final String name, final Long offset,
             final String groupId) {
         this.id = id;
-        this.competitionId = competitionId;
+        this.eventId = eventId;
         this.name = name;
         this.offset = offset;
         this.groupId = groupId;
@@ -51,12 +51,12 @@ public class Clazz {
         return this.id;
     }
 
-    public void setCompetitionId(final String competitionId) {
-        this.competitionId = competitionId;
+    public void setEventId(final String eventId) {
+        this.eventId = eventId;
     }
 
-    public String getCompetitionId() {
-        return this.competitionId;
+    public String getEventId() {
+        return this.eventId;
     }
 
     public void setName(final String name) {

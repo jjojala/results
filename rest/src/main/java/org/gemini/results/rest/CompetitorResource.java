@@ -27,7 +27,7 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import org.gemini.results.data.DataUtils;
 import org.gemini.results.model.Clazz;
-import org.gemini.results.model.Competition;
+import org.gemini.results.model.Event;
 import org.gemini.results.model.Competitor;
 import org.gemini.results.model.CompetitorList;
 import org.gemini.results.model.NameList;
@@ -81,8 +81,8 @@ public class CompetitorResource {
         final EntityManager em = emf_.createEntityManager();
 
         try {
-            if (DataUtils.find(em, Competition.class, competitionId_) == null)
-                return RestUtils.notFound(Competition.class, competitionId_);
+            if (DataUtils.find(em, Event.class, competitionId_) == null)
+                return RestUtils.notFound(Event.class, competitionId_);
 
             final List<Competitor> competitors = (classId == null)
                     ? em.createNamedQuery("Competitor.list")
@@ -110,8 +110,8 @@ public class CompetitorResource {
         final EntityManager em = emf_.createEntityManager();
 
         try {
-            if (DataUtils.find(em, Competition.class, competitionId_) == null)
-                return RestUtils.notFound(Competition.class, competitionId_);
+            if (DataUtils.find(em, Event.class, competitionId_) == null)
+                return RestUtils.notFound(Event.class, competitionId_);
 
             final Competitor c = DataUtils.find(em, Competitor.class, id);
             if (c == null)
@@ -140,16 +140,15 @@ public class CompetitorResource {
 
         try {
             trx.begin();
-            if (DataUtils.findWithLock(
-                    em, Competition.class, competitionId_) == null)
-                return RestUtils.notFound(Competition.class, competitionId_);
+            if (DataUtils.findWithLock(em, Event.class, competitionId_) == null)
+                return RestUtils.notFound(Event.class, competitionId_);
 
             if (competitor.getClazzId() != null && DataUtils.findWithLock(
                     em, Clazz.class, competitor.getClazzId()) == null)
                 return RestUtils.notFound(Clazz.class, competitor.getClazzId());
 
             competitor.setId(id);
-            competitor.setCompetitionId(competitionId_);
+            competitor.setEventId(competitionId_);
             DataUtils.create(em, id, competitor);
             trx.commit();
 
@@ -181,16 +180,15 @@ public class CompetitorResource {
 
         try {
             trx.begin();
-            if (DataUtils.findWithLock(
-                    em, Competition.class, competitionId_) == null)
-                return RestUtils.notFound(Competition.class, competitionId_);
+            if (DataUtils.findWithLock(em, Event.class, competitionId_) == null)
+                return RestUtils.notFound(Event.class, competitionId_);
 
             if (competitor.getClazzId() != null && DataUtils.findWithLock(
                     em, Clazz.class, competitor.getClazzId()) == null)
                 return RestUtils.notFound(Clazz.class, competitor.getClazzId());
 
             competitor.setId(id);
-            competitor.setCompetitionId(competitionId_);
+            competitor.setEventId(competitionId_);
             DataUtils.update(em, id, competitor);
 
             trx.commit();
@@ -222,9 +220,8 @@ public class CompetitorResource {
         try {
             trx.begin();
 
-            if (DataUtils.findWithLock(
-                    em, Competition.class, competitionId_) == null)
-                return RestUtils.notFound(Competition.class, competitionId_);
+            if (DataUtils.findWithLock(em, Event.class, competitionId_) == null)
+                return RestUtils.notFound(Event.class, competitionId_);
 
             final Competitor competitor = DataUtils.findWithLock(
                    em, Competitor.class, id);

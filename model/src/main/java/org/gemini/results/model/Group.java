@@ -18,7 +18,7 @@ public class Group {
     private String id;
 
     @XmlAttribute(required = true)
-    private String competitionId;
+    private String eventId;
 
     @XmlAttribute
     private String name;
@@ -35,12 +35,12 @@ public class Group {
     protected Group() {
     }
 
-    public Group(final String id, final String competitionId,
+    public Group(final String id, final String eventId,
             final String name, 
             final short minNumber, final short maxNumber,
             final Long offset) {
         this.id = id;
-        this.competitionId = competitionId;
+        this.eventId = eventId;
         this.name = name;
         this.minNumber = minNumber;
         this.maxNumber = maxNumber;
@@ -55,12 +55,12 @@ public class Group {
         return this.id;
     }
 
-    public void setCompetitionId(final String competitionId) {
-        this.competitionId = competitionId;
+    public void setEventId(final String eventId) {
+        this.eventId = eventId;
     }
 
-    public String getCompetitionId() {
-        return this.competitionId;
+    public String getEventId() {
+        return this.eventId;
     }
 
     public void setName(final String name) {

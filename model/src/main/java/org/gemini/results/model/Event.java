@@ -16,7 +16,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 @XmlRootElement(namespace = ModelUtils.NAMESPACE)
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType
-public class Competition {
+public class Event {
 
     @XmlAttribute(required = true)
     private String id;
@@ -46,13 +46,13 @@ public class Competition {
     @XmlElement(name = "competitor")
     private List<Competitor> competitors;
 
-    protected Competition() {
+    protected Event() {
         groups = new GroupList();
         clazzes = new ClazzList();
         competitors = new ArrayList<>();
     }
 
-    public Competition(final String id,
+    public Event(final String id,
             final XMLGregorianCalendar time,
             final String name, final String organizer,
             final List<Group> startGroups,

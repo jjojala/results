@@ -14,7 +14,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
 import org.gemini.results.data.DataUtils;
-import org.gemini.results.model.Competition;
+import org.gemini.results.model.Event;
 import org.gemini.results.model.ModelUtils;
 import org.gemini.results.model.Group;
 import org.gemini.results.model.GroupList;
@@ -27,17 +27,17 @@ import org.junit.Test;
 
 public class GroupResourceTest extends JerseyTest {
 
-    private static String competitionId;
+    private static String eventId;
     private static EntityManagerFactory emf;
 
     @BeforeClass
     public static void setUpClass() {
-        competitionId = UUID.randomUUID().toString();
+        eventId = UUID.randomUUID().toString();
         emf = Persistence.createEntityManagerFactory("results-data");
 
         {
-            final Competition competition = new Competition(
-                    competitionId,
+            final Event event = new Event(
+                    eventId,
                     ModelUtils.getDatatypeFactory().newXMLGregorianCalendar(
                     "2015-01-31T11:52:15.000+02:00"),
                     "my-name", "my-organizer", null, null, null);
@@ -45,7 +45,7 @@ public class GroupResourceTest extends JerseyTest {
             final EntityManager em = emf.createEntityManager();
             final EntityTransaction trx = em.getTransaction();
             trx.begin();
-            em.persist(competition);
+            em.persist(event);
             trx.commit();
 
             DataUtils.close(em);
@@ -61,10 +61,10 @@ public class GroupResourceTest extends JerseyTest {
 
             trx.begin();
 
-            final List<Competition> competitions =
-                    em.createNamedQuery("Competition.list").getResultList();
+            final List<Event> events =
+                    em.createNamedQuery("Event.list").getResultList();
 
-            for (final Competition c: competitions) {
+            for (final Event c: events) {
                 em.remove(c);
             }
 
@@ -93,25 +93,25 @@ public class GroupResourceTest extends JerseyTest {
                         "my-group-name", (short)-1, (short)-1, 0L);
 
                 final Response response = target(String.format(
-                        "events/%s/groups/%s", competitionId, groupId))
+                        "events/%s/groups/%s", eventId, groupId))
                         .request().post(Entity.xml(group));
                 Assert.assertEquals(201, response.getStatus());
             }
 
             {
                 final Response response = target(String.format(
-                        "events/%s/groups", competitionId)).request().get();
+                        "events/%s/groups", eventId)).request().get();
                 Assert.assertEquals(200, response.getStatus());
                 final List<Group> groups = response.readEntity(GroupList.class);
                 Assert.assertEquals(1, groups.size());
                 final Group group = groups.get(0);
                 Assert.assertEquals(groupId, group.getId());
-                Assert.assertEquals(competitionId, group.getCompetitionId());
+                Assert.assertEquals(eventId, group.getEventId());
             }
 
             {
                 final Response response = target(String.format(
-                        "events/%s/groups/%s", competitionId, groupId))
+                        "events/%s/groups/%s", eventId, groupId))
                         .request().delete();
                 Assert.assertEquals(200, response.getStatus());
             }
@@ -119,7 +119,7 @@ public class GroupResourceTest extends JerseyTest {
 
         {
             final Response response = target(String.format(
-                    "events/%s/groups", competitionId)).request().get();
+                    "events/%s/groups", eventId)).request().get();
             Assert.assertEquals(200, response.getStatus());
             final List<Group> groups = response.readEntity(GroupList.class);
             Assert.assertEquals(0, groups.size());
@@ -133,17 +133,17 @@ public class GroupResourceTest extends JerseyTest {
     }
 
     @Test
-    public void testNonExistingCompetition() {
-        final String nonExistingCompetitionId = UUID.randomUUID().toString();
+    public void testNonExistingEvent() {
+        final String nonExistingEventId = UUID.randomUUID().toString();
         final String nonExistingGroupId = UUID.randomUUID().toString();
 
         final Group group = new Group(nonExistingGroupId,
-                nonExistingCompetitionId, "my-group-name",
+                nonExistingEventId, "my-group-name",
                 (short)-1, (short)-1, 0L);
 
         { // Get
             final Response response = target(String.format(
-                    "events/%s/groups/%s", nonExistingCompetitionId,
+                    "events/%s/groups/%s", nonExistingEventId,
                     nonExistingGroupId)).request().get();
 
             Assert.assertEquals(404, response.getStatus());
@@ -151,7 +151,7 @@ public class GroupResourceTest extends JerseyTest {
 
         { // create
             final Response response = target(String.format(
-                    "events/%s/groups/%s", nonExistingCompetitionId,
+                    "events/%s/groups/%s", nonExistingEventId,
                     nonExistingGroupId)).request().post(Entity.xml(group));
 
             System.out.println(response.getEntity());
@@ -160,7 +160,7 @@ public class GroupResourceTest extends JerseyTest {
 
         { // update
             final Response response = target(String.format(
-                    "events/%s/groups/%s", nonExistingCompetitionId,
+                    "events/%s/groups/%s", nonExistingEventId,
                     nonExistingGroupId)).request().put(Entity.xml(group));
 
             Assert.assertEquals(404, response.getStatus());
@@ -168,7 +168,7 @@ public class GroupResourceTest extends JerseyTest {
 
         { // delete
             final Response response = target(String.format(
-                    "events/%s/groups/%s", nonExistingCompetitionId,
+                    "events/%s/groups/%s", nonExistingEventId,
                     nonExistingGroupId)).request().delete();
 
             Assert.assertEquals(404, response.getStatus());
@@ -180,12 +180,12 @@ public class GroupResourceTest extends JerseyTest {
     public void testNonExistingGroup() {
         final String nonExistingGroupId = UUID.randomUUID().toString();
         final Group group = new Group(nonExistingGroupId,
-                competitionId, "my-group-name",
+                eventId, "my-group-name",
                 (short)-1, (short)-1, 0L);
 
         { // get
             final Response response = target(String.format(
-                    "events/%s/groups/%s", competitionId,
+                    "events/%s/groups/%s", eventId,
                     nonExistingGroupId)).request().get();
 
             Assert.assertEquals(404, response.getStatus());
@@ -193,7 +193,7 @@ public class GroupResourceTest extends JerseyTest {
 
         { // update
             final Response response = target(String.format(
-                    "events/%s/groups/%s", competitionId,
+                    "events/%s/groups/%s", eventId,
                     nonExistingGroupId)).request().put(Entity.xml(group));
 
             Assert.assertEquals(404, response.getStatus());
@@ -213,7 +213,7 @@ public class GroupResourceTest extends JerseyTest {
 
         { // delete
             final Response response = target(String.format(
-                    "events/%s/groups/%s", competitionId,
+                    "events/%s/groups/%s", eventId,
                     nonExistingGroupId)).request().delete();
 
             Assert.assertEquals(404, response.getStatus());
@@ -226,27 +226,27 @@ public class GroupResourceTest extends JerseyTest {
 
         { // Create
             final Group group = new Group(groupId,
-                    competitionId, "my-group-name",
+                    eventId, "my-group-name",
                     (short) -1, (short) -1, 0L);
 
             final WebTarget resource = target(String.format(
-                    "events/%s/groups/%s", competitionId, groupId));
+                    "events/%s/groups/%s", eventId, groupId));
             final Response response =
                     resource.request().post(Entity.xml(group));
 
             Assert.assertEquals(201, response.getStatus());
             final String locationHeader = response.getHeaderString("Location");
-            Assert.assertTrue(locationHeader.contains(competitionId));
+            Assert.assertTrue(locationHeader.contains(eventId));
             Assert.assertTrue(locationHeader.contains(groupId));
         }
 
         { // re-create
             final Group group = new Group(groupId,
-                    competitionId, "my-group-name",
+                    eventId, "my-group-name",
                     (short) -1, (short) -1, 0L);
 
             final WebTarget resource = target(String.format(
-                    "events/%s/groups/%s", competitionId, groupId));
+                    "events/%s/groups/%s", eventId, groupId));
             final Response response =
                     resource.request().post(Entity.xml(group));
 
@@ -256,7 +256,7 @@ public class GroupResourceTest extends JerseyTest {
         { // Update
             { // baseline
                 final Response response = target(String.format(
-                        "events/%s/groups/%s", competitionId, groupId))
+                        "events/%s/groups/%s", eventId, groupId))
                         .request().get();
 
                 Assert.assertEquals(200, response.getStatus());
@@ -266,11 +266,11 @@ public class GroupResourceTest extends JerseyTest {
 
             { // change and update
                 final Group group = new Group(groupId,
-                        competitionId, "my-group-name#2",
+                        eventId, "my-group-name#2",
                         (short) -1, (short) -1, 0L);
 
                 final Response response = target(String.format(
-                        "events/%s/groups/%s", competitionId,
+                        "events/%s/groups/%s", eventId,
                         groupId)).request().put(Entity.xml(group));
 
                 Assert.assertEquals(200, response.getStatus());
@@ -278,7 +278,7 @@ public class GroupResourceTest extends JerseyTest {
 
             { // get changes
                 final Response response = target(String.format(
-                        "events/%s/groups/%s", competitionId, groupId))
+                        "events/%s/groups/%s", eventId, groupId))
                         .request().get();
 
                 Assert.assertEquals(200, response.getStatus());
@@ -289,7 +289,7 @@ public class GroupResourceTest extends JerseyTest {
 
         { // delete
             final Response response = target(String.format(
-                    "events/%s/groups/%s", competitionId, groupId))
+                    "events/%s/groups/%s", eventId, groupId))
                     .request().delete();
 
             Assert.assertEquals(200, response.getStatus());

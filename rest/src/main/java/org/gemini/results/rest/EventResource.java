@@ -28,8 +28,8 @@ import javax.ws.rs.core.UriInfo;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.gemini.results.data.DataUtils;
 import org.gemini.results.model.Clazz;
-import org.gemini.results.model.Competition;
-import org.gemini.results.model.CompetitionList;
+import org.gemini.results.model.Event;
+import org.gemini.results.model.EventList;
 import org.gemini.results.model.Competitor;
 import org.gemini.results.model.Group;
 
@@ -55,14 +55,14 @@ public class EventResource {
         final EntityManager em = emf_.createEntityManager();
 
         try {
-            final List<Competition> competitions =
-                    em.createNamedQuery("Competition.list").getResultList();
+            final List<Event> events =
+                    em.createNamedQuery("Event.list").getResultList();
 
-            return RestUtils.ok(new CompetitionList(competitions));
+            return RestUtils.ok(new EventList(events));
         }
         
         catch (final RuntimeException ex) {
-            LOG.log(Level.WARNING, "'Competition.list' failed: ", ex);
+            LOG.log(Level.WARNING, "'Event.list' failed: ", ex);
             return Response.serverError().entity(ex).build();
         }
 
@@ -76,19 +76,19 @@ public class EventResource {
     public Response export(@PathParam("id") final String id) {
         final EntityManager em = emf_.createEntityManager();
         try {
-            final Competition competition =
-                    DataUtils.find(em, Competition.class, id);
-            if (competition == null)
-                return RestUtils.notFound(Competition.class, id);
+            final Event event =
+                    DataUtils.find(em, Event.class, id);
+            if (event == null)
+                return RestUtils.notFound(Event.class, id);
 
-            competition.getGroups().addAll(em.createNamedQuery("Group.list")
+            event.getGroups().addAll(em.createNamedQuery("Group.list")
                     .setParameter(1, id).getResultList());
-            competition.getClasses().addAll(em.createNamedQuery("Clazz.list")
+            event.getClasses().addAll(em.createNamedQuery("Clazz.list")
                     .setParameter(1, id).getResultList());
-            competition.getCompetitors().addAll(em.createNamedQuery(
+            event.getCompetitors().addAll(em.createNamedQuery(
                     "Competitor.list").setParameter(1, id).getResultList());
 
-            return RestUtils.ok(competition);
+            return RestUtils.ok(event);
         }
 
         catch (final RuntimeException ex) {
@@ -105,7 +105,7 @@ public class EventResource {
     @Path("import/{id}")
     public Response _import(@Context final UriInfo ui,
             @PathParam("id") final String id,
-            final Competition competition) {
+            final Event competition) {
         final EntityManager em = emf_.createEntityManager();
         final EntityTransaction trx = em.getTransaction();
 
@@ -117,17 +117,17 @@ public class EventResource {
 
             for (final Group group: competition.getGroups()) {
                 System.out.println("group: " + group.getId());
-                group.setCompetitionId(id);
+                group.setEventId(id);
                 DataUtils.create(em, group.getId(), group);
             }
 
             for (final Clazz clazz: competition.getClasses()) {
-                clazz.setCompetitionId(id);
+                clazz.setEventId(id);
                 DataUtils.create(em, clazz.getId(), clazz);
             }
 
             for (final Competitor competitor: competition.getCompetitors()) {
-                competitor.setCompetitionId(id);
+                competitor.setEventId(id);
                 DataUtils.create(em, competitor.getId(), competitor);
             }
 
@@ -156,10 +156,10 @@ public class EventResource {
     public Response get(@PathParam("id") final String id) {
         final EntityManager em = emf_.createEntityManager();
         try {
-            final Competition competition =
-                    DataUtils.find(em, Competition.class, id);
+            final Event competition =
+                    DataUtils.find(em, Event.class, id);
             if (competition == null)
-                return RestUtils.notFound(Competition.class, id);
+                return RestUtils.notFound(Event.class, id);
 
             return RestUtils.ok(competition);
         }
@@ -177,7 +177,7 @@ public class EventResource {
     @PUT
     @Path("{id}")
     public Response update(@PathParam("id") final String id,
-            final Competition competition) {
+            final Event competition) {
         final EntityManager em = emf_.createEntityManager();
         final EntityTransaction trx = em.getTransaction();
 
@@ -187,13 +187,13 @@ public class EventResource {
             DataUtils.update(em, id, competition);
             trx.commit();
 
-            listener_.onUpdate(Competition.class, competition, id);
+            listener_.onUpdate(Event.class, competition, id);
             
             return RestUtils.ok();
         }
 
         catch (final EntityNotFoundException ex) {
-            return RestUtils.notFound(Competition.class, id);
+            return RestUtils.notFound(Event.class, id);
         }
 
         catch (final RuntimeException ex) {
@@ -210,7 +210,7 @@ public class EventResource {
     @Path("{id}")
     public Response create(@Context final UriInfo ui, 
             @PathParam("id") final String id,
-            final Competition competition) {
+            final Event competition) {
         final EntityManager em = emf_.createEntityManager();
         final EntityTransaction trx = em.getTransaction();
 
@@ -220,14 +220,14 @@ public class EventResource {
             DataUtils.create(em, id, competition);
             trx.commit();
 
-            listener_.onCreate(Competition.class, competition, id);
+            listener_.onCreate(Event.class, competition, id);
 
             return RestUtils.created(UriBuilder.fromUri(
                     ui.getRequestUri()).build());
         }
 
         catch (final EntityExistsException ex) {
-            return RestUtils.conflict(Competition.class, id);
+            return RestUtils.conflict(Event.class, id);
         }
 
         catch (final RuntimeException ex) {
@@ -248,15 +248,15 @@ public class EventResource {
 
         try {
             trx.begin();
-            final Competition competition =
-                    DataUtils.findWithLock(em, Competition.class, id);
+            final Event competition =
+                    DataUtils.findWithLock(em, Event.class, id);
             if (competition == null)
-                return RestUtils.notFound(Competition.class, id);
+                return RestUtils.notFound(Event.class, id);
             
-            DataUtils.remove(em, id, Competition.class); //  == true
+            DataUtils.remove(em, id, Event.class); //  == true
             trx.commit();
 
-            listener_.onRemove(Competition.class, competition, id);
+            listener_.onRemove(Event.class, competition, id);
 
             return RestUtils.ok();
         }
@@ -277,9 +277,9 @@ public class EventResource {
         final EntityManager em = emf_.createEntityManager();
 
         try {
-            final Competition c = DataUtils.find(em, Competition.class, id);
+            final Event c = DataUtils.find(em, Event.class, id);
             if (c == null)
-                return RestUtils.notFound(Competition.class, id);
+                return RestUtils.notFound(Event.class, id);
 
             return RestUtils.ok(c.getName());
         }
@@ -303,16 +303,16 @@ public class EventResource {
 
         try {
             trx.begin();
-            final Competition c =
-                    DataUtils.findWithLock(em, Competition.class, id);
+            final Event c =
+                    DataUtils.findWithLock(em, Event.class, id);
             if (c == null)
-                return RestUtils.notFound(Competition.class, id);
+                return RestUtils.notFound(Event.class, id);
 
             c.setName(name);
             em.merge(c);
             trx.commit();
             
-            listener_.onUpdate(Competition.class, c, c.getId());
+            listener_.onUpdate(Event.class, c, c.getId());
             return RestUtils.ok();
         }
 
@@ -332,9 +332,9 @@ public class EventResource {
         final EntityManager em = emf_.createEntityManager();
 
         try {
-            final Competition c = DataUtils.find(em, Competition.class, id);
+            final Event c = DataUtils.find(em, Event.class, id);
             if (c == null)
-                return RestUtils.notFound(Competition.class, id);
+                return RestUtils.notFound(Event.class, id);
 
             return RestUtils.ok(c.getTime());
         }
@@ -358,16 +358,16 @@ public class EventResource {
 
         try {
             trx.begin();
-            final Competition c =
-                    DataUtils.findWithLock(em, Competition.class, id);
+            final Event c =
+                    DataUtils.findWithLock(em, Event.class, id);
             if (c == null)
-                return RestUtils.notFound(Competition.class, id);
+                return RestUtils.notFound(Event.class, id);
 
             c.setTime(time);
             em.merge(c);
             trx.commit();
             
-            listener_.onUpdate(Competition.class, c, c.getId());
+            listener_.onUpdate(Event.class, c, c.getId());
             return RestUtils.ok();
         }
 
@@ -387,9 +387,9 @@ public class EventResource {
         final EntityManager em = emf_.createEntityManager();
 
         try {
-            final Competition c = DataUtils.find(em, Competition.class, id);
+            final Event c = DataUtils.find(em, Event.class, id);
             if (c == null)
-                return RestUtils.notFound(Competition.class, id);
+                return RestUtils.notFound(Event.class, id);
 
             return RestUtils.ok(c.getOrganizer());
         }
@@ -413,10 +413,10 @@ public class EventResource {
 
         try {
             trx.begin();
-            final Competition c =
-                    DataUtils.findWithLock(em, Competition.class, id);
+            final Event c =
+                    DataUtils.findWithLock(em, Event.class, id);
             if (c == null)
-                return RestUtils.notFound(Competition.class, id);
+                return RestUtils.notFound(Event.class, id);
 
             c.setOrganizer(organizer);
             em.merge(c);

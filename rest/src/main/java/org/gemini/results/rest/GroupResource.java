@@ -25,7 +25,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import org.gemini.results.data.DataUtils;
-import org.gemini.results.model.Competition;
+import org.gemini.results.model.Event;
 import org.gemini.results.model.Group;
 import org.gemini.results.model.GroupList;
 
@@ -53,8 +53,8 @@ public class GroupResource {
         final EntityManager em = emf_.createEntityManager();
 
         try {
-            if (DataUtils.find(em, Competition.class, competitionId_) == null)
-                return RestUtils.notFound(Competition.class, competitionId_);
+            if (DataUtils.find(em, Event.class, competitionId_) == null)
+                return RestUtils.notFound(Event.class, competitionId_);
 
             final List<Group> groups = em.createNamedQuery("Group.list")
                     .setParameter(1, competitionId_).getResultList();
@@ -78,8 +78,8 @@ public class GroupResource {
         final EntityManager em = emf_.createEntityManager();
 
         try {
-            if (DataUtils.find(em, Competition.class, competitionId_) == null)
-                return RestUtils.notFound(Competition.class, competitionId_);
+            if (DataUtils.find(em, Event.class, competitionId_) == null)
+                return RestUtils.notFound(Event.class, competitionId_);
 
             final Group group = em.find(Group.class, id);
             if (group != null)
@@ -109,12 +109,11 @@ public class GroupResource {
         try {
             trx.begin();
 
-            if (DataUtils.findWithLock(
-                    em, Competition.class, competitionId_) == null)
-                return RestUtils.notFound(Competition.class, competitionId_);
+            if (DataUtils.findWithLock(em, Event.class, competitionId_) == null)
+                return RestUtils.notFound(Event.class, competitionId_);
 
             group.setId(id);
-            group.setCompetitionId(competitionId_);
+            group.setEventId(competitionId_);
             DataUtils.create(em, id, group);
             trx.commit();
 
@@ -147,12 +146,11 @@ public class GroupResource {
         try {
             trx.begin();
 
-            if (DataUtils.findWithLock(
-                    em, Competition.class, competitionId_) == null)
-                return RestUtils.notFound(Competition.class, competitionId_);
+            if (DataUtils.findWithLock(em, Event.class, competitionId_) == null)
+                return RestUtils.notFound(Event.class, competitionId_);
 
             group.setId(id);
-            group.setCompetitionId(competitionId_);
+            group.setEventId(competitionId_);
 
             DataUtils.update(em, id, group);
 
@@ -183,8 +181,8 @@ public class GroupResource {
         final EntityTransaction trx = em.getTransaction();
 
         try {
-            if (DataUtils.find(em, Competition.class, competitionId_) == null)
-                return RestUtils.notFound(Competition.class, competitionId_);
+            if (DataUtils.find(em, Event.class, competitionId_) == null)
+                return RestUtils.notFound(Event.class, competitionId_);
 
             trx.begin();
             final Group group = DataUtils.findWithLock(em, Group.class, id);

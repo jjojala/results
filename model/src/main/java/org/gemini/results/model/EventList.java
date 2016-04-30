@@ -15,20 +15,20 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(namespace = ModelUtils.NAMESPACE)
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType
-public class CompetitionList extends AbstractList<Competition> {
+public class EventList extends AbstractList<Event> {
 
     @XmlElement(name = "competition")
-    private List<Competition> competitions = new ArrayList<>();
+    private List<Event> competitions = new ArrayList<>();
 
-    public CompetitionList() {
+    public EventList() {
     }
 
-    public CompetitionList(final List<Competition> items) {
+    public EventList(final List<Event> items) {
         this.competitions.addAll(items);
     }
 
     @Override
-    public Competition get(int index) {
+    public Event get(int index) {
         return this.competitions.get(index);
     }
 
@@ -38,17 +38,17 @@ public class CompetitionList extends AbstractList<Competition> {
     }
 
     @Override
-    public Competition set(int index, Competition element) {
+    public Event set(int index, Event element) {
         return this.competitions.set(index, element);
     }
 
     @Override
-    public void add(int index, Competition element) {
+    public void add(int index, Event element) {
         this.competitions.add(index, element);
     }
 
     @Override
-    public Competition remove(int index) {
+    public Event remove(int index) {
         return this.competitions.remove(index);
     }
 }

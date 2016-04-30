@@ -32,7 +32,7 @@ public abstract class ModelUtils {
         static {
             try {
                 CONTEXT = JAXBContext.newInstance(
-                        Competition.class, Competitor.class,
+                        Event.class, Competitor.class,
                         CompetitorList.class);
             }
 

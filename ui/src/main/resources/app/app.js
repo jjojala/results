@@ -80,19 +80,19 @@ app.controller('CompetitionMainController',
                 $scope.$apply(function() {
                     if (c.id === $scope.competition.id) {
                         if (c.time !== $scope.competition.time) {
-                            console.log('TODO: recalulcate results on competion time change.');
+                            console.log('TODO: recalulcate results on event time change.');
                         }
                         $scope.competition = c;
                     }
                 });
             },
-            'UPDATED', 'org.gemini.results.model.Competition');
+            'UPDATED', 'org.gemini.results.model.Event');
 
         Rcnp.register(function (c) {
                 $scope.$apply(function() {
                     if (c.id === $scope.competition.id) {
-                        alert('This competition is unexpectedly removed! '
-                            + 'Please return back to competition list.');
+                        alert('This event is unexpectedly removed! '
+                            + 'Please return back to event list.');
                         $scope.current = { clazz: null, group: null, competitor: null };
                         $scope.competition = null;
                         $scope.groups = [];
@@ -101,11 +101,11 @@ app.controller('CompetitionMainController',
                     }
                 });
             },
-            'REMOVED', 'org.gemini.results.model.Competition');
+            'REMOVED', 'org.gemini.results.model.Event');
             
         Rcnp.register(function (g) {
                 $scope.$apply(function() {
-                    if (g.competitionId === $scope.competition.id) {
+                    if (g.eventId === $scope.competition.id) {
                         $scope.groups.push(g);
                     }
                 });
@@ -114,7 +114,7 @@ app.controller('CompetitionMainController',
 
         Rcnp.register(function (g) {
                 $scope.$apply(function() {
-                    if (g.competitionId === $scope.competition.id) {
+                    if (g.eventId === $scope.competition.id) {
                         for (var i = 0; i < $scope.groups.length; i++) {
                             if (g.id === $scope.groups[i].id) {
                                 if (g.offset !== $scope.groups[i].offset) {
@@ -132,7 +132,7 @@ app.controller('CompetitionMainController',
 
         Rcnp.register(function (g) {
                 $scope.$apply(function() {
-                    if (g.competitionId === $scope.competition.id) {
+                    if (g.eventId === $scope.competition.id) {
                         for (var i = 0; i < $scope.groups.length; i++) {
                             if (g.id === $scope.groups[i].id) {
                                 $scope.groups.splice(i, 1);
@@ -154,7 +154,7 @@ app.controller('CompetitionMainController',
 
         Rcnp.register(function (cl) {
                 $scope.$apply(function() {
-                    if (cl.competitionId === $scope.competition.id) {
+                    if (cl.eventId === $scope.competition.id) {
                         $scope.clazzes.push({
                             _group: getGroupById(cl.groupId),
                             _ref: cl
@@ -166,7 +166,7 @@ app.controller('CompetitionMainController',
 
         Rcnp.register(function (cl) {
                 $scope.$apply(function() {
-                    if (cl.competitionId === $scope.competition.id) {
+                    if (cl.eventId === $scope.competition.id) {
                         for (var i = 0; i < $scope.clazzes.length; i++) {
                             if (cl.id === $scope.clazzes[i]._ref.id) {
                                 $scope.clazzes[i] = {
@@ -188,7 +188,7 @@ app.controller('CompetitionMainController',
 
         Rcnp.register(function (cl) {
                 $scope.$apply(function() {
-                    if (cl.competitionId === $scope.competition.id) {
+                    if (cl.eventId === $scope.competition.id) {
                         for (var i = 0; i < $scope.clazzes.length; i++) {
                             if (cl.id === $scope.clazzes[i]._ref.id) {
                                 $scope.clazzes.splice(i, 1);
@@ -211,7 +211,7 @@ app.controller('CompetitionMainController',
 
         Rcnp.register(function (co) {
                 $scope.$apply(function() {
-                    if (co.competitionId === $scope.competition.id) {
+                    if (co.eventId === $scope.competition.id) {
                         var context = {
                             _clazz: getClazzById(co.clazzId),
                             _ref: co
@@ -226,7 +226,7 @@ app.controller('CompetitionMainController',
 
         Rcnp.register(function (co) {
                 $scope.$apply(function() {
-                    if (co.competitionId === $scope.competition.id) {
+                    if (co.eventId === $scope.competition.id) {
                         for (var i = 0; i < $scope.competitors.length; i++) {
                             if (co.id === $scope.competitors[i]._ref.id) {
                                 var context = {
@@ -245,7 +245,7 @@ app.controller('CompetitionMainController',
 
         Rcnp.register(function (co) {
                 $scope.$apply(function() {
-                    if (co.competitionId === $scope.competition.id) {
+                    if (co.eventId === $scope.competition.id) {
                         for (var i = 0; i < $scope.competitors.length; i++) {
                             if (co.id === $scope.competitors[i]._ref.id) {
                                 $scope.competitors.splice(i, 1);
@@ -459,7 +459,7 @@ app.controller('CompetitionListController',
                     $scope.competitions.push(c);
                 });
             },
-            'CREATED', 'org.gemini.results.model.Competition');
+            'CREATED', 'org.gemini.results.model.Event');
 
         Rcnp.register(function(c) {
             $scope.$apply(function() {
@@ -470,7 +470,7 @@ app.controller('CompetitionListController',
                     }
                 }
             });
-        }, 'UPDATED', 'org.gemini.results.model.Competition');
+        }, 'UPDATED', 'org.gemini.results.model.Event');
 
         Rcnp.register(function(c) {
             $scope.$apply(function() {
@@ -481,7 +481,7 @@ app.controller('CompetitionListController',
                     }
                 }
             });
-        }, 'REMOVED', 'org.gemini.results.model.Competition');
+        }, 'REMOVED', 'org.gemini.results.model.Event');
         
         $http.get("rest/events").success(function (data) {
             for (var i = 0; i < data.length; ++i)
@@ -489,7 +489,7 @@ app.controller('CompetitionListController',
 
             $scope.competitions = data;
         }).error(function (err, status) {
-            alert('Retrieving competitions failed: \n'
+            alert('Retrieving events failed: \n'
                 + 'err: ' + err + '\n'
                 + 'status: ' + status);
         });
@@ -508,10 +508,10 @@ app.controller('CompetitionListController',
             $http.post("rest/events/" + c.id, c)
                 .success(function() { $scope.current = {}; })
                 .error(function(err, status) {
-                    alert('Adding competition failed: \n'
+                    alert('Adding event failed: \n'
                         + 'err: '  + err + '\n'
                         + 'status: ' + status + '\n'
-                        + 'competition: ' + angular.toJson(c, true));
+                        + 'event: ' + angular.toJson(c, true));
                     });
             };
 
@@ -520,20 +520,20 @@ app.controller('CompetitionListController',
             $http.put("rest/events/" + c.id, c)
                 .success(function() { $scope.current = {}; })
                 .error(function (err, status) {
-                    alert('Updating competition failed: \n'
+                    alert('Updating event failed: \n'
                         + 'err: ' + err + '\n'
                         + 'status: ' + status + '\n'
-                        + 'competition: ' + angular.toJson(c, true));
+                        + 'event: ' + angular.toJson(c, true));
                     });
             };
 
         $scope.onDestroy = function(c, i) {
             $http.delete("rest/events/" + c.id)
                 .error(function (err, status) {
-                    alert('Deleting competition failed: \n'
+                    alert('Deleting event failed: \n'
                         + 'err: ' + err + '\n'
                         + 'status: ' + status + '\n'
-                        + 'competition: ' + angular.toJson(c, true));
+                        + 'event: ' + angular.toJson(c, true));
                 });
         };
 
