@@ -9,8 +9,8 @@
         function(Uuid, $websocket) {
 
             var wsUrl = 
-                    (window.location.protocol === 'https:' ? 'wss://' : 'ws://')
-                    + window.location.host + '/notifications/' + Uuid.randomUUID();
+                    (window.location.protocol === 'https:' ? 'wss://' : 'ws://') +
+                    window.location.host + '/notifications/' + Uuid.randomUUID();
 
             var ws = $websocket.$new(wsUrl, [ 'x-rcnp' ]);
             ws.$on('$open', function() {
@@ -37,7 +37,7 @@
 
             ws.$on('$error', function(err) {
                 console.log('onError: ' + err);
-            })
+            });
 
             return {
                 register: function(f, e, c) {

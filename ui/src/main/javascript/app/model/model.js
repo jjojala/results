@@ -64,6 +64,6 @@
         };
     };
 
-    angular.module('model').provider()
+    angular.module('model').provider();
 })();
 

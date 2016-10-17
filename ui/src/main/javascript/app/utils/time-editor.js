@@ -11,7 +11,7 @@
             && (a[4] === '_' || a[4] < 6)
             && (isDigit(a[6]));
         */
-    }
+    };
     
     var msecsToTimeArray = function(t) {
         if (!t)
@@ -28,13 +28,13 @@
             Math.floor(seconds / 10).toString(), (seconds % 10).toString(),
             tenths.toString()
         ];
-    }
+    };
 
     var timeArrayToMsecs = function(a) {
-        return  (a[0] * 10 + +a[1]) * 60 * 60 * 1000 // hours    --> msecs
-            +   (a[2] * 10 + +a[3]) * 60 * 1000      // minutes  --> msecs
-            +   (a[4] * 10 + +a[5]) * 1000           // seconds  --> msecs
-            +   (a[6]) * 100;                       // tenths   --> msecs
+        return ((a[0] * 10 + a[1]) * 60 * 60 * 1000) + // hours    --> msecs
+            ((a[2] * 10 + a[3]) * 60 * 1000) +         // minutes  --> msecs
+            ((a[4] * 10 + a[5]) * 1000) +              // seconds  --> msecs
+            ((a[6]) * 100);                            // tenths   --> msecs
     };
 
     var timeArrayToString = function(a) {
@@ -66,13 +66,12 @@
                 
                 scope.$watch('time', function(time) {
 
-                    basetime = scope.time
-                        ? new Date(scope.time).setHours(0, 0, 0, 0)
-                        : new Date(0);
+                    basetime = scope.time ?
+                        new Date(scope.time).setHours(0, 0, 0, 0) : new Date(0);
 
                     console.log('scope.time    : ' + 
-                                (scope.time ? new Date(scope.time) : basetime)
-                            + '\nbasetime: ' + new Date(basetime));
+                                (scope.time ? new Date(scope.time) : basetime) +
+                                '\nbasetime: ' + new Date(basetime));
 
                     values = msecsToTimeArray(scope.time - basetime);
                     input.val(values ? timeArrayToString(values) : null);
@@ -107,7 +106,7 @@
                                     basetime + timeArrayToMsecs(values);
                             console.log('time:  ' + new Date(timeArrayToMsecs(values)));
                             console.log('basetime: ' + basetime);
-                        })
+                        });
                     } else {
                     }
                 });

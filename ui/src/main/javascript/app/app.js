@@ -1,7 +1,8 @@
-/* 
+/*
  * Copyright (C) 2015-2016 Jari Ojala (jari.ojala@iki.fi).
  */
 
+(function() {
 'use strict';
 
 var app = angular.module('ResultsApplication', [ 'utils',
@@ -91,8 +92,8 @@ app.controller('CompetitionMainController',
         Rcnp.register(function (c) {
                 $scope.$apply(function() {
                     if (c.id === $scope.competition.id) {
-                        alert('This event is unexpectedly removed! '
-                            + 'Please return back to event list.');
+                        alert('This event is unexpectedly removed! ' +
+                            'Please return back to event list.');
                         $scope.current = { clazz: null, group: null, competitor: null };
                         $scope.competition = null;
                         $scope.groups = [];
@@ -140,7 +141,7 @@ app.controller('CompetitionMainController',
                             }
                         }
 
-                        for (var i = 0; i < $scope.clazzes.length; i++) {
+                        for (i = 0; i < $scope.clazzes.length; i++) {
                             if (g.id === $scope.clazzes[i]._group.id) {
                                 $scope.clazzes[i]._group = null;
                             
@@ -175,7 +176,7 @@ app.controller('CompetitionMainController',
                                 };
 
                                 if (cl.offset !== $scope.clazzes[i]._ref.offset) {
-                                    console.log('TODO: Recalculate results on Clazz change')
+                                    console.log('TODO: Recalculate results on Clazz change');
                                 }
 
                                 break;
@@ -196,7 +197,7 @@ app.controller('CompetitionMainController',
                             }
                         }
 
-                        for (var i = 0; i < $scope.competitors.length; i++) {
+                        for (i = 0; i < $scope.competitors.length; i++) {
                             if ($scope.competitors[i]._clazz &&
                                     cl.id === $scope.competitors[i]._clazz.id) {
                                 $scope.competitors[i]._clazz = null;
@@ -205,7 +206,7 @@ app.controller('CompetitionMainController',
                             }
                         }
                     }
-                })
+                });
             },
             'REMOVED', 'org.gemini.results.model.Clazz');
 
@@ -253,7 +254,7 @@ app.controller('CompetitionMainController',
                             }
                         }
                     }
-                })
+                });
             },
             'REMOVED', 'org.gemini.results.model.Competitor');
 
@@ -314,8 +315,8 @@ app.controller('CompetitionMainController',
             $http.post(baseUrl + "/groups/" + g.id, g)
                 .success(function() { $scope.current.group = null; })
                 .error(function(err, status) {
-                    alert("Adding group failed: \nerr: " + err + "\nstatus: "
-                            + status + "\nGroup: " + angular.toJson(g, true));
+                    alert("Adding group failed: \nerr: " + err + "\nstatus: " +
+                        status + "\nGroup: " + angular.toJson(g, true));
                 });
         };        
         
@@ -332,8 +333,9 @@ app.controller('CompetitionMainController',
             $http.put(baseUrl + "/groups/" + g.id, g)
                 .success(function() { $scope.current.group = null; })
                 .error(function(err, status) {
-                    alert("Updating group failed: \nerr: " + err + "\nstatus: "
-                            + status + "\nGroup: " + angular.toJson(g, true));
+                    alert("Updating group failed: \nerr: " + err +
+                        "\nstatus: " + status + "\nGroup: " +
+                        angular.toJson(g, true));
                 });
         };
         
@@ -348,8 +350,8 @@ app.controller('CompetitionMainController',
             $http.post(baseUrl + "/classes/" + c._ref.id, c._ref)
                 .success(function() { $scope.current.clazz = null; })
                 .error(function(err, status) {
-                    alert("Adding class failed: \nerr: " + err + "\nstatus: "
-                            + status + "\nClass: " + angular.toJson(c, true));
+                    alert("Adding class failed: \nerr: " + err + "\nstatus: " +
+                        status + "\nClass: " + angular.toJson(c, true));
                 });
         };
 
@@ -365,8 +367,9 @@ app.controller('CompetitionMainController',
             $http.put(baseUrl + "/classes/" + c._ref.id, c._ref)
                 .success(function() { $scope.current.clazz = null; })
                 .error(function(err, status) {
-                    alert("Updating class failed: \nerr: " + err + "\nstatus: "
-                    + status + "\nClass: " + angular.toJson(c, true));
+                    alert("Updating class failed: \nerr: " + err +
+                        "\nstatus: " + status + "\nClass: " +
+                        angular.toJson(c, true));
                 });
         };
 
@@ -381,8 +384,9 @@ app.controller('CompetitionMainController',
             $http.post(baseUrl + "/competitors/" + c._ref.id, c._ref)
                 .success(function() { $scope.current.competitor = null; })
                 .error(function (err, status) {
-                    alert("Adding competitor failed: \nerr: " + err + "\nstatus: "
-                        + status + "\nCompetitor:"+ angular.toJson(c, true));
+                    alert("Adding competitor failed: \nerr: " + err +
+                        "\nstatus: " + status + "\nCompetitor:" +
+                        angular.toJson(c, true));
                 });
         };
 
@@ -399,8 +403,9 @@ app.controller('CompetitionMainController',
             $http.put(baseUrl + "/competitors/" + c._ref.id, c._ref)
                 .success(function() { $scope.current.competitor = null; })
                 .error(function(err, status) {
-                    alert("Updating competitor failed: \nerr: " + err + "\nstatus: "
-                        + status + "\nCompetitor: " + angular.toJson(c._ref, true));
+                    alert("Updating competitor failed: \nerr: " + err +
+                        "\nstatus: " + status + "\nCompetitor: " +
+                        angular.toJson(c._ref, true));
                 });
         };
 
@@ -448,20 +453,20 @@ app.controller('CompetitionListController',
         
         $scope.showEventImportDialog = function() {
             $scope.eventImportDialogVisible = true;
-        }
+        };
         
         $scope.hideEventImportDialog = function() {
             $scope.eventImportDialogVisible = false;
-        }
+        };
         
         $scope.openCompetitionDetails = function (c, i) {
             $scope.competitionDetailsShow = true;
-        }
+        };
         
         $scope.hideCompetitionDetails = function() {
             $scope.current = null;
             $scope.competitionDetailsShow = false;
-        }
+        };
         
         Rcnp.register(function(c) {
                 $scope.$apply(function() {
@@ -498,9 +503,8 @@ app.controller('CompetitionListController',
 
             $scope.competitions = data;
         }).error(function (err, status) {
-            alert('Retrieving events failed: \n'
-                + 'err: ' + err + '\n'
-                + 'status: ' + status);
+            alert('Retrieving events failed: \n' + 'err: ' + err + '\n' +
+                    'status: ' + status);
         });
 
         $scope.onSelect = function(c) {
@@ -510,17 +514,16 @@ app.controller('CompetitionListController',
                 name: c.name,
                 organizer: c.organizer
             };
-        }
+        };
 
         $scope.onCreate = function(c) {
             c.id = Uuid.randomUUID();
             $http.post("rest/events/" + c.id, c)
                 .success(function() { $scope.current = {}; })
                 .error(function(err, status) {
-                    alert('Adding event failed: \n'
-                        + 'err: '  + err + '\n'
-                        + 'status: ' + status + '\n'
-                        + 'event: ' + angular.toJson(c, true));
+                    alert('Adding event failed: \n' + 'err: '  + err + '\n' +
+                        'status: ' + status + '\n' + 'event: ' +
+                        angular.toJson(c, true));
                     });
             };
 
@@ -529,27 +532,26 @@ app.controller('CompetitionListController',
             $http.put("rest/events/" + c.id, c)
                 .success(function() { $scope.current = {}; })
                 .error(function (err, status) {
-                    alert('Updating event failed: \n'
-                        + 'err: ' + err + '\n'
-                        + 'status: ' + status + '\n'
-                        + 'event: ' + angular.toJson(c, true));
+                    alert('Updating event failed: \n' + 'err: ' + err + '\n' +
+                        'status: ' + status + '\n' + 'event: ' +
+                        angular.toJson(c, true));
                     });
             };
 
         $scope.onDestroy = function(c, i) {
             $http.delete("rest/events/" + c.id)
                 .error(function (err, status) {
-                    alert('Deleting event failed: \n'
-                        + 'err: ' + err + '\n'
-                        + 'status: ' + status + '\n'
-                        + 'event: ' + angular.toJson(c, true));
+                    alert('Deleting event failed: \n' + 'err: ' + err + '\n' +
+                        'status: ' + status + '\n' + 'event: ' +
+                        angular.toJson(c, true));
                 });
         };
 
         $scope.onDownload = function(c) {
             $http.get("rest/events/export/" + c.id);
-        }
+        };
 
         $scope.sortCriteria = 'time';
     }
 );
+})();
