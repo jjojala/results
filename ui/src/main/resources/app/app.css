@@ -41,6 +41,15 @@
 }
 */
 
+.modal.fade {
+    display: inherit;
+    opacity: inherit;
+}
+
+.modal.fade .modal-dialog {
+    top: 100px;
+}
+
 #competitionDetailsDialog.modal.fade {
     display: inherit;
     opacity: inherit;

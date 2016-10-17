@@ -1,97 +1,149 @@
-<div class="container">
+<!--
+  Copyright (C) 2015-2016 Jari Ojala (jari.ojala@iki.fi)
+-->
 
-    <div id="competitionDetailsDialog" class="modal fade" ng-show="competitionDetailsShow">
-        <div class="modal-dialog">
-            <div class="modal-content">
+<div id="eventImportDialog" class="modal fade" ng-show="eventImportDialogVisible">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="/rest/events/import/999" method="POST">
                 <div class="modal-header">
-                    <button type="button" class="close" ng-click="hideCompetitionDetails()">&times;</button>
-                    <h4 ng-hide="current.id" class="modal-title">New Competition</h4>
-                    <h4 ng-show="current.id" class="modal-title">Competition Details</h4>
+                    <button type="button" class="close"
+                            ng-click="hideEventImportDialog()">
+                        &times;
+                    </button>
+                    <h4>Import Event</h4>                
                 </div>
                 <div class="modal-body">
                     <form>
                         <div class="form-group">
-                            <label for="time">Competition time:</label>
-                            <input  id="time" class="form-control"
-                                    type="datetime-local"
-                                    placeholder="yyyy-MM-ddTHH:mm"
-                                    ng-model="current.time"/>
-                        </div>
-                        <div class="form-group">
-                            <label for="name">Competition name:</label>
-                            <input  id="name" class="form-control" type="text"
-                                    placeholder="<competition's name>"
-                                    ng-model="current.name"/>
-                        </div>
-                        <div class="form-group">
-                            <label for="organizer">Organizer's name:</label>
-                            <input  id="organizer" class="form-control"
-                                    type="text"
-                                    placeholder="<competition's organizer>"
-                                    ng-model="current.organizer"/>
+                            <label for="file">Select file:</label>
+                            <input id="file" class="form-control" name="file" type="file"/>                        
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn"
-                            ng-click="hideCompetitionDetails()">
+                            ng-click="hideEventImportDialog()">
                         Cancel
                     </button>
-                    <button type="button" class="btn btn-default"
-                            ng-show="current.id"
-                            ng-click="onSave(current); hideCompetitionDetails()">
-                        Update
-                    </button>
-                    <button type="button" class="btn btn-default"
-                            ng-hide="current.id"
-                            ng-click="onCreate(current); hideCompetitionDetails()">
-                        Create
+                    <button type="submit" class="btn btn-default"
+                            ng-click="hideEventImportDialog()">
+                        Import
                     </button>
                 </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="competitionDetailsDialog" class="modal fade" ng-show="competitionDetailsShow">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" ng-click="hideCompetitionDetails()">&times;</button>
+                <h4 ng-hide="current.id" class="modal-title">New Event</h4>
+                <h4 ng-show="current.id" class="modal-title">Event Details</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="time">Event time:</label>
+                        <input  id="time" class="form-control"
+                                type="datetime-local"
+                                placeholder="yyyy-MM-ddTHH:mm"
+                                ng-model="current.time"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="name">Event name:</label>
+                        <input  id="name" class="form-control" type="text"
+                                placeholder="<event's name>"
+                                ng-model="current.name"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="organizer">Organizer's name:</label>
+                        <input  id="organizer" class="form-control"
+                                type="text"
+                                placeholder="<event's organizer>"
+                                ng-model="current.organizer"/>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn"
+                        ng-click="hideCompetitionDetails()">
+                    Cancel
+                </button>
+                <button type="button" class="btn btn-default"
+                        ng-show="current.id"
+                        ng-click="onSave(current); hideCompetitionDetails()">
+                    Update
+                </button>
+                <button type="button" class="btn btn-default"
+                        ng-hide="current.id"
+                        ng-click="onCreate(current); hideCompetitionDetails()">
+                    Create
+                </button>
             </div>
         </div>
     </div>
+</div>
 
-    <h2>Competitions</h2>
+<div class="container">
 
-    <div class="input-group">
-        <span class="input-group-addon" id="search-icon">
-            <i class="glyphicon glyphicon-search"></i>
-        </span>
-        <input type="text" class="form-control"
-               placeholder="<pattern>" aria-describedby="search-icon"
-               ng-model="filter">
+
+    <h2>Events</h2>
+
+    <div class="row">
+        <div class="col-xs-2">
+            <button type="button" class="btn btn-default"
+                    aria-describedby="new-event-btn-icon"
+                    ng-click="openCompetitionDetails(null)">
+                <i class="glyphicon glyphicon-plus"></i>
+                New Event...</button>
+        </div>
+        <div class="col-xs-2">
+            <button type="button" class="btn btn-default"
+                    aria-describedby="new-event-btn-icon"
+s                    ng-click="showEventImportDialog()">
+                <i class="glyphicon glyphicon-plus"></i>
+                Import Event...</button>
+        </div>
+        <div class="col-xs-4 col-xs-offset-4">
+            <div class="input-group">
+                <span class="input-group-addon" id="search-icon">
+                    <i class="glyphicon glyphicon-search"></i>
+                </span>
+                <input type="text" class="form-control"
+                       placeholder="<pattern>" aria-describedby="search-icon"
+                       ng-model="filter">
+            </div>
+        </div>
     </div>
-    
-    <div>
-        Sort by:
-        <select ng-model="sortCriteria">
-            <option value="time">Time</option>
-            <option value="name">Name</option>
-            <option value="organizer">Organizer</option>
-        </select>
+    <!--
+    <div class="row">
+        <form>
+            <label for="sortCriteria">Sort by:</label>
+            <select id="sortCriteria" ng-model="sortCriteria">
+                <option value="time">Time</option>
+                <option value="name">Name</option>
+                <option value="organizer">Organizer</option>
+            </select>
+        </form>
     </div>
+    -->
 
     <div>
         <table class="table table-hover">
             <thead>
                 <tr>
-                    <th><i class="glyphicon glyphicon-sort-by-alphabet">Time</i></th>
-                    <th>Name</th>
-                    <th>Organizer</th>
+                    <th>
+                        <<i class="glyphicon glyphicon-sort-by-alphabet">Time</i></th>
+                    <th><i class="caret"></i> Name</th>
+                    <th><i class="caret"></i> Organizer</th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td colspan="4">
-                        <a href ng-click="openCompetitionDetails(null)"
-                                data-toggle="tooltip" data-placement="left"
-                                title="Create a new competition...">
-                            <i class="glyphicon glyphicon-plus"></i>
-                        </a>
-                    </td>
-                </tr>
                 <tr ng-repeat="c in competitions | filter:filter 
                             | orderBy:sortCriteria"
                             ng-click="onSelect(c)">
@@ -102,7 +154,7 @@
                         <a href="rest/events/export/{{c.id}}"
                            data-toggle="tooltip" data-placement="left"
                            title="Download competition as XML.">
-                            <i class="glyphicon glyphicon-download"></i>
+                            <i class="glyphicon glyphicon-export"></i>
                         </a>
                         <a href ng-click="onDestroy(c, $index)"
                            data-toggle="tooltip" data-placement="left"

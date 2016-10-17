@@ -444,6 +444,15 @@ app.controller('CompetitionListController',
         $scope.current = null;
         $scope.competitions = [];
         $scope.competitionDetailsShow = false;
+        $scope.eventImportDialogVisible = false;
+        
+        $scope.showEventImportDialog = function() {
+            $scope.eventImportDialogVisible = true;
+        }
+        
+        $scope.hideEventImportDialog = function() {
+            $scope.eventImportDialogVisible = false;
+        }
         
         $scope.openCompetitionDetails = function (c, i) {
             $scope.competitionDetailsShow = true;
