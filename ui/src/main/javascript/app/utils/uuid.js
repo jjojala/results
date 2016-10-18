@@ -10,7 +10,7 @@
      * @name Uuid
      * @desc Utility for UUID-related operations.
      */
-    function Uuid() {
+    function uuidService() {
 
         return {
             /**
@@ -29,6 +29,6 @@
         };
     }
 
-    angular.module('utils').service('Uuid', Uuid);
+    angular.module('utils').service('Uuid', uuidService);
 })();
 
