@@ -40,6 +40,13 @@
             });
 
             return {
+                /**
+                 * @name Register a callback function for RCNP notifications
+                 * @param {function({string} data, {String} eventName, {String} entityType)} handler-function
+                 * @param {String} name of the event for which this registration is made for
+                 * @param {String} entity type being subject of the event for which this registration is made for 
+                 * @returns {undefined}
+                 */
                 register: function(f, e, c) {
                     handlers.push({ handler: f, event: e, entityClass: c });
                 }
