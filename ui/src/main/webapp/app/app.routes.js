@@ -5,7 +5,8 @@
 (function() {
     'use strict';
     
-    angular.module('app.routes', [ 'ngRoute', 'app.competition' ]).config(['$routeProvider', config]);
+    angular.module('app.routes', [ 'ngRoute', 'app.competition' ])
+            .config(['$routeProvider', config]);
     
     function config($routeProvider) {
         $routeProvider

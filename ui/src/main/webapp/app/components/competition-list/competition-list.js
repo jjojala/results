@@ -5,11 +5,11 @@
 (function() {
 'use strict';
 
-var app = angular.module('app.competition',
-    [ 'utils', 'ngRoute', 'ui.bootstrap', 'ngWebsocket' ]);
+angular.module('app.competition')
+    .controller('CompetitionListController', ['$scope', '$http',
+        'Uuid', 'Rcnp', CompetitionListController]);
 
-app.controller('CompetitionListController',
-    function ($scope, $http, Uuid, Rcnp) {
+    function CompetitionListController($scope, $http, Uuid, Rcnp) {
 
         $scope.current = null;
         $scope.competitions = [];
@@ -118,5 +118,4 @@ app.controller('CompetitionListController',
 
         $scope.sortCriteria = 'time';
     }
-);
 })();
