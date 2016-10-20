@@ -15,7 +15,7 @@ After getting the sources from git, let's say to /results:
 Once built, likely the most easiest way to get it running is to do as I do,
 as I constantly use that approach while I'am developing it. For that,
 I use NetBeans. From netbeans I'll  open the project results-server,
-and then right-click Main.java and choose 'Run File'. 
+and then right-click ResultsServer.java and choose 'Run File'. 
 
 Eventually, when I got that far it will run fine from the command line by
 typing (or by double-clicking the jar in Windows):
@@ -46,7 +46,7 @@ REST api for manipulating results data remotely. This is obviously based on JAXB
 Single page, AngularJS-based javascript application that retrieves the raw data from the
 "backend" by using AJAX and rest. During the build-phase, result-ui will
 also aggregate bunch of javascript libraries wrapped into the jars as
-dependencies. These files can be then retrieved from the HTTP server
+dependencies. At runtime these files can be then retrieved from the HTTP server
 (results-server).
 
 In this application, results-ui (the frontend) is doing a lot. The backend
@@ -60,7 +60,12 @@ too (one example of "edge computing" approach).
 Unlike most of the apps out there, this one is not built by using the javascript
 -based build systems (like grunt or gulp), but with maven. While js-based
 build systems for js stuff works like a charm, I found it cumbersome to combine
-maven-based backend build (for java) with the non-maven based frontend. Let's see
+maven-based backend build (for java) with the non-maven based frontend. One reason
+was also, that I was fund of various js-libs wrapped into a jar's in 
+http://www.webjars.org/. These jar's are declared as dependencies for results-ui,
+and that's the way, how they found their way to built packages. 
+
+Let's see
 how it will fit. So far, so good.
 
 ### results-rcnp
