@@ -78,11 +78,7 @@
     <build>
         <resources>
             <resource>
-                <directory>src/main/javascript</directory>
-                <filtering>true</filtering>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
+                <directory>src/main/webapp</directory>
                 <filtering>true</filtering>
             </resource>
         </resources>
@@ -100,7 +96,7 @@
                             <jsEngine>CLOSURE</jsEngine>
                             <closureLanguage>ECMASCRIPT5_STRICT</closureLanguage>
                             <webappSourceDir>${basedir}/src/main</webappSourceDir>
-                            <jsSourceDir>javascript</jsSourceDir>
+                            <jsSourceDir>webapp</jsSourceDir>
                             <!--
                             <cssSourceIncludes>
                               <cssSourceInclude>**</cssSourceInclude>
@@ -112,9 +108,6 @@
                             <jsSourceIncludes>
                                 <jsSourceInclude>**/*.js</jsSourceInclude>
                             </jsSourceIncludes>
-                            <jsSourceExcludes>
-                                <jsSourceExclude>**/*.min.js</jsSourceExclude>
-                            </jsSourceExcludes>
                         </configuration>
                         <goals>
                             <goal>minify</goal>
@@ -138,7 +131,7 @@
                     <version>2.4.3</version>
                     <globals>angular,console,alert</globals>
                     <directories>
-                        <directory>src/main/javascript</directory>
+                        <directory>src/main/webapp</directory>
                     </directories>
                 </configuration>
             </plugin>
@@ -160,6 +153,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <jsSrcDir>src/main/webapp/</jsSrcDir>
                     <preloadSources>
                         <source>webjars/angular.js</source>
                         <source>webjars/angular-route.js</source>

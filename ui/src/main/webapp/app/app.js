@@ -11,11 +11,11 @@ var app = angular.module('ResultsApplication', [ 'utils',
 app.config(['$routeProvider', function($routeProvider) {
    $routeProvider
            .when('/competition-list', {
-                    templateUrl: '/view/competition-list-tmpl.html',
+                    templateUrl: '/app/components/competition-list/competition-list-tmpl.html',
                     controller: 'CompetitionListController'
                 })
            .when('/competition/:competitionId', {
-                    templateUrl: '/view/competition-main-tmpl.html',
+                    templateUrl: '/app/components/competition/competition-main-tmpl.html',
                     controller: 'CompetitionMainController'
                 })
            .otherwise({

@@ -53,8 +53,7 @@ public class ResultsServer {
         // Development resources (incl. javascripts), these are not
         // available at production env (shouldn't make any here either)
         final StaticHttpHandler handler = new StaticHttpHandler(
-                "../ui/src/main/resources/", "../ui/src/main/javascript/",
-                "../ui/target/classes/");
+                "../ui/src/main/webapp/");
         handler.setFileCacheEnabled(false);
         server.getServerConfiguration().addHttpHandler(handler);
 
