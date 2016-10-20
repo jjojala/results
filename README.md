@@ -43,7 +43,7 @@ REST api for manipulating results data remotely. This is obviously based on JAXB
 
 ### results-ui
 
-Single page javascript application that retrieves the raw data from the
+Single page, AngularJS-based javascript application that retrieves the raw data from the
 "backend" by using AJAX and rest. During the build-phase, result-ui will
 also aggregate bunch of javascript libraries wrapped into the jars as
 dependencies. These files can be then retrieved from the HTTP server
@@ -57,12 +57,19 @@ backend for storing. This approach keeps things pretty clear - on both
 ends in fact, and reduces the unnecessary interactions and the backend load
 too (one example of "edge computing" approach).
 
+Unlike most of the apps out there, this one is not built by using the javascript
+-based build systems (like grunt or gulp), but with maven. While js-based
+build systems for js stuff works like a charm, I found it cumbersome to combine
+maven-based backend build (for java) with the non-maven based frontend. Let's see
+how it will fit. So far, so good.
+
 ### results-rcnp
 
 Implements a WebSocket -based, self-invented /Resource Change Notification Protocol/. The
 package contains the data model, Grizzly WebSockets -based broker implementation, which is
 used to notify results's clients about data changes. The protocol is briefly described in
-RcnpService's javadoc.
+RcnpService's javadoc. On the UI-side (in results-ui), there's a js-library working as
+a frontend counterpart for this.
 
 ### results-server
 
