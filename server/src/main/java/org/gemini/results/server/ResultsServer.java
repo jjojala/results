@@ -44,15 +44,17 @@ public class ResultsServer {
         final HttpServer server
                 = GrizzlyHttpServerFactory.createHttpServer(restUri, config);
 
-        // TODO: Use CLStaticHttpHandler for production
-            /* like this... */
+        // Production resources (incl. javascripts)
         server.getServerConfiguration().addHttpHandler(new CLStaticHttpHandler(
                 ResultsServer.class.getClassLoader(), new String[]{
                     "/META-INF/resources/webjars/"
                 }), "/lib");
-        /* */
+
+        // Development resources (incl. javascripts), these are not
+        // available at production env (shouldn't make any here either)
         final StaticHttpHandler handler = new StaticHttpHandler(
-                "../ui/src/main/resources/", "../ui/target/classes/");
+                "../ui/src/main/resources/", "../ui/src/main/javascript/",
+                "../ui/target/classes/");
         handler.setFileCacheEnabled(false);
         server.getServerConfiguration().addHttpHandler(handler);
 
