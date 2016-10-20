@@ -5,23 +5,8 @@
 (function() {
 'use strict';
 
-var app = angular.module('ResultsApplication', [ 'utils',
-    'ngRoute', 'ui.bootstrap', 'ngWebsocket']);
-
-app.config(['$routeProvider', function($routeProvider) {
-   $routeProvider
-           .when('/competition-list', {
-                    templateUrl: '/app/components/competition-list/competition-list-tmpl.html',
-                    controller: 'CompetitionListController'
-                })
-           .when('/competition/:competitionId', {
-                    templateUrl: '/app/components/competition/competition-main-tmpl.html',
-                    controller: 'CompetitionMainController'
-                })
-           .otherwise({
-                    redirectTo: '/competition-list'
-                });
-}]);
+var app = angular.module('app', [ 'utils',
+    'ngRoute', 'ui.bootstrap', 'ngWebsocket', 'app.routes' ]);
 
 app.controller('CompetitionMainController',
     function($scope, $http, $routeParams, Uuid, Rcnp) {
