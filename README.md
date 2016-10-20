@@ -65,9 +65,6 @@ was also, that I was fund of various js-libs wrapped into a jar's in
 http://www.webjars.org/. These jar's are declared as dependencies for results-ui,
 and that's the way, how they found their way to built packages. 
 
-Let's see
-how it will fit. So far, so good.
-
 ### results-rcnp
 
 Implements a WebSocket -based, self-invented /Resource Change Notification Protocol/. The
