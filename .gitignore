@@ -3,4 +3,5 @@
 /server/target/
 /data/target/
 /ui/target/
+/ui/*.log
 /rcnp/target/

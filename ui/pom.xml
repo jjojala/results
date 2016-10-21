@@ -66,6 +66,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        
+        <dependency>
+            <groupId>org.webjars.bower</groupId>
+            <artifactId>requirejs</artifactId>
+            <version>2.1.20</version>
+        </dependency>
 
         <dependency>
             <groupId>org.webjars.bower</groupId>
@@ -169,6 +175,10 @@
                         <source>app/utils/filters.js</source>
                         <source>app/model/model.module.js</source>
                         <source>app/model/model.js</source>
+                        <source>app/components/competition.module.js</source>
+                        <source>app/components/competition-list/competition-list.js</source>
+                        <source>app/components/competition-main/competition-main.js</source>
+                        <source>app/app.routes.js</source>
                         <source>app/app.js</source>
                     </preloadSources>
                 </configuration>
