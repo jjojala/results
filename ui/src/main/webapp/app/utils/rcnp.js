@@ -2,7 +2,7 @@
  * Copyright (C) 2015 Jari Ojala (jari.ojala@iki.fi)
  */
 
-(function() {
+define(function() {
     'use strict';
 
     angular.module('utils').service('Rcnp',
@@ -53,4 +53,4 @@
             };
         });
 
-})();
+});

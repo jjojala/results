@@ -141,7 +141,7 @@
                     </directories>
                 </configuration>
             </plugin>
- 
+<!-- 
             <plugin>
                 <groupId>com.github.searls</groupId>
                 <artifactId>jasmine-maven-plugin</artifactId>
@@ -160,29 +160,15 @@
                 </executions>
                 <configuration>
                     <jsSrcDir>src/main/webapp/</jsSrcDir>
+                    <specRunnerTemplate>REQUIRE_JS</specRunnerTemplate>
+                    <preloadScriptTags></preloadScriptTags>
                     <preloadSources>
-                        <source>webjars/angular.js</source>
-                        <source>webjars/angular-route.js</source>
-                        <source>webjars/angular-bootstrap.js</source>
-                        <source>webjars/ui-bootstrap.js</source>
-                        <source>webjars/ui-bootstrap-tpls.js</source>
-                        <source>webjars/ng-webjars.js</source>
-                        <source>webjars/angular-mocks.js</source>
-                        <source>app/utils/utils.module.js</source>
-                        <source>app/utils/uuid.js</source>
-                        <source>app/utils/time-editor.js</source>
-                        <source>app/utils/rcnp.js</source>
-                        <source>app/utils/filters.js</source>
-                        <source>app/model/model.module.js</source>
-                        <source>app/model/model.js</source>
-                        <source>app/components/competition.module.js</source>
-                        <source>app/components/competition-list/competition-list.js</source>
-                        <source>app/components/competition-main/competition-main.js</source>
-                        <source>app/app.routes.js</source>
+                        <source>webjars/require.js</source>
                         <source>app/app.js</source>
                     </preloadSources>
                 </configuration>
             </plugin>
+-->
         </plugins>
     </build>
 </project>

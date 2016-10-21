@@ -3,7 +3,7 @@
   Copyright (C) 2015-2016 Jari Ojala (jari.ojala@iki.fi).
 -->
 
-<html lang="en" ng-app="app">
+<html lang="en">
     <head>
         <meta charset="utf-8">
         <title>Results</title>
@@ -12,27 +12,7 @@
               href="lib/bootstrap/3.3.4/dist/css/bootstrap.css"/>
         <link rel="stylesheet" href="app/app.css"/>
 
-        <script src="lib/angular/1.5.0-beta.2/angular.min.js"></script>
-        <script src="lib/angular-route/1.5.0-beta.2/angular-route.min.js"></script>
-        <script src="lib/angular-bootstrap/0.14.3/ui-bootstrap.min.js"></script>
-        <script src="lib/angular-bootstrap/0.14.3/ui-bootstrap-tpls.min.js"></script>
-        <script src="lib/ng-websocket/0.2.1/ng-websocket.js"></script>
-
-        <script src="app/utils/utils.module.js"></script>
-        <script src="app/utils/uuid.js"></script>
-        <script src="app/utils/time-editor.js"></script>
-        <script src="app/utils/rcnp.js"></script>
-        <script src="app/utils/filters.js"></script>
-
-        <script src="app/model/model.module.js"></script>
-        <script src="app/model/model.js"></script>
-
-        <script src="app/components/competition.module.js"></script>
-        <script src="app/components/competition-list/competition-list.js"></script>
-        <script src="app/components/competition-main/competition-main.js"></script>
-
-        <script src="app/app.routes.js"></script>
-        <script src="app/app.js"></script>
+        <script src="lib/requirejs/2.1.20/require.js" data-main="app/app"></script>
     </head>
 
     <body>

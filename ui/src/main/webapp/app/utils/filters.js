@@ -2,7 +2,7 @@
  * Copyright (C) 2015 Jari Ojala (jari.ojala@iki.fi)
  */
 
-(function() {
+define(function() {
     'use strict';
 
     // timestamp:duration_in_msecs:format
@@ -26,5 +26,5 @@
     };
 
     angular.module('utils').filter('timestamp', timestamp);
-})();
+});
 

@@ -2,7 +2,7 @@
  * Copyright (C) 2015-2016 Jari Ojala (jari.ojala@iki.fi).
  */
 
-(function() {
+define(function() {
     'use strict';
 
     angular.module('app.competition').controller('CompetitionMainController',
@@ -427,4 +427,4 @@
         };        
     }
 
-})();
+});

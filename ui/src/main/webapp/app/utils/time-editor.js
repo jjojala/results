@@ -2,7 +2,7 @@
  * Copyright (C) 2016 Jari Ojala (jari.ojala@iki.fi)
  */
 
-(function() {
+define(function() {
     var isTimeArrayValid = function(a) {
         // minutes < 60 && seconds < 60 (no other checks needed)
         return (a[2] < 6 && a[4] < 6);
@@ -115,5 +115,5 @@
     };
     
     angular.module('utils').directive('timeEditor', timeEditor);
-})();
+});
 
