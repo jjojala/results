@@ -53,7 +53,7 @@ class EventListContent extends Component {
                         Tapahtuman nimi
                     </span>
                     <span style={{right: "0", width: "70px"}}>
-                        <button onClick={() => actions.addEvent({ 
+                        <button onClick={() => actions.createEvent({ 
                             id: id, date: "2019-02-05T10:42:14.000+03:00",
                             name: "Name (id=" + id + ")"})}>
                             Lis&auml;&auml;

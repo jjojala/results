@@ -1,8 +1,10 @@
-from flask import Flask, abort
+from flask import Flask, abort, json
 from flask_restful import Api, Resource, reqparse
+from flask_socketio import SocketIO, Namespace
 
 app = Flask(__name__)
 api = Api(app)
+socketio = SocketIO(app, json=json)
 
 events = [
 ]
@@ -12,6 +14,9 @@ class Events(Resource):
 		return events, 200
 
 class Event(Resource):
+	def __init__(self, **kwargs):
+		self._notifications = kwargs['notifications']
+
 	def get(self, id):
 		for e in events:
 			if (id == e["id"]):
@@ -34,6 +39,8 @@ class Event(Resource):
 			"name": args["name"]
 		}
 		events.append(event)
+		self._notifications.submit('CREATED', 'Event', event)
+
 		return event, 201
 
 	def put(self, id):
@@ -46,16 +53,43 @@ class Event(Resource):
 			if (id == e["id"]):
 				e["date"] = args["date"]
 				e["name"] = args["name"]
+				self._notifications.submit('UPDATED', 'Event', e);
 				return e, 200
 
 		return "Event not found", 404
 
 	def delete(self, id):
 		global events
-		events = [e for e in events if e["id"] != id]
-		return "{} is deleted.".format(id), 200
+		newEvents = [e for e in events if e["id"] != id]
+		if (len(newEvents) < len(events)):
+			events = newEvents
+			self._notifications.submit('REMOVED', 'Event', id)
+			return "{} is deleted.".format(id), 200
+		
+		return "Event {} not found".format(id), 404
 
-api.add_resource(Event, "/api/event/<string:id>")
+class Notifications(Namespace):
+	def submit(self, event, entity, data):
+		notification = {
+			'event': event + ' ' + entity,
+			'data': data
+		}
+		socketio.emit('notification', notification, namespace='/api/notifications')
+
+	def on_connect(self):
+		print("on_connect()")
+	
+	def on_disconnect(self):
+		print("on_disconnect()")
+
+	def on_notification(self, data):
+		print("on_notification(data={})".format(data))
+
+notifications = Notifications('/api/notifications')
+
+socketio.on_namespace(notifications)
+api.add_resource(Event, "/api/event/<string:id>",
+		resource_class_kwargs={ 'notifications': notifications })
 api.add_resource(Events, "/api/event/")
 
 @app.route('/')
@@ -81,4 +115,4 @@ def catch_all(path):
 	return f.read()
 
 if __name__ == "__main__":
-	app.run(debug=True)
+	socketio.run(app, debug=True)
