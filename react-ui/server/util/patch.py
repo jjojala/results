@@ -60,7 +60,7 @@ def patch(target, diff, key=None):
         r = {} # result
         for k,v in t.items(): # for 'key','value:' in 'target'
             if (k in d.keys()):  # if 'diff' contains 'key'
-                r[k] = patch(v, d[k], ks)
+                r[k] = patch(v, d[k], k)
             else:
                 r[k] = copy.deepcopy(t[k]) # no 'change' so copy as such
 
