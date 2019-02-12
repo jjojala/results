@@ -1,28 +1,26 @@
 from flask import Flask, abort, json
 from flask_restful import Api
 from flask_socketio import SocketIO, Namespace
-from notification import Notifications
-from patch import PatchConflict, diff, patch
-from event import events, Event, Events
-from name import names, Name, Names
+import rest
+import util
 
 app = Flask(__name__)
 api = Api(app)
 socketio = SocketIO(app, json=json)
 
-notifications = Notifications('/api/notifications', socketio)
+notifications = rest.Notifications('/api/notifications', socketio)
 resource_config = {
 	'notifications': notifications
 }
 
 socketio.on_namespace(notifications)
-api.add_resource(Event, "/api/event/<string:id>",
+api.add_resource(rest.Event, "/api/event/<string:id>",
 		resource_class_kwargs=resource_config)
-api.add_resource(Events, "/api/event/",
+api.add_resource(rest.Events, "/api/event/",
 		resource_class_kwargs=resource_config)
-api.add_resource(Names, "/api/name/",
+api.add_resource(rest.Names, "/api/name/",
 		resource_class_kwargs=resource_config)
-api.add_resource(Name, "/api/name/<string:id>",
+api.add_resource(rest.Name, "/api/name/<string:id>",
 		resource_class_kwargs=resource_config)
 
 @app.route('/')
