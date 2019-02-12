@@ -1,5 +1,11 @@
 from flask_socketio import SocketIO, Namespace
 
+CREATED = 'CREATED'
+UPDATED = 'UPDATED'
+PATCHED = 'PATCHED'
+REMOVED = 'REMOVED'
+
+
 class Notifications(Namespace):
 	def __init__(self, namespace, socketio):
 		super(Notifications, self).__init__(namespace)

@@ -22,6 +22,10 @@ api.add_resource(rest.Names, "/api/name/",
 		resource_class_kwargs=resource_config)
 api.add_resource(rest.Name, "/api/name/<string:id>",
 		resource_class_kwargs=resource_config)
+api.add_resource(rest.Communities, "/api/community/",
+		resource_class_kwargs=resource_config)
+api.add_resource(rest.Community, "/api/community/<string:id>",
+		resource_class_kwargs=resource_config)
 
 @app.route('/')
 def root():
