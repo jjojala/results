@@ -1,11 +1,21 @@
 module.exports = {
+    entry: [
+        __dirname + "/src/index.html",
+        __dirname + "/src/index.js"
+    ],
     module: {
         rules: [
             {
                 test: /\.(js|jsx)$/,
                 exclude: /node_modules/,
                 use: {
-                    loader: "babel-loader"
+                    loader: 'babel-loader'
+                }
+            },
+            {  
+                test: /\.html/,
+                use: {
+                    loader: 'file-loader?name=[name].[ext]'
                 }
             }
         ]
