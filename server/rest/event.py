@@ -1,4 +1,5 @@
 from flask_restful import Resource, reqparse
+import rest.timeservice as timeservice
 
 events = [
 ]
@@ -6,22 +7,25 @@ events = [
 TYPE = "Event"
 
 class Events(Resource):
-    def __init__(self, **kwargs):
-        pass
+	def __init__(self, **kwargs):
+		pass
 
-    def get(self):
-        return events, 200
+	@timeservice.time_service
+	def get(self):
+		return events, 200
 
 class Event(Resource):
 	def __init__(self, **kwargs):
 		self._notifications = kwargs['notifications']
 
+	@timeservice.time_service
 	def get(self, id):
 		for e in events:
 			if (id == e["id"]):
 				return e, 200
 		return "{} with id {} not found".format(TYPE, id), 404
 
+	@timeservice.time_service
 	def post(self, id):
 		parser = reqparse.RequestParser()
 		parser.add_argument("date")
@@ -42,6 +46,7 @@ class Event(Resource):
 
 		return event, 201
 
+	@timeservice.time_service
 	def put(self, id):
 		parser = reqparse.RequestParser()
 		parser.add_argument("date")
@@ -57,6 +62,7 @@ class Event(Resource):
 
 		return "{} with id {} not found".format(TYPE, id), 404
 
+	@timeservice.time_service
 	def delete(self, id):
 		global events
 		newEvents = [e for e in events if e["id"] != id]
@@ -67,5 +73,6 @@ class Event(Resource):
 		
 		return "{} with id {} not found".format(TYPE, id), 404
 
+	@timeservice.time_service
 	def patch(self, id):
 		pass # TODO: for now...
