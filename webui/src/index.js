@@ -7,6 +7,7 @@ import io from "socket.io-client";
 
 import { EventListView } from "./event/EventListView.js";
 import { EventDetailsView } from "./event/EventDetailsView.js";
+import { communities, CommunityListView } from "./community/CommunityListView.js"
 
 const app = {
     state: {
@@ -108,11 +109,15 @@ class App extends Component {
                     <Route path="/event/:id" render={(props) =>
                         <EventDetailsView id={props.match.params.id}
                                         states={this.props.states} actions={this.props.actions}/>} />
+                    <Route exact path="/community/" render={() =>
+                        <CommunityListView states={this.props.states}
+                                            actions={this.props.actions} />} />
                 </div>
             </Router>
         );
     }
 }
+
 
 const update = flyd.stream();
 const states = flyd.scan(P, app.state, update);
