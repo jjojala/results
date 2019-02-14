@@ -1,6 +1,9 @@
+from flask import request, jsonify
 from flask_restful import Resource, reqparse
 from .notification import CREATED, UPDATED, PATCHED, REMOVED
 import rest.timeservice as timeservice
+from util.patch import patch, PatchConflict
+import sys
 
 communities = [
 ]
@@ -91,4 +94,18 @@ class Community(Resource):
 
         @timeservice.time_service
         def patch(self, id):
-                pass
+                args = request.json
+
+                # TODO: explicitly lock the item
+                for i in communities:
+                        if (id == i["id"]):
+                                try:
+                                        patched = patch(i, args)
+                                        i["name"] = patched["name"]
+                                        i["abbr"] = patched["abbr"]
+                                        return i, 200
+                                except PatchConflict as ex:
+                                        return "Patching {} with id {} failed: {}".format(
+                                                _TYPE, id, str(ex)), 409
+
+                return "{} with id {} not found".format(_TYPE, id), 404
