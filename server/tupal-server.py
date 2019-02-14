@@ -25,13 +25,11 @@ api.add_resource(rest.Events, EVENT_API,
                         "notifications": notifications,
                         "api": EVENT_API })
 api.add_resource(rest.Names, NAME_API,
-		resource_class_kwargs={
-                        "notifications":notifications,
-                        "api": NAME_API })
+		resource_class_kwargs=rest.Names.makeArgs(
+                        notifications, NAME_API))
 api.add_resource(rest.Name, NAME_API + "<string:id>",
-		resource_class_kwargs={
-                        "notifications": notifications,
-                        "api": NAME_API })
+                 resource_class_kwargs=rest.Name.makeArgs(
+                         notifications, NAME_API))
 api.add_resource(rest.Communities, COMMUNITY_API,
 		resource_class_kwargs=rest.Communities.makeArgs(
                         notifications, COMMUNITY_API))
