@@ -1,6 +1,9 @@
+# -*- coding: utf-8 -*-
+
 from flask import Flask, abort, json
 from flask_restful import Api
 from flask_socketio import SocketIO, Namespace
+import model
 import rest
 import util
 
@@ -15,15 +18,18 @@ app = Flask(__name__)
 api = Api(app)
 socketio = SocketIO(app, json=json)
 
+eventModel = model.EventModel()
+tagModel = model.TagModel()
+
 notifications = rest.Notifications('/api/notifications', socketio)
 
 socketio.on_namespace(notifications)
 api.add_resource(rest.Event, EVENT_API + "<string:id>",
 		resource_class_kwargs=rest.Event.makeArgs(
-                        notifications, EVENT_API))
+                        notifications, EVENT_API, eventModel))
 api.add_resource(rest.Events, EVENT_API,
 		resource_class_kwargs=rest.Events.makeArgs(
-                        notifications, EVENT_API))
+                        notifications, EVENT_API, eventModel))
 api.add_resource(rest.Names, NAME_API,
 		resource_class_kwargs=rest.Names.makeArgs(
                         notifications, NAME_API))
@@ -38,10 +44,10 @@ api.add_resource(rest.Community, COMMUNITY_API + "<string:id>",
                         notifications, COMMUNITY_API))
 api.add_resource(rest.Tags, TAG_API,
                  resource_class_kwargs=rest.Tags.makeArgs(
-                         notifications, TAG_API))
+                         notifications, TAG_API, tagModel))
 api.add_resource(rest.Tag, TAG_API + "<string:id>",
                  resource_class_kwargs=rest.Tags.makeArgs(
-                         notifications, TAG_API))
+                         notifications, TAG_API, tagModel))
 api.add_resource(rest.Competitors, COMPETITOR_API,
                  resource_class_kwargs=rest.Competitors.makeArgs(
                          notifications, COMPETITOR_API))
