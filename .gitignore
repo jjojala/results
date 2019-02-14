@@ -1,7 +1,17 @@
-/model/target/
-/rest/target/
-/server/target/
-/data/target/
-/ui/target/
-/ui/*.log
-/rcnp/target/
+# Common 
+**/dist/
+**/build/
+
+# Node/npm/npx/webpack
+**/node_modules/
+
+# Python/pip/setuptools
+**/__pycache__/
+**/*.py[cod]
+**/develop-eggs/
+**/downloads/
+**/eggs/
+**/.eggs/
+**/*.egg-info/
+**/.installed.cfg
+**/*.egg
