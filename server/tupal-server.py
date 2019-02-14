@@ -17,13 +17,11 @@ notifications = rest.Notifications('/api/notifications', socketio)
 
 socketio.on_namespace(notifications)
 api.add_resource(rest.Event, EVENT_API + "<string:id>",
-		resource_class_kwargs={
-                        "notifications": notifications,
-                        "api": EVENT_API })                     
+		resource_class_kwargs=rest.Event.makeArgs(
+                        notifications, EVENT_API))
 api.add_resource(rest.Events, EVENT_API,
-		resource_class_kwargs={
-                        "notifications": notifications,
-                        "api": EVENT_API })
+		resource_class_kwargs=rest.Events.makeArgs(
+                        notifications, EVENT_API))
 api.add_resource(rest.Names, NAME_API,
 		resource_class_kwargs=rest.Names.makeArgs(
                         notifications, NAME_API))

@@ -3,7 +3,6 @@ from flask_restful import Resource, reqparse
 from .notification import CREATED, UPDATED, PATCHED, REMOVED
 import rest.timeservice as timeservice
 from util.patch import patch, PatchConflict
-import sys
 
 communities = [
 ]
