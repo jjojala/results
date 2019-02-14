@@ -7,6 +7,8 @@ import util
 EVENT_API="/api/event/"
 NAME_API="/api/name/"
 COMMUNITY_API="/api/community/"
+TAG_API="/api/tag/"
+COMPETITOR_API="/api/competitor/"
 NOTIFICATION_API="/api/notifications/"
 
 app = Flask(__name__)
@@ -34,6 +36,18 @@ api.add_resource(rest.Communities, COMMUNITY_API,
 api.add_resource(rest.Community, COMMUNITY_API + "<string:id>",
 		resource_class_kwargs=rest.Community.makeArgs(
                         notifications, COMMUNITY_API))
+api.add_resource(rest.Tags, TAG_API,
+                 resource_class_kwargs=rest.Tags.makeArgs(
+                         notifications, TAG_API))
+api.add_resource(rest.Tag, TAG_API + "<string:id>",
+                 resource_class_kwargs=rest.Tags.makeArgs(
+                         notifications, TAG_API))
+api.add_resource(rest.Competitors, COMPETITOR_API,
+                 resource_class_kwargs=rest.Competitors.makeArgs(
+                         notifications, COMPETITOR_API))
+api.add_resource(rest.Competitor, COMPETITOR_API + "<string:id>",
+                 resource_class_kwargs=rest.Competitor.makeArgs(
+                         notifications, COMPETITOR_API))
 
 @app.route('/')
 def root():
