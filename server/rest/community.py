@@ -5,75 +5,90 @@ import rest.timeservice as timeservice
 communities = [
 ]
 
-TYPE = "Community"
+_NOTIFICATION_ARG = "notifications"
+_API_ARG = "api"
+_TYPE = "Community"
 
 class Communities(Resource):
-	def __init__(self, **kwargs):
-		pass
+        def makeArgs(notifications, api):
+                return {
+                        _NOTIFICATION_ARG: notifications,
+                        _API_ARG: api }
 
-	@timeservice.time_service
-	def get(self):
-		return communities, 200
+        def __init__(self, **kwargs):
+                self._notifications = kwargs[_NOTIFICATION_ARG]
+                self._api = kwargs[_API_ARG]
+
+        @timeservice.time_service
+        def get(self):
+                return communities, 200
 
 class Community(Resource):
-	def __init__(self, **kwargs):
-		self._notifications = kwargs['notifications']
+        def makeArgs(notifications, api):
+                return {
+                        _NOTIFICATION_ARG: notifications,
+                        _API_ARG: api }
 
-	@timeservice.time_service
-	def get(self, id):
-		for i in communities:
-			if (id == i["id"]):
-				return i, 200
-		return "{} with id {} not found".format(TYPE, id), 404
+        def __init__(self, **kwargs):
+                self._notifications = kwargs[_NOTIFICATION_ARG]
+                self._api = kwargs[_API_ARG]
 
-	@timeservice.time_service
-	def post(self, id):
-		parser = reqparse.RequestParser()
-		parser.add_argument("name")
-		parser.add_argument("abbr")
-		args = parser.parse_args()
+        @timeservice.time_service
+        def get(self, id):
+                for i in communities:
+                        if (id == i["id"]):
+                                return i, 200
+                return "{} with id {} not found".format(_TYPE, id), 404
+
+        @timeservice.time_service
+        def post(self, id):
+                parser = reqparse.RequestParser()
+                parser.add_argument("name")
+                parser.add_argument("abbr")
+                args = parser.parse_args()
 		
-		for i in communities:
-			if (id == i["id"]):
-				return "{} with id {} already exists".format(TYPE, id), 409
+                for i in communities:
+                        if (id == i["id"]):
+                                return "{} with id {} already exists".format(
+                                        _TYPE, id), 409
 
-		community = {
-			"id": id,
-			"name": args["name"],
-			"abbr": args["abbr"]
-		}
-		communities.append(community)
-		self._notifications.submit(CREATED, TYPE, community)
+                community = {
+                        "id": id,
+                        "name": args["name"],
+                        "abbr": args["abbr"]
+                }
+                communities.append(community)
+                self._notifications.submit(CREATED, _TYPE, community)
 
-		return community, 201
+                return community, 201, { 'Location': self._api + id }
 
-	@timeservice.time_service
-	def put(self, id):
-		parser = reqparse.RequestParser()
-		parser.add_argument("name")
-		parser.add_argument("abbr")
-		args = parser.parse_args()
+        @timeservice.time_service
+        def put(self, id):
+                parser = reqparse.RequestParser()
+                parser.add_argument("name")
+                parser.add_argument("abbr")
+                args = parser.parse_args()
 		
-		for i in communities:
-			if (id == i["id"]):
-				i["name"] = args["name"]
-				i["abbr"] = args["abbr"]
-				self._notifications.submit(UPDATED, TYPE, i)
-				return i, 200
+                for i in communities:
+                        if (id == i["id"]):
+                                i["name"] = args["name"]
+                                i["abbr"] = args["abbr"]
+                                self._notifications.submit(UPDATED, _TYPE, i)
+                                return i, 200
 
-		return "{} with id {} not found".format(TYPE, id), 404
+                return "{} with id {} not found".format(_TYPE, id), 404
 
-	@timeservice.time_service
-	def delete(self, id):
-		global communities
-		new = [i for i in communities if i["id"] != id]
-		if (len(new) < len(communities)):
-			communities = new
-			self._notifications.submit(REMOVED, TYPE, id)
-			return "{} is deleted.".format(id), 200
-		
-		return "{} with id {} not found".format(TYPE, id), 404
+        @timeservice.time_service
+        def delete(self, id):
+                global communities
+                new = [i for i in communities if i["id"] != id]
+                if (len(new) < len(communities)):
+                        communities = new
+                        self._notifications.submit(REMOVED, _TYPE, id)
+                        return "{} is deleted.".format(id), 200
 
-	@timeservice.time_service
-	def patch(self, id):
-		pass # TODO: for now...
+                return "{} with id {} not found".format(_TYPE, id), 404
+
+        @timeservice.time_service
+        def patch(self, id):
+                pass

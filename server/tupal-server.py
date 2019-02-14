@@ -4,28 +4,40 @@ from flask_socketio import SocketIO, Namespace
 import rest
 import util
 
+EVENT_API="/api/event/"
+NAME_API="/api/name/"
+COMMUNITY_API="/api/community/"
+NOTIFICATION_API="/api/notifications/"
+
 app = Flask(__name__)
 api = Api(app)
 socketio = SocketIO(app, json=json)
 
 notifications = rest.Notifications('/api/notifications', socketio)
-resource_config = {
-	'notifications': notifications
-}
 
 socketio.on_namespace(notifications)
-api.add_resource(rest.Event, "/api/event/<string:id>",
-		resource_class_kwargs=resource_config)
-api.add_resource(rest.Events, "/api/event/",
-		resource_class_kwargs=resource_config)
-api.add_resource(rest.Names, "/api/name/",
-		resource_class_kwargs=resource_config)
-api.add_resource(rest.Name, "/api/name/<string:id>",
-		resource_class_kwargs=resource_config)
-api.add_resource(rest.Communities, "/api/community/",
-		resource_class_kwargs=resource_config)
-api.add_resource(rest.Community, "/api/community/<string:id>",
-		resource_class_kwargs=resource_config)
+api.add_resource(rest.Event, EVENT_API + "<string:id>",
+		resource_class_kwargs={
+                        "notifications": notifications,
+                        "api": EVENT_API })                     
+api.add_resource(rest.Events, EVENT_API,
+		resource_class_kwargs={
+                        "notifications": notifications,
+                        "api": EVENT_API })
+api.add_resource(rest.Names, NAME_API,
+		resource_class_kwargs={
+                        "notifications":notifications,
+                        "api": NAME_API })
+api.add_resource(rest.Name, NAME_API + "<string:id>",
+		resource_class_kwargs={
+                        "notifications": notifications,
+                        "api": NAME_API })
+api.add_resource(rest.Communities, COMMUNITY_API,
+		resource_class_kwargs=rest.Communities.makeArgs(
+                        notifications, COMMUNITY_API))
+api.add_resource(rest.Community, COMMUNITY_API + "<string:id>",
+		resource_class_kwargs=rest.Community.makeArgs(
+                        notifications, COMMUNITY_API))
 
 @app.route('/')
 def root():
