@@ -3,119 +3,102 @@ from flask_restful import Resource, reqparse
 from .notification import CREATED, UPDATED, PATCHED, REMOVED
 import rest.timeservice as timeservice
 from util.patch import patch, PatchConflict
-
-competitors = [
-]
+import model
 
 _NOTIFICATION_ARG = "notifications"
 _API_ARG = "api"
+_MODEL_ARG = "model"
 _TYPE = "Competitor"
 
 class Competitors(Resource):
-        def makeArgs(notifications, api):
+        def makeArgs(notifications, api, model):
                 return {
                         _NOTIFICATION_ARG: notifications,
-                        _API_ARG: api }
+                        _API_ARG: api,
+                        _MODEL_ARG: model }
 
         def __init__(self, **kwargs):
                 self._notifications = kwargs[_NOTIFICATION_ARG]
                 self._api = kwargs[_API_ARG]
+                self._model = kwargs[_MODEL_ARG]
 
         @timeservice.time_service
         def get(self):
-                return competitors, 200
+                return self._model.list(), 200
 
 class Competitor(Resource):
-        def makeArgs(notifications, api):
+        def makeArgs(notifications, api, model):
                 return {
                         _NOTIFICATION_ARG: notifications,
-                        _API_ARG: api }
+                        _API_ARG: api,
+                        _MODEL_ARG: model }
 
         def __init__(self, **kwargs):
                 self._notifications = kwargs[_NOTIFICATION_ARG]
                 self._api = kwargs[_API_ARG]
+                self._model = kwargs[_MODEL_ARG]
 
         @timeservice.time_service
         def get(self, id):
-                for i in competitors:
-                        if (id == i["id"]):
-                                return i, 200
-                return "{} with id {} not found".format(_TYPE, id), 404
+                entity = self._model.get(id)
+                if (entity):
+                        return entity, 200
+                return model.jsonify(model.EntityNotFound(_TYPE, id)), 404
 
         @timeservice.time_service
         def post(self, id):
                 parser = reqparse.RequestParser()
+                parser.add_argument("id")
                 parser.add_argument("start")
                 parser.add_argument("finish")
                 parser.add_argument("tags", type=list, location='json')
                 parser.add_argument("status")
                 args = parser.parse_args()
-		
-                for i in competitors:
-                        if (id == i["id"]):
-                                return "{} with id {} already exists".format(
-                                        _TYPE, id), 409
 
-                item = {
-                        "id": id,
-                        "start": args["start"],
-                        "finish": args["finish"],
-                        "tags": args["tags"],
-                        "status": args["status"]
-                }
-                competitors.append(item)
-                self._notifications.submit(CREATED, _TYPE, item)
-
-                return item, 201, { 'Location': self._api + id }
+                try:
+                        entity = self._model.create(args)
+                        self._notifications.submit(CREATED, _TYPE, entity)
+                        return entity, 201, { 'Location': self._api + id }
+                except model.EntityAlreadyExists as ex:
+                        return model.jsonify(ex), 409
 
         @timeservice.time_service
         def put(self, id):
                 parser = reqparse.RequestParser()
+                parser.add_argument("id")
                 parser.add_argument("start")
                 parser.add_argument("finish")
                 parser.add_argument("tags", type=list, location='json')
                 parser.add_argument("status")
                 args = parser.parse_args()
-		
-                for i in competitors:
-                        if (id == i["id"]):
-                                i["start"] = args["start"]
-                                i["finish"] = args["finish"]
-                                i["tags"] = args["tags"]
-                                i["status"] = args["status"]
-                                self._notifications.submit(UPDATED, _TYPE, i)
-                                return i, 200
 
-                return "{} with id {} not found".format(_TYPE, id), 404
+                try:
+                        entity = self._model.update(args)
+                        self._notifications.submit(UPDATED, _TYPE, entity)
+                        return entity, 200
+                except model.EntityNotFound as ex:
+                        return model.jsonify(ex), 404
 
         @timeservice.time_service
         def delete(self, id):
-                global competitors
-                new = [i for i in competitors if i["id"] != id]
-                if (len(new) < len(competitors)):
-                        competitors = new
+                try:
+                        self._model.remove(id)
                         self._notifications.submit(REMOVED, _TYPE, id)
-                        return "{} is deleted.".format(id), 200
-
-                return "{} with id {} not found".format(_TYPE, id), 404
+                        return id, 200
+                except model.EntityNotFound as ex:
+                        return model.jsonify(ex), 404
 
         @timeservice.time_service
         def patch(self, id):
                 diff = request.json
+                def patcher(entity):
+                        return patch(entity, diff)
 
-                # TODO: explicitly lock the item
-                for i in competitors:
-                        if (id == i["id"]):
-                                try:
-                                        patched = patch(i, diff)
-                                        i["start"] = patched["start"]
-                                        i["finish"] = patched["finish"]
-                                        i["tags"] = patched["tags"]
-                                        i["status"] = patched["status"]
-                                        self._notifications.submit(PATCHED, _TYPE, diff)
-                                        return i, 200
-                                except PatchConflict as ex:
-                                        return "Patching {} with id {} failed: {}".format(
-                                                _TYPE, id, str(ex)), 409
-
-                return "{} with id {} not found".format(_TYPE, id), 404
+                try:
+                        entity = self._model.patch(id, patcher)
+                        self._notifications.submit(PATCHED, _TYPE, diff)
+                        return entity, 200
+                except model.EntityConstraintViolated as ex:
+                        return model.jsonify(ex), 409
+                except model.EntityNotFound as ex:
+                        return model.jsonify(ex), 404

@@ -45,7 +45,7 @@ class Event(Resource):
                 entity = self._model.get(id)
                 if (entity):
                         return entity, 200
-                return model.EntityNotFound.str(_TYPE, id), 404
+                return model.jsonify(model.EntityNotFound(_TYPE, id)), 404
 
         @timeservice.time_service
         def post(self, id):
@@ -60,7 +60,7 @@ class Event(Resource):
                         self._notifications.submit(CREATED, _TYPE, entity)
                         return entity, 201, { 'Location': self._api + id }
                 except model.EntityAlreadyExists as ex:
-                        return str(ex), 409
+                        return model.jsonify(ex), 409
 
         @timeservice.time_service
         def put(self, id):
@@ -76,7 +76,7 @@ class Event(Resource):
                         return entity, 200
 
                 except model.EntityNotFound as ex:
-                        return str(ex), 404
+                        return model.jsonify(ex), 404
 
         @timeservice.time_service
         def delete(self, id):
@@ -86,7 +86,7 @@ class Event(Resource):
                         return id, 200
 
                 except model.EntityNotFound as ex:
-                        return str(ex), 404
+                        return model.jsonify(ex), 404
 
         @timeservice.time_service
         def patch(self, id):
@@ -100,7 +100,7 @@ class Event(Resource):
                         return entity, 200
 
                 except model.EntityConstraintViolated as ex:
-                        return str(ex), 409
+                        return model.jsonify(ex), 409
 
                 except model.EntityNotFound as ex:
-                        return str(ex), 404
+                        return model.jsonify(ex), 404

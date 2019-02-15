@@ -38,14 +38,14 @@ class Tag(Resource):
         def __init__(self, **kwargs):
                 self._notifications = kwargs[_NOTIFICATION_ARG]
                 self._api = kwargs[_API_ARG]
-                self._model = model
+                self._model = kwargs[_MODEL_ARG]
 
         @timeservice.time_service
         def get(self, id):
                 entity = self._model.get(id)
                 if (entity):
                         return entity, 200
-                return model.EntityNotFound.str(_TYPE, id), 404
+                return model.jsonify(model.EntityNotFound(_TYPE, id)), 404
 
         @timeservice.time_service
         def post(self, id):
@@ -60,7 +60,7 @@ class Tag(Resource):
                         self._notifications.submit(CREATED, _TYPE, entity)
                         return entity, 201, { 'Location': self._api + id }
                 except model.EntityAlreadyExists as ex:
-                        return str(ex), 409
+                        return model.jsonify(ex), 409
 
         @timeservice.time_service
         def put(self, id):
@@ -75,7 +75,7 @@ class Tag(Resource):
                         self._notifications.submit(UPDATED, _TYPE, entity)
                         return entity, 200
                 except model.EntityNotFound as ex:
-                        return str(ex), 404
+                        return model.jsonify(ex), 404
 
         @timeservice.time_service
         def delete(self, id):
@@ -84,7 +84,7 @@ class Tag(Resource):
                         self._notifications.submit(REMOVED, _TYPE, id)
                         return id, 200
                 except model.EntityNotFound as ex:
-                        return str(ex), 404
+                        return model.jsonify(ex), 404
 
         @timeservice.time_service
         def patch(self, id):
@@ -97,6 +97,6 @@ class Tag(Resource):
                         self._notifications.submit(PATCHED, _TYPE, diff)
                         return entity, 200
                 except model.EntityConstraintViolated as ex:
-                        return str(ex), 409
+                        return model.jsonify(ex), 409
                 except model.EntityNotFound as ex:
-                        return str(ex), 404
+                        return model.jsonify(ex), 404
