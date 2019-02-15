@@ -18,11 +18,13 @@ app = Flask(__name__)
 api = Api(app)
 socketio = SocketIO(app, json=json)
 
-eventModel = model.EventModel()
-tagModel = model.TagModel()
-communityModel = model.CommunityModel()
-competitorModel = model.CompetitorModel()
-nameModel = model.NameModel()
+modelController = model.ModelController()
+
+eventModel = model.EventModel(modelController)
+tagModel = model.TagModel(modelController)
+communityModel = model.CommunityModel(modelController)
+competitorModel = model.CompetitorModel(modelController)
+nameModel = model.NameModel(modelController)
 
 notifications = rest.Notifications('/api/notifications', socketio)
 

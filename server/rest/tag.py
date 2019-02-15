@@ -88,12 +88,9 @@ class Tag(Resource):
 
         @timeservice.time_service
         def patch(self, id):
-                diff = request.json
-                def patcher(entity):
-                        return patch(entity, diff)
-
                 try:
-                        entity = self._model.patch(id, patcher)
+                        diff = request.json
+                        entity = self._model.patch(id, diff)
                         self._notifications.submit(PATCHED, _TYPE, diff)
                         return entity, 200
                 except model.EntityConstraintViolated as ex:

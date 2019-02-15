@@ -3,6 +3,16 @@
 def jsonify(entityException):
     return { "message": str(entityException) }
 
+class ModelObserver:
+    def created(self, itemType, id, item):
+        pass
+    def updated(self, itemType, id, item):
+        pass
+    def removed(self, itemType, id):
+        pass
+    def patched(self, itemType, id, diff, item):
+        pass
+
 class EntityException(Exception):
     pass
 
@@ -41,5 +51,5 @@ class EntityConstraintViolated(EntityException):
         self._msg = msg
 
     def __str__(self):
-        return EntityConstraintViolation.str(
+        return EntityConstraintViolated.str(
             self._entityType, self._id, self._msg)

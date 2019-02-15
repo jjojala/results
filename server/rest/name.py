@@ -2,7 +2,6 @@ from flask import request
 from flask_restful import Resource, reqparse
 from .notification import CREATED, UPDATED, PATCHED, REMOVED
 import rest.timeservice as timeservice
-from util.patch import patch, PatchConflict
 import model
 
 _NOTIFICATION_ARG = "notifications"
@@ -88,12 +87,9 @@ class Name(Resource):
 
         @timeservice.time_service
         def patch(self, id):
-                diff = request.json
-                def patcher(entity):
-                        return patch(entity, diff)
-
                 try:
-                        entity = self._model.patch(id, patcher)
+                        diff = request.json
+                        entity = self._model.patch(id, diff)
                         self._notifications.submit(PATCHED, _TYPE, diff)
                         return entity, 200
                 except model.EntityConstraintViolated as ex:

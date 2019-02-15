@@ -5,3 +5,4 @@ from .tag import TagModel
 from .community import CommunityModel
 from .competitor import CompetitorModel
 from .name import NameModel
+from .controller import ModelController
