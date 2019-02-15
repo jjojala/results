@@ -58,7 +58,7 @@ class Community(Resource):
 
                 try:
                         entity = self._model.create(args)
-                        self._notifications.submit(CREATED, _TYPE, entity)
+                        self._notifications.submit(CREATED, _TYPE, id, entity)
                         return entity, 201, { 'Location': self._api + id }
                 except model.EntityAlreadyExists as ex:
                         return model.jsonify(ex), 409
@@ -69,7 +69,7 @@ class Community(Resource):
 
                 try:
                         entity = self._model.update(args)
-                        self._notifications.submit(UPDATED, _TYPE, entity)
+                        self._notifications.submit(UPDATED, _TYPE, id, entity)
                         return entity, 200
 
                 except model.EntityNotFound as ex:
@@ -79,7 +79,7 @@ class Community(Resource):
         def delete(self, id):
                 try:
                         self._model.remove(id)
-                        self._notifications.submit(REMOVED, _TYPE, id)
+                        self._notifications.submit(REMOVED, _TYPE, id, None)
                         return id, 200
                 except model.EntityNotFound as ex:
                         return model.jsonify(ex), 404
@@ -89,7 +89,7 @@ class Community(Resource):
                 try:
                         diff = request.json
                         entity = self._model.patch(id, diff)
-                        self._notifications.submit(PATCHED, _TYPE, diff)
+                        self._notifications.submit(PATCHED, _TYPE, id, diff)
                         return entity, 200
                 except model.EntityConstraintViolated as ex:
                         return model.jsonify(ex), 409

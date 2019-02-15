@@ -10,10 +10,11 @@ class Notifications(Namespace):
 	def __init__(self, namespace, socketio):
 		super(Notifications, self).__init__(namespace)
 		self._socketio = socketio
+		self._nodeId = 123
 
-	def submit(self, event, entity, data):
+	def submit(self, event, entityType, entityId, data):
 		notification = {
-			'event': event + ' ' + entity,
+			'event': event + ' ' + entityType + ' ' + entityId + ' ' + str(self._nodeId),
 			'data': data
 		}
 		self._socketio.emit('notification', notification, namespace='/api/notifications')
