@@ -27,7 +27,7 @@ Once compiled, type:
 
 ```
 cd webui
-python ../server/tupal-server.py
+python ../server/server.py
 ```
 
 Then navigate to address `http://localhost:5000`
