@@ -20,11 +20,11 @@ socketio = SocketIO(app, json=json)
 
 controller = model.ModelController("test.db")
 
-events = model.EventModel(controller)
-tags = model.TagModel(controller)
-communities = model.CommunityModel(controller)
-competitors = model.CompetitorModel(controller)
-names = model.NameModel(controller)
+events = controller.wrap(model.EventModel(controller))
+tags = controller.wrap(model.TagModel(controller))
+communities = controller.wrap(model.CommunityModel(controller))
+competitors = controller.wrap(model.CompetitorModel(controller))
+names = controller.wrap(model.NameModel(controller))
 
 notifications = rest.Notifications('/api/notifications', socketio)
 socketio.on_namespace(notifications)

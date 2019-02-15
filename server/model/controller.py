@@ -2,10 +2,10 @@
 from .common import *
 import sqlite3
 
-class ModelWrapper(object):
-    def __init__(self, controller, wrappee):
+class ModelWrapper:
+    def __init__(self, controller, model):
         self._controller = controller
-        self._wrapped = wrappee
+        self._wrapped = model
 
     def __getattr__(self, member_name):
         member = self._wrapped.__getattribute__(member_name)
@@ -26,18 +26,21 @@ class ModelWrapper(object):
             return member
 
     def setup(self):
-        # such as begin a transaction...
+        print("setup()") 
         pass
 
     def success(self):
-        self._controller.get_connection().commit()
+        #self._controller.get_connection().commit()
+        print("success()")
 
     def error(self):
-        self._controller.get_connection().rollback()
+        print("error()")
+        #self._controller.get_connection().rollback()
 
 class ModelController:
     def __init__(self, dbname):
-        self._connection = sqlite3.connect(dbname)
+        #self._connection = sqlite3.connect(dbname)
+        self._connection = None
 
     def get_connection(self):
         return self._connection
