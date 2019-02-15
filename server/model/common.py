@@ -6,11 +6,11 @@ def jsonify(entityException):
 class ModelObserver:
     def created(self, itemType, id, item):
         pass
-    def updated(self, itemType, id, item):
+    def updated(self, itemType, id, old, new):
         pass
-    def removed(self, itemType, id):
+    def removed(self, itemType, id, removedItem):
         pass
-    def patched(self, itemType, id, diff, item):
+    def patched(self, itemType, id, diff, old, new):
         pass
 
 class EntityException(Exception):

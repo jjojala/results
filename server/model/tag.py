@@ -29,16 +29,16 @@ class TagModel:
     def update(self, item):
         for i in range(len(self._items)):
             if (item["id"] == self._items[i]["id"]):
+                self._observer.updated(_TYPE, item["id"], self._items[i], item)
                 self._items[i] = item
-                self._observer.updated(_TYPE, item["id"], item)
                 return item
         raise EntityNotFound(_TYPE, item["id"])
 
     def remove(self, id):
         for i in range(len(self._items)):
             if (id == self._items[i]["id"]):
+                self._observer.removed(_TYPE, id, self._items[i])
                 del self._items[i]
-                self._observer.removed(_TYPE, id)
                 return True
         raise EntityNotFound(_TYPE, id)
 
@@ -46,8 +46,9 @@ class TagModel:
         try:
             for i in range(len(self._items)):
                 if (id == self._items[i]["id"]):
-                    self._items[i] = patch(self._items[i], diff)
-                    self._observer.patched(_TYPE, id, diff, self._items[i])
+                    patched = patch(self._items[i], diff)
+                    self._observer.patched(_TYPE, id, diff, self._items[i], patched)
+                    self._items[i] = patched
                     return self._items[i]
             raise EntityNotFound(_TYPE, id)
         except PatchConflict as ex:
