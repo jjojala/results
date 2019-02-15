@@ -16,6 +16,7 @@ _parser = reqparse.RequestParser()
 _parser.add_argument('id', type=str, required=True)
 _parser.add_argument('date', type=str, required=True)
 _parser.add_argument('name', type=str, required=True)
+_parser.add_argument('tags', type=list, location='json', required=False)
 
 class Events(Resource):
         def makeArgs(notifications, api, model):

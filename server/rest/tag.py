@@ -14,8 +14,15 @@ _TYPE = "Tag"
 
 _parser = reqparse.RequestParser()
 _parser.add_argument('id', type=str, required=True) # id
+_parser.add_argument('pid', type=str, required=False) # parent's id 
 _parser.add_argument('tag', type=str, required=True) # tag
 _parser.add_argument('desc', type=str, required=True) # description
+_parser.add_argument('grp', type=bool, required=False) # if this is tag group
+# if group's values are exclusive
+_parser.add_argument('excl', type=bool, required=False)
+_parser.add_argument('req', type=bool, required=False) # if value is mandatory
+# setting this tag non-obligatorily sets the 'ref' as well
+_parser.add_argument('ref', type=str, required=False)
 
 class Tags(Resource):
         def makeArgs(notifications, api, model):
