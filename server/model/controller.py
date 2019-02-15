@@ -3,9 +3,9 @@ from .common import *
 import sqlite3
 
 class ModelWrapper:
-    def __init__(self, controller, model):
+    def __init__(self, controller, wrapped):
         self._controller = controller
-        self._wrapped = model
+        self._wrapped = wrapped
 
     def __getattr__(self, member_name):
         member = self._wrapped.__getattribute__(member_name)

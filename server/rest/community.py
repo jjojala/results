@@ -18,7 +18,7 @@ _parser.add_argument('name', type=str, required=True) # name
 _parser.add_argument('abbr', type=str, required=False) # abbreviation
 
 class Communities(Resource):
-        def makeArgs(notifications, api, model):
+        def make_args(notifications, api, model):
                 return {
                         _NOTIFICATION_ARG: notifications,
                         _API_ARG: api,
@@ -34,7 +34,7 @@ class Communities(Resource):
                 return self._model.list(), 200
 
 class Community(Resource):
-        def makeArgs(notifications, api, model):
+        def make_args(notifications, api, model):
                 return {
                         _NOTIFICATION_ARG: notifications,
                         _API_ARG: api,

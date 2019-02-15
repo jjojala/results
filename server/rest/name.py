@@ -16,7 +16,7 @@ _parser.add_argument('fn', type=str, required=True) # family name
 _parser.add_argument('rc', type=str, required=False) # most recent community
 
 class Names(Resource):
-        def makeArgs(notifications, api, model):
+        def make_args(notifications, api, model):
                 return {
                         _NOTIFICATION_ARG: notifications,
                         _API_ARG: api,
@@ -32,7 +32,7 @@ class Names(Resource):
                 return self._model.list(), 200
 
 class Name(Resource):
-        def makeArgs(notifications, api, model):
+        def make_args(notifications, api, model):
                 return {
                         _NOTIFICATION_ARG: notifications,
                         _API_ARG: api,

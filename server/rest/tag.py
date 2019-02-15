@@ -25,7 +25,7 @@ _parser.add_argument('req', type=bool, required=False) # if value is mandatory
 _parser.add_argument('ref', type=str, required=False)
 
 class Tags(Resource):
-        def makeArgs(notifications, api, model):
+        def make_args(notifications, api, model):
                 return {
                         _NOTIFICATION_ARG: notifications,
                         _API_ARG: api,
@@ -41,7 +41,7 @@ class Tags(Resource):
                 return self._model.list(), 200
 
 class Tag(Resource):
-        def makeArgs(notifications, api, model):
+        def make_args(notifications, api, model):
                 return {
                         _NOTIFICATION_ARG: notifications,
                         _API_ARG: api,

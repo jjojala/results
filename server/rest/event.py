@@ -19,7 +19,7 @@ _parser.add_argument('name', type=str, required=True)
 _parser.add_argument('tags', type=list, location='json', required=False)
 
 class Events(Resource):
-        def makeArgs(notifications, api, model):
+        def make_args(notifications, api, model):
                 return {
                         _NOTIFICATION_ARG: notifications,
                         _API_ARG: api,
@@ -35,7 +35,7 @@ class Events(Resource):
                 return self._model.list(), 200
 
 class Event(Resource):
-        def makeArgs(notifications, api, model):
+        def make_args(notifications, api, model):
                 return {
                         _NOTIFICATION_ARG: notifications,
                         _API_ARG: api,

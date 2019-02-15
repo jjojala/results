@@ -18,7 +18,7 @@ _parser.add_argument('tags', type=list, location='json', required=False) # tag i
 _parser.add_argument('status', type=str, required=False) # competitor's status
 
 class Competitors(Resource):
-        def makeArgs(notifications, api, model):
+        def make_args(notifications, api, model):
                 return {
                         _NOTIFICATION_ARG: notifications,
                         _API_ARG: api,
@@ -34,7 +34,7 @@ class Competitors(Resource):
                 return self._model.list(), 200
 
 class Competitor(Resource):
-        def makeArgs(notifications, api, model):
+        def make_args(notifications, api, model):
                 return {
                         _NOTIFICATION_ARG: notifications,
                         _API_ARG: api,
