@@ -9,6 +9,12 @@ _API_ARG = "api"
 _MODEL_ARG = "model"
 _TYPE = "Name"
 
+_parser = reqparse.RequestParser()
+_parser.add_argument('id', type=str, required=True) # id
+_parser.add_argument('gn', type=str, required=True) # given name
+_parser.add_argument('fn', type=str, required=True) # family name
+_parser.add_argument('rc', type=str, required=False) # most recent community
+
 class Names(Resource):
         def makeArgs(notifications, api, model):
                 return {
@@ -46,12 +52,7 @@ class Name(Resource):
 
         @timeservice.time_service
         def post(self, id):
-                parser = reqparse.RequestParser()
-                parser.add_argument("id")
-                parser.add_argument("gn")
-                parser.add_argument("fn")
-                parser.add_argument("rc")
-                args = parser.parse_args()
+                args = _parser.parse_args(strict=True)
 
                 try:
                         entity = self._model.create(args)
@@ -62,12 +63,7 @@ class Name(Resource):
 
         @timeservice.time_service
         def put(self, id):
-                parser = reqparse.RequestParser()
-                parser.add_argument("id")
-                parser.add_argument("gn")
-                parser.add_argument("fn")
-                parser.add_argument("rc")
-                args = parser.parse_args()
+                args = _parser.parse_args(strict=True)
 
                 try:
                         entity = self._model.update(args)

@@ -12,6 +12,11 @@ _API_ARG = "api"
 _MODEL_ARG = "model"
 _TYPE = "Event"
 
+_parser = reqparse.RequestParser()
+_parser.add_argument('id', type=str, required=True)
+_parser.add_argument('date', type=str, required=True)
+_parser.add_argument('name', type=str, required=True)
+
 class Events(Resource):
         def makeArgs(notifications, api, model):
                 return {
@@ -49,11 +54,7 @@ class Event(Resource):
 
         @timeservice.time_service
         def post(self, id):
-                parser = reqparse.RequestParser()
-                parser.add_argument("id")
-                parser.add_argument("date")
-                parser.add_argument("name")
-                args = parser.parse_args()
+                args = _parser.parse_args(strict=True)
 
                 try:
                         entity = self._model.create(args)
@@ -64,11 +65,7 @@ class Event(Resource):
 
         @timeservice.time_service
         def put(self, id):
-                parser = reqparse.RequestParser()
-                parser.add_argument("id")
-                parser.add_argument("date")
-                parser.add_argument("name")
-                args = parser.parse_args()
+                args = _parser.parse_args(strict=True)
 
                 try:
                         entity = self._model.update(args)

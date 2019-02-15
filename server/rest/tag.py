@@ -12,6 +12,11 @@ _API_ARG = "api"
 _MODEL_ARG = "model"
 _TYPE = "Tag"
 
+_parser = reqparse.RequestParser()
+_parser.add_argument('id', type=str, required=True) # id
+_parser.add_argument('tag', type=str, required=True) # tag
+_parser.add_argument('desc', type=str, required=True) # description
+
 class Tags(Resource):
         def makeArgs(notifications, api, model):
                 return {
@@ -49,11 +54,7 @@ class Tag(Resource):
 
         @timeservice.time_service
         def post(self, id):
-                parser = reqparse.RequestParser()
-                parser.add_argument("id")
-                parser.add_argument("tag")
-                parser.add_argument("desc")
-                args = parser.parse_args()
+                args = _parser.parse_args(strict=True)
 
                 try:
                         entity = self._model.create(args)
@@ -64,11 +65,7 @@ class Tag(Resource):
 
         @timeservice.time_service
         def put(self, id):
-                parser = reqparse.RequestParser()
-                parser.add_argument("id")
-                parser.add_argument("tag")
-                parser.add_argument("desc")
-                args = parser.parse_args()
+                args = _parser.parse_args(strict=True)
 
                 try:
                         entity = self._model.update(args)

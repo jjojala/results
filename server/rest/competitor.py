@@ -10,6 +10,13 @@ _API_ARG = "api"
 _MODEL_ARG = "model"
 _TYPE = "Competitor"
 
+_parser = reqparse.RequestParser()
+_parser.add_argument('id', type=str, required=True) # id
+_parser.add_argument('start', type=int, required=False) # start time (unix timestamp, ms)
+_parser.add_argument('finish', type=int, required=False) # finish time (timestamp)
+_parser.add_argument('tags', type=list, location='json', required=False) # tag id refs
+_parser.add_argument('status', type=str, required=False) # competitor's status
+
 class Competitors(Resource):
         def makeArgs(notifications, api, model):
                 return {
@@ -47,13 +54,7 @@ class Competitor(Resource):
 
         @timeservice.time_service
         def post(self, id):
-                parser = reqparse.RequestParser()
-                parser.add_argument("id")
-                parser.add_argument("start")
-                parser.add_argument("finish")
-                parser.add_argument("tags", type=list, location='json')
-                parser.add_argument("status")
-                args = parser.parse_args()
+                args = _parser.parse_args(strict=True)
 
                 try:
                         entity = self._model.create(args)
@@ -64,13 +65,7 @@ class Competitor(Resource):
 
         @timeservice.time_service
         def put(self, id):
-                parser = reqparse.RequestParser()
-                parser.add_argument("id")
-                parser.add_argument("start")
-                parser.add_argument("finish")
-                parser.add_argument("tags", type=list, location='json')
-                parser.add_argument("status")
-                args = parser.parse_args()
+                args = _parser.parse_args(strict=True)
 
                 try:
                         entity = self._model.update(args)
