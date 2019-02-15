@@ -1,17 +1,8 @@
 # -*- coding: utf-8 -*-
 
+
 def jsonify(entityException):
     return { "message": str(entityException) }
-
-class ModelObserver:
-    def created(self, itemType, id, item):
-        pass
-    def updated(self, itemType, id, old, new):
-        pass
-    def removed(self, itemType, id, removedItem):
-        pass
-    def patched(self, itemType, id, diff, old, new):
-        pass
 
 class EntityException(Exception):
     pass

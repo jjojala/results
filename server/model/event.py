@@ -47,7 +47,7 @@ class EventModel:
             for i in range(len(self._items)):
                 if (id == self._items[i]["id"]):
                     patched = patch(self._items[i], diff)
-                    self._observer.patched(_TYPE, items["id"], diff, self._items[i], patched)
+                    self._observer.patched(_TYPE, id, diff, self._items[i], patched)
                     self._items[i] = patched
                     return self._items[i]
             raise EntityNotFound(_TYPE, id)

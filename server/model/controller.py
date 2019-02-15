@@ -1,18 +1,19 @@
 # -*- coding: utf-8 -*-
 from .common import *
+import sqlite3
 
 class ModelWrapper(object):
-    def __init__(self, clazz, connection, *args, **kwargs):
-        self._wrapped = clazz(*args, **kwargs)
-        self._connection = connection
+    def __init__(self, controller, wrappee):
+        self._controller = controller
+        self._wrapped = wrappee
 
-    def __getattr__(self, attr):
-        orig_attr = self._wrapped.__getattribute__(attr)
-        if callable(orig_attr):
-            def hooked(*args, **kwargs):
+    def __getattr__(self, member_name):
+        member = self._wrapped.__getattribute__(member_name)
+        if callable(member):
+            def decorator(*args, **kwargs):
                 self.setup()
                 try:
-                    result = orig_attr(*args, **kwargs)
+                    result = member(*args, **kwargs)
                     if (result == self._wrapped):
                         return self
                     self.success()
@@ -20,29 +21,29 @@ class ModelWrapper(object):
                 except:
                     self.error()
                     raise
-            return hooked
+            return decorator
         else:
-            return orig_attr
+            return member
 
     def setup(self):
         # such as begin a transaction...
         pass
 
     def success(self):
-        # such as commit a transaction... (must not fail!)
-        pass
+        self._controller.get_connection().commit()
 
     def error(self):
-        # such as rollback a transaction (must not fail!)
-        pass
-                
+        self._controller.get_connection().rollback()
 
-class ModelController(ModelObserver):
+class ModelController:
     def __init__(self, dbname):
-        self._dbname = dbname
+        self._connection = sqlite3.connect(dbname)
+
+    def get_connection(self):
+        return self._connection
 
     def wrap(self, model):
-        return ModelWrapper(model)
+        return ModelWrapper(self, model)
    
     def created(self, itemType, id, item):
         print("Created {} with id {}: {}".format(itemType, id, item))

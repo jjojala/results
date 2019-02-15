@@ -5,9 +5,9 @@ from util.patch import patch, PatchConflict
 _TYPE = "Tag"
 
 class TagModel:
-    def __init__(self, modelObserver):
+    def __init__(self, controller):
         self._items = []
-        self._observer = modelObserver
+        self._controller = controller
 
     def list(self):
         return self._items

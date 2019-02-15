@@ -18,51 +18,51 @@ app = Flask(__name__)
 api = Api(app)
 socketio = SocketIO(app, json=json)
 
-modelController = model.ModelController("test.db")
+controller = model.ModelController("test.db")
 
-eventModel = model.EventModel(modelController)
-tagModel = model.TagModel(modelController)
-communityModel = model.CommunityModel(modelController)
-competitorModel = model.CompetitorModel(modelController)
-nameModel = model.NameModel(modelController)
+events = model.EventModel(controller)
+tags = model.TagModel(controller)
+communities = model.CommunityModel(controller)
+competitors = model.CompetitorModel(controller)
+names = model.NameModel(controller)
 
 notifications = rest.Notifications('/api/notifications', socketio)
-
 socketio.on_namespace(notifications)
+
 api.add_resource(rest.Event, EVENT_API + "<string:id>",
 		resource_class_kwargs=rest.Event.makeArgs(
-                        notifications, EVENT_API, eventModel))
+                        notifications, EVENT_API, events))
 api.add_resource(rest.Events, EVENT_API,
 		resource_class_kwargs=rest.Events.makeArgs(
-                        notifications, EVENT_API, eventModel))
+                        notifications, EVENT_API, events))
 
 api.add_resource(rest.Names, NAME_API,
 		resource_class_kwargs=rest.Names.makeArgs(
-                        notifications, NAME_API, nameModel))
+                        notifications, NAME_API, names))
 api.add_resource(rest.Name, NAME_API + "<string:id>",
                  resource_class_kwargs=rest.Name.makeArgs(
-                         notifications, NAME_API, nameModel))
+                         notifications, NAME_API, names))
 
 api.add_resource(rest.Communities, COMMUNITY_API,
 		resource_class_kwargs=rest.Communities.makeArgs(
-                        notifications, COMMUNITY_API, communityModel))
+                        notifications, COMMUNITY_API, communities))
 api.add_resource(rest.Community, COMMUNITY_API + "<string:id>",
 		resource_class_kwargs=rest.Community.makeArgs(
-                        notifications, COMMUNITY_API, communityModel))
+                        notifications, COMMUNITY_API, communities))
 
 api.add_resource(rest.Tags, TAG_API,
                  resource_class_kwargs=rest.Tags.makeArgs(
-                         notifications, TAG_API, tagModel))
+                         notifications, TAG_API, tags))
 api.add_resource(rest.Tag, TAG_API + "<string:id>",
                  resource_class_kwargs=rest.Tags.makeArgs(
-                         notifications, TAG_API, tagModel))
+                         notifications, TAG_API, tags))
 
 api.add_resource(rest.Competitors, COMPETITOR_API,
                  resource_class_kwargs=rest.Competitors.makeArgs(
-                         notifications, COMPETITOR_API, competitorModel))
+                         notifications, COMPETITOR_API, competitors))
 api.add_resource(rest.Competitor, COMPETITOR_API + "<string:id>",
                  resource_class_kwargs=rest.Competitor.makeArgs(
-                         notifications, COMPETITOR_API, competitorModel))
+                         notifications, COMPETITOR_API, competitors))
 
 @app.route('/')
 def root():
