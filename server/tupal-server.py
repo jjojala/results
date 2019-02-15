@@ -18,7 +18,7 @@ app = Flask(__name__)
 api = Api(app)
 socketio = SocketIO(app, json=json)
 
-modelController = model.ModelController()
+modelController = model.ModelController("test.db")
 
 eventModel = model.EventModel(modelController)
 tagModel = model.TagModel(modelController)
