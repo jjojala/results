@@ -22,7 +22,7 @@ _parser.add_argument('grp', type=bool, required=False) # if this is tag group
 _parser.add_argument('excl', type=bool, required=False)
 _parser.add_argument('req', type=bool, required=False) # if value is mandatory
 # setting this tag non-obligatorily sets the 'ref' as well
-_parser.add_argument('ref', type=str, required=False)
+_parser.add_argument('refs', type=list, location='json', required=False)
 
 class Tags(Resource):
         def make_args(notifications, api, model):

@@ -24,70 +24,64 @@ npx webpack --mode production
 
 ![Classes](classes.svg)
 
-/Event/ as a concept is no doubt self-explanatory. /Tags/ are /specified/ as
-part of /Event/. A single /Tag/ -specification by more than one /Event/, but
-when the last refence to an /Tag/ is removed, also the /Tag/ itself shall
-be removed. An /Event/ may specify a /Tag/ either directly, or indirectly.
-/Event/ specifies a /Tag/ directly, if the /Tag/ is referred in the /Events/
-/tags/ attribute. /Tags/ may be nested which takse place if a /Tags/ /pid/
-(parent id) refers to anoter /Tag/. A nested /Tag/ of a /Tag/ that is directly
-referred by a /Event/ is said to be /indirectly/ referred /Tag/. A parent /Tag/ must have the attribute /grp/ (group) set to True. /Tags/ that are either
-directly or indirectly referred by an /Event/ are said to be "in scope of
-/Event/". The last concept (?) related to /Tag/ hierarchy is the "ref"
--dependency. It means, that when a /Competitor/ is "tagged" with /Tag/
-(let's get back to these later), also the /Tags/ that are "refs" of tagged
-/Tag/ will be by default tagged for the /Competitor/. Note, that this is 
-only default behaviour, and can be explicitly overridden by the user. A typical
-use case of this is case, where the initially tagged /Tag/ represents a
-competition class, while the referred /Tag/ represents something that is
-common to that class, such as bid numbering scheme, start time (in case of
-mass start) or start time calculating scheme.
+*Event* as a concept is no doubt self-explanatory. An *Event* may specify *Tags*
+either directly by having *Tags* `id` directly in the `tags` -attribute,
+or indirectly if the *Tag* is children or belongs to the chain of children of
+a direct *Tag* of an *Event*. The same *Tag* may be specified by more than one
+*Event*, which might be useful in case of series of events ("multi-day-events").
+However, when a *Tag* is no longer specified by any *Event*, directly or indirectly,
+it shall be removed. The *Tags* specified - directly or indirectly - of an individual
+*Event* are said to be in "the scope of that *Event*". A *Tag* may have children only
+if it's `grp` (group) -attribute is set to `true`. A *Tag* of group -kind may be
+"exclusive" (i.e. the attribute `excl` is set to `true`) indicating, that only one
+of the *Tags* within the group may be set at once. For groups, attribute `req` with
+value `true` means, that at least one of the children must be set (usefull for
+specifying *Tags* representing competition class). For non-groups, the `req` means
+that the *Tag* must be set in order to proceed (e.g. with registration, as the *Tag*
+may indicate that the registration fee has been payd).
 
-Still few things about /Tags/: /Tag/ may be a group /Tag/, in which case the
-attribute /grp/ is set to True. In this case, there may be other /Tags/ that
-belong to that group by referring to the "parent" with /pid/ attribute. A
-/Tag/ may be "required" (attribute /req/ is set to True). For groups this
-means, that at least one of the group's /Tag/ must be set for the /Competitor/
-before the /Competitor/ is valid (e.g. one of the group of /Tags/ must be
-chosen as the competition class before proceeding with the /Competitor/
-registration). For non-group /Tags/ "required" may indicate e.g. wheter the
-competitor has paid the registration fee. The final concept of /Tags/ is
-the exclusive /Tag/ groups. This means, that if a /Competitor/ has tagged
-with one of the /Tags/ within exclusive tag group, it must not be tagged
-with another /Tag/ within the same group. This is usefull for (usualy)
-cases, that a /Competitor/ may be registered to a single class within the
-/Event/ only.
+*Tag* may also "refer" to another *Tags* within the scope of enclosing *Event* (see above).
+*Tag* refers to another by having it's `id` in `refs` attribute. The feature is useful
+for "linking traits". For example *Tag* `M21` (competition class) may refer to *Tag*
+`AM 10:30` indicating, that if `M21` is set, the starting time is `AM 10:30`. If `M21`
+is removed, `AM 10:30` still remains. If `AM 10:30` is removed, it's `id` will be
+cleared from the `M21`'s `refs` attribute.
 
-/Competitor/ represents a person's registration to an /Event/. The life-time
-of the /Competitor/ is bound to the life-time of the /Event/. When the 
-/Event/ is removed, also the /Competitors/ will be removed. A /Name/
+*Competitor* represents a person's registration to an *Event*. The life-time
+of the *Competitor* is bound to the life-time of the *Event*. When the 
+*Event* is removed, also the *Competitors* will be removed. A *Name*
 represents the individual person (having a name). Obviously the same
-person (i.e. the /Name/) may participate to multiple /Events/. However,
-the /Name/ will not be removed when the last /Compeitor/ referring it
-is removed, as the it is possible, maybe even likely that the same person
-will partcipate to some of the future /Events/. In that case, it is 
-handy for the user if the /Name/ is still available, so that it is not
-needed to type in again (but just chosen, or auto-completed etc).
+person (i.e. the *Name*) may participate to multiple *Events*. However,
+the *Name* will not be removed when the last *Compeitor* referring it
+is removed, as the it is very much possible that the same person
+will partcipate to some other *Events* later. In that case, it is 
+handy for the user if the *Name* is still available, so that there's
+no need to type in again (but just choose from auto-completed list etc).
 
-Finally, the /Community/ represents the community that the person is
-representing in the particular /Event/. /Community/ as an attribute of
-/Competitor/ is optional, as the person may not represent anything other
-than him- or herself. The /Name/ may also be associated with the most recently
-represented /Community/. This helps user to fill in registrations, as the
-most recently represented /Community/ may be automatically offered when
+Finally, the *Community* represents the community that the person is
+representing in the particular *Event*. *Community* as an attribute of
+*Competitor* is optional, as the person may not represent anything other
+than him- or herself. The *Name* may also be associated with the most recently
+represented *Community*. This helps user to fill in registrations, as the
+most recently represented *Community* may be automatically offered when
 filling in the registration form. Of course it is possible for the person
-to represent different /Communities/.
+to represent different *Communities*.
 
 ## Running it
 
 Once compiled, type:
 
-
 ```
 cd webui
-python ../server/server.py
+FLASK_APP=../server/app/server.py flask run
 ```
 
 Then navigate to address `http://localhost:5000`
 
+## Testing the backend
+
+```
+cd server
+FLASK_APP=app/server.py pytest
+```
 

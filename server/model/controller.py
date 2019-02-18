@@ -47,6 +47,9 @@ class ModelController:
 
     def wrap(self, model):
         return ModelWrapper(self, model)
+
+    def on_pre_remove(self, item_type, id_set):
+        print("on_pre_remove({}, {})".format(item_type, id_set))
    
     def created(self, itemType, id, item):
         print("Created {} with id {}: {}".format(itemType, id, item))
