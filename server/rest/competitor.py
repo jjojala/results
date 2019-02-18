@@ -12,6 +12,9 @@ _TYPE = "Competitor"
 
 _parser = reqparse.RequestParser()
 _parser.add_argument('id', type=str, required=True) # id
+_parser.add_argument('eid', type=str, required=True) # event id
+_parser.add_argument('nid', type=str, required=True) # name id
+_parser.add_argument('cid', type=str, required=False) # community id
 _parser.add_argument('start', type=int, required=False) # start time (unix timestamp, ms)
 _parser.add_argument('finish', type=int, required=False) # finish time (timestamp)
 _parser.add_argument('tags', type=list, location='json', required=False) # tag id refs

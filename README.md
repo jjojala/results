@@ -20,6 +20,10 @@ cd webui
 npx webpack --mode production
 ```
 
+## About the data model
+
+![Classes](classes.svg)
+
 ## Running it
 
 Once compiled, type:
