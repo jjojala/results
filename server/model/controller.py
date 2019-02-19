@@ -49,6 +49,7 @@ class ModelController:
         return ModelWrapper(self, model)
 
     def on_pre_remove(self, item_type, id_set):
+        # TODO: remove other objects
         print("on_pre_remove({}, {})".format(item_type, id_set))
    
     def created(self, itemType, id, item):

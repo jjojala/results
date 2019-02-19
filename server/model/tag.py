@@ -9,15 +9,52 @@ class TagModel:
         self._items = []
         self._controller = controller
 
-    def _get_dependants(self, id):
-        """Return a set of id's of Tags that are children of the Tag
-             with the given id. If no dependants found, and empty set
-             will be returned."""
-        deps = { id }
+    def _check_refs(self, root_id, refs):
+        """Raises an exception, if the given root_id refers to either
+            a non-existing tag or if the references would constitute
+            a circular dependency. If neither is true, function pass."""
+        
+        if refs == None:
+            return
+        
+        for referred_id in refs:
+            if reference_id == root_id:
+                raise EntityConstraintViolated(_TYPE, referee_id,
+                    "Tag is constituting a curcular reference.")
+
+                referred_tag = self.get(referred_id)
+                if referred_tag == None:
+                    raise EntityConstraintViolated(_TYPE, item["id"],
+                        "Reference {} with id {} not found.".format(
+                            _TYPE, r))
+
+                this._check_refs(root_id, referred_tag["refs"])
+
+    def _check_parent(self, item):
+        if item["pid"] == None:
+            return
+
+        parent = self.get(item["pid"])
+        if parent == None:
+            raise EntityConstraintViolated(_TYPE, item["id"],
+                "Parent {} with id {} not found.".format(
+                    _TYPE, pid))
+
+        if parent["grp"] == None or parent["grp"] == False:
+            raise EntityConstraintViolated(_TYPE, pid,
+                "Expected to be a group.")
+
+    def _get_children(self, parent):
+        if parent["grp"] == None or parent["grp"] == False:
+            return set()
+        
+        children = set()
         for i in self._items:
-            if (id == i["pid"] or (i["refs"] and id in i["refs"])):
-                deps.add(i["id"])
-        return deps
+            if parent["id"] == i["pid"]:
+                children.add(i["id"])
+                children.update(self._get_children(i["id"]))
+
+        return children
 
     def _remove_one(self, id):
         for i in range(len(self._items)):
@@ -43,32 +80,38 @@ class TagModel:
         return None
  
     def create(self, item):
+        self._check_parent(item)
+        self._check_refs(item["id"], item["refs"])
+        # TODO: that we're still working within the scope of event!
         for i in self._items:
             if (item["id"] == i["id"]):
                 raise EntityAlreadyExists(_TYPE, item["id"])
+
         self._items.append(item)
         self._controller.created(_TYPE, item["id"], item)
         return item
 
-    def update(self, item):
-        """TODO: To be removed?! """
-        for i in range(len(self._items)):
-            if (item["id"] == self._items[i]["id"]):
-                self._controller.updated(_TYPE, item["id"], self._items[i], item)
-                self._items[i] = item
-                return item
-        raise EntityNotFound(_TYPE, item["id"])
+# TODO: To be removed!
+#    def update(self, item):
+#        """TODO: To be removed?! """
+#        for i in range(len(self._items)):
+#            if (item["id"] == self._items[i]["id"]):
+#                self._controller.updated(_TYPE, item["id"], self._items[i], item)
+#                self._items[i] = item
+#                return item
+#        raise EntityNotFound(_TYPE, item["id"])
 
     def remove(self, id):
         for i in range(len(self._items)):
             if (id == self._items[i]["id"]):
-                deps = self._get_dependants(id)
-                self._controller.on_pre_remove(_TYPE, deps)
-                self._remove_set(deps)
+                group = set({id}).union(self._get_children(self._items[i]))
+                self._controller.on_pre_remove(_TYPE, group)
+                self._remove_set(group)
                 return True
         raise EntityNotFound(_TYPE, id)
 
     def patch(self, id, diff):
+        # TODO: check refs, check groups
         try:
             for i in range(len(self._items)):
                 if (id == self._items[i]["id"]):
