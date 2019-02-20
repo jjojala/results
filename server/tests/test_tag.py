@@ -23,6 +23,7 @@ def test_tag_self_reference_prevention(client):
     result = client.post("/api/tag/1", json={
         'id':'1', 'tag':'tag-1', 'desc':'desc 1',
         'refs': [ '1' ]})
-    assert 409 == result.status_code
+    assert 422 == result.status_code
 
-    
+    result = client.get("/api/tag/1")
+    assert 404 == result.status_code

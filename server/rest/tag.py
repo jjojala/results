@@ -67,6 +67,8 @@ class Tag(Resource):
                         entity = self._model.create(args)
                         self._notifications.submit(CREATED, _TYPE, id, entity)
                         return entity, 201, { 'Location': self._api + id }
+                except model.IllegalEntity as ex:
+                        return model.jsonify(ex), 422
                 except (model.EntityAlreadyExists,
                         model.EntityConstraintViolated) as ex:
                         return model.jsonify(ex), 409
@@ -89,6 +91,8 @@ class Tag(Resource):
                         entity = self._model.patch(id, diff)
                         self._notifications.submit(PATCHED, _TYPE, id, diff)
                         return entity, 200
+                except model.IllegalEntity as ex:
+                        return model.jsonify(ex), 422
                 except model.EntityConstraintViolated as ex:
                         return model.jsonify(ex), 409
                 except model.EntityNotFound as ex:

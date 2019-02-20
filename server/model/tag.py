@@ -9,57 +9,32 @@ class TagModel:
         self._items = []
         self._controller = controller
 
-    def _check_refs(self, scope, root_id, refs):
-        """Raises an exception, if the given root_id refers to either
-            a non-existing tag or if the references would constitute
-            a circular dependency. If neither is true, function pass."""
-        
-        if refs == None:
-            return
-        
-        for referred_id in refs:
-            if referred_id == root_id:
-                raise EntityConstraintViolated(_TYPE, root_id,
-                    "Tag is constituting a curcular reference.")
+    def _resolve_descendants(self, group_id):
+        """Returns a list tag ids of descendants of the given group.
+            The given group is expected to exist (not checked).
+            If no descendants found, and empty list is returned."""
 
-                if referred_id not in scope:
-                    raise EntityConstraintViolated(_TYPE, root_id,
-                        "Tag is referring to Tag {} outside of it's scope.".format(
-                            reference_id))
-                
-                referred_tag = self.get(referred_id)
-                if referred_tag == None:
-                    raise EntityConstraintViolated(_TYPE, root_id,
-                        "Reference {} with id {} not found.".format(
-                            _TYPE, referred_id))
+        descendants = []
+        for tag in self._items:
+            if group_id == tag["pid"]:
+                descendants.append(tag["id"])
+                descendants.extend(self._resolve_descendants(tag["id"]))
 
-                this._check_refs(scope, root_id, referred_tag["refs"])
+        return descendants
 
-    def _check_parent(self, item):
-        if item["pid"] == None:
-            return
+    def _resolve_scope(self, tag_id):
+        """Returns the scope_id of a tag. If no Tag with the given id
+            is not found, or any other Tag within the chain of Tags toward
+            the scope is missing, an EntityNotFound is raised."""
 
-        parent = self.get(item["pid"])
-        if parent == None:
-            raise EntityConstraintViolated(_TYPE, item["id"],
-                "Parent {} with id {} not found.".format(
-                    _TYPE, pid))
+        tag = self.get(tag_id)
+        if tag == None:
+            raise EntityNotFound(_TYPE, tag_id)
 
-        if parent["grp"] == None or parent["grp"] == False:
-            raise EntityConstraintViolated(_TYPE, pid,
-                "Expected to be a group.")
+        if tag["pid"] == None:
+            return tag_id       # this is it!
 
-    def _get_children(self, parent):
-        if parent["grp"] == None or parent["grp"] == False:
-            return set()
-        
-        children = set()
-        for i in self._items:
-            if parent["id"] == i["pid"]:
-                children.add(i["id"])
-                children.update(self._get_children(i["id"]))
-
-        return children
+        return self._resolve_scope(tag["pid"])
 
     def _remove_one(self, id):
         for i in range(len(self._items)):
@@ -84,31 +59,36 @@ class TagModel:
                 return i
         return None
  
-    def create(self, item, event_id=None):
-        for i in self._items:
-            if (item["id"] == i["id"]):
-                raise EntityAlreadyExists(_TYPE, item["id"])
+    def create(self, tag):
+        if self.get(tag["id"]) != None:
+            raise EntityAlreadyExists(_TYPE, tag["id"])
 
-        scope = self._controller.get_event_tags(event_id)
-        if scope == None:
-            scope = [ i["id"] for i in self._items ]
-            
-        self._check_parent(item)
-        if item["refs"] != None:
-            scope = self._controller.get_event_tags(event_id)
-            if scope == None:
-                scope = [ i["id"] for i in self._items ]
+        if tag["pid"] == None: # this is a scope tag
+            if tag["refs"] != None:  # not allowed for scopes
+                raise IllegalEntity(_TYPE, tag["id"],
+                                    "Refs not allowed for scope tags.")
 
-            self._check_refs(scope, item["id"], item["refs"])
+        elif self.get(tag["pid"]) == None:  # not a scope
+            raise IllegalEntity(_TYPE, tag["id"],
+                                str(EntityNotFound(_TYPE, tag["pid"])))
 
-        self._items.append(item)
-        self._controller.created(_TYPE, item["id"], item)
-        return item
+        if tag["refs"] != None: # check refs
+            scope_tag_ids = self._resolve_descendants(
+                self._resolve_scope(tag["pid"]))
+            for referred_tag_id in tag["refs"]:
+                if referred_tag_id not in scope_tag_ids:
+                    raise IllegalEntity(_TYPE, tag["id"],
+                                        str(EntityNotFound(_TYPE, referred_tag)))
 
-    def remove(self, id):
+        # got this far so the item must be valid
+        self._items.append(tag)
+        self._controller.created(_TYPE, tag["id"], tag)
+        return tag
+
+    def remove(self, tag_id):
         for i in range(len(self._items)):
-            if (id == self._items[i]["id"]):
-                group = set({id}).union(self._get_children(self._items[i]))
+            if (tag_id == self._items[i]["id"]):
+                group = set(self._resolve_descendants(tag_id)).union({tag_id})
                 self._controller.on_pre_remove(_TYPE, group)
                 self._remove_set(group)
                 return True
