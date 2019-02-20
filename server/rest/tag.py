@@ -70,18 +70,6 @@ class Tag(Resource):
                 except model.EntityAlreadyExists as ex:
                         return model.jsonify(ex), 409
 
-# TODO: To be removed!
-#        @timeservice.time_service
-#        def put(self, id):
-#                args = _parser.parse_args(strict=True)
-#
-#                try:
-#                        entity = self._model.update(args)
-#                        self._notifications.submit(UPDATED, _TYPE, id, entity)
-#                        return entity, 200
-#                except model.EntityNotFound as ex:
-#                        return model.jsonify(ex), 404
-
         @timeservice.time_service
         def delete(self, id):
                 try:

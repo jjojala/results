@@ -105,16 +105,6 @@ class TagModel:
         self._controller.created(_TYPE, item["id"], item)
         return item
 
-# TODO: To be removed!
-#    def update(self, item):
-#        """TODO: To be removed?! """
-#        for i in range(len(self._items)):
-#            if (item["id"] == self._items[i]["id"]):
-#                self._controller.updated(_TYPE, item["id"], self._items[i], item)
-#                self._items[i] = item
-#                return item
-#        raise EntityNotFound(_TYPE, item["id"])
-
     def remove(self, id):
         for i in range(len(self._items)):
             if (id == self._items[i]["id"]):

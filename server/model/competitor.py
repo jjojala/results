@@ -26,14 +26,6 @@ class CompetitorModel:
         self._observer.created(_TYPE, item["id"], item)
         return item
 
-    def update(self, item):
-        for i in range(len(self._items)):
-            if (item["id"] == self._items[i]["id"]):
-                self._observer.updated(_TYPE, item["id"], self._items[i], item)
-                self._items[i] = item
-                return item
-        raise EntityNotFound(_TYPE, item["id"])
-
     def remove(self, id):
         for i in range(len(self._items)):
             if (id == self._items[i]["id"]):
