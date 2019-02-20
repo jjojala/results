@@ -9,7 +9,7 @@ class TagModel:
         self._items = []
         self._controller = controller
 
-    def _check_refs(self, root_id, refs):
+    def _check_refs(self, scope, root_id, refs):
         """Raises an exception, if the given root_id refers to either
             a non-existing tag or if the references would constitute
             a circular dependency. If neither is true, function pass."""
@@ -22,13 +22,18 @@ class TagModel:
                 raise EntityConstraintViolated(_TYPE, referee_id,
                     "Tag is constituting a curcular reference.")
 
+                if reference_id not in scope:
+                    raise EntityConstraintViolated(_TYPE, referee_id,
+                        "Tag is referring to Tag {} outside of it's scope.".format(
+                            reference_id))
+                
                 referred_tag = self.get(referred_id)
                 if referred_tag == None:
                     raise EntityConstraintViolated(_TYPE, item["id"],
                         "Reference {} with id {} not found.".format(
                             _TYPE, r))
 
-                this._check_refs(root_id, referred_tag["refs"])
+                this._check_refs(scope, root_id, referred_tag["refs"])
 
     def _check_parent(self, item):
         if item["pid"] == None:
@@ -79,13 +84,22 @@ class TagModel:
                 return i
         return None
  
-    def create(self, item):
-        self._check_parent(item)
-        self._check_refs(item["id"], item["refs"])
-        # TODO: that we're still working within the scope of event!
+    def create(self, item, event_id=None):
         for i in self._items:
             if (item["id"] == i["id"]):
                 raise EntityAlreadyExists(_TYPE, item["id"])
+
+        scope = self._controller.get_event_tags(event_id)
+        if scope == None:
+            scope = [ i["id"] for i in self._items ]
+            
+        self._check_parent(item)
+        if item["refs"] != None:
+            scope = self._controller.get_event_tags(event_id)
+            if scope == None:
+                scope = [ i["id"] for i in self._items ]
+
+            self._check_refs(scope, item["id"], item["refs"])
 
         self._items.append(item)
         self._controller.created(_TYPE, item["id"], item)

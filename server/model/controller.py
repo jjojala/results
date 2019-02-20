@@ -48,6 +48,12 @@ class ModelController:
     def wrap(self, model):
         return ModelWrapper(self, model)
 
+    def get_event_tags(self, event_id):
+        """Return list of tag ids for given Event. If event_id is None,
+           None is returned."""
+        # TODO: implement
+        return None
+        
     def on_pre_remove(self, item_type, id_set):
         # TODO: remove other objects
         print("on_pre_remove({}, {})".format(item_type, id_set))
