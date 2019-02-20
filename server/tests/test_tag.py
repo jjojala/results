@@ -19,4 +19,10 @@ def test_simple_tag(client):
     assert [] == result.get_json() 
     assert 200 == result.status_code
 
+def test_tag_self_reference_prevention(client):
+    result = client.post("/api/tag/1", json={
+        'id':'1', 'tag':'tag-1', 'desc':'desc 1',
+        'refs': [ '1' ]})
+    assert 409 == result.status_code
+
     

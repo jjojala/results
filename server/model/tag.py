@@ -18,20 +18,20 @@ class TagModel:
             return
         
         for referred_id in refs:
-            if reference_id == root_id:
-                raise EntityConstraintViolated(_TYPE, referee_id,
+            if referred_id == root_id:
+                raise EntityConstraintViolated(_TYPE, root_id,
                     "Tag is constituting a curcular reference.")
 
-                if reference_id not in scope:
-                    raise EntityConstraintViolated(_TYPE, referee_id,
+                if referred_id not in scope:
+                    raise EntityConstraintViolated(_TYPE, root_id,
                         "Tag is referring to Tag {} outside of it's scope.".format(
                             reference_id))
                 
                 referred_tag = self.get(referred_id)
                 if referred_tag == None:
-                    raise EntityConstraintViolated(_TYPE, item["id"],
+                    raise EntityConstraintViolated(_TYPE, root_id,
                         "Reference {} with id {} not found.".format(
-                            _TYPE, r))
+                            _TYPE, referred_id))
 
                 this._check_refs(scope, root_id, referred_tag["refs"])
 

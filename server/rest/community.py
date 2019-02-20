@@ -60,7 +60,8 @@ class Community(Resource):
                         entity = self._model.create(args)
                         self._notifications.submit(CREATED, _TYPE, id, entity)
                         return entity, 201, { 'Location': self._api + id }
-                except model.EntityAlreadyExists as ex:
+                except (model.EntityAlreadyExists,
+                        model.EntityConstraintViolated) as ex:
                         return model.jsonify(ex), 409
 
         @timeservice.time_service
@@ -71,6 +72,8 @@ class Community(Resource):
                         return id, 200
                 except model.EntityNotFound as ex:
                         return model.jsonify(ex), 404
+                except model.EntityConstraintViolated as ex:
+                        return model.jsonify(ex), 409
 
         @timeservice.time_service
         def patch(self, id):
