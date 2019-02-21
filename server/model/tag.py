@@ -36,6 +36,24 @@ class TagModel:
 
         return self._resolve_scope(tag["pid"])
 
+    def _update_refs(self, removed_tag_ids):
+        """Updates tag refs according to removal of given tags.
+            Returns list of tuples (id, diff) or an empty list
+            if no matching tags were found."""
+
+        updates = []
+        for tag in self._items:
+            if tag["refs"] != None:
+                updated_refs = [ ref_id for ref_id in tag["refs"]
+                  if ref_id not in removed_tag_ids ]
+                if len(tag["refs"]) != len(updated_refs):
+                    original_refs = tag["refs"].copy()
+                    tag["refs"] = updated_refs
+                    updates.append( { 'id': tag["id"],
+                                      'diff': { 'refs': [ original_refs,
+                                                          updated_refs ] } })
+        return updates
+
     def _remove_one(self, id):
         for i in range(len(self._items)):
             if self._items[i]["id"] == id:
@@ -43,9 +61,9 @@ class TagModel:
                 return True
         return False
 
-    def _remove_set(self, id_set):
+    def _remove_group(self, group):
         count = 0
-        for i in id_set:
+        for i in group:
             if self._remove_one(i):
                 count = count + 1
         return count
@@ -88,9 +106,9 @@ class TagModel:
     def remove(self, tag_id):
         for i in range(len(self._items)):
             if (tag_id == self._items[i]["id"]):
-                group = set(self._resolve_descendants(tag_id)).union({tag_id})
-                self._controller.on_pre_remove(_TYPE, group)
-                self._remove_set(group)
+                to_be_removed = self._resolve_descendants(tag_id) + [ tag_id ]
+                self._remove_group(to_be_removed)
+                updates = self._update_refs(to_be_removed)
                 return True
         raise EntityNotFound(_TYPE, id)
 
