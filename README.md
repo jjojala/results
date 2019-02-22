@@ -82,6 +82,6 @@ Then navigate to address `http://localhost:5000`
 
 ```
 cd server
-FLASK_APP=app/server.py pytest
+FLASK_APP=app/server.py python -m pytest
 ```
 

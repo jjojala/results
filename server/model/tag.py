@@ -118,6 +118,26 @@ class TagModel:
             for i in range(len(self._items)):
                 if (id == self._items[i]["id"]):
                     patched = patch(self._items[i], diff)
+                    new_refs = [ ref_id for ref_id in patched["refs"]
+                                 if ref_id not in self._items[i]["refs"] ]
+                    if len(new_refs) > 0:
+                        scope_tag_ids = self._resolve_descendants(
+                            self._resolve_scope(id))
+                        for ref_id in new_refs:
+                            if ref_id not in scope_tag_ids:
+                                raise IllegalEntity(_TYPE, id,
+                                                    str(EntityNotFound(_TYPE, ref_id)))
+
+                    if patched["pid"] != self._items[i]["pid"]:
+                        if patched["pid"] == None: # this is a scope tag
+                            if patched["refs"] != None:  # .. then refs not allowed
+                                raise IllegalEntity(_TYPE, patched["id"],
+                                                    "Refs not allowed for scope tags.")
+
+                        elif self.get(patched["pid"]) == None:  # not a scope
+                            raise IllegalEntity(_TYPE, id,
+                                                str(EntityNotFound(_TYPE, patched["pid"])))
+                        
                     self._controller.patched(_TYPE, id, diff, self._items[i], patched)
                     self._items[i] = patched
                     return self._items[i]
