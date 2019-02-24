@@ -76,7 +76,7 @@ class TagModel:
             if (id == i["id"]):
                 return i
         return None
- 
+
     def create(self, tag):
         if self.get(tag["id"]) != None:
             raise EntityAlreadyExists(_TYPE, tag["id"])
@@ -137,7 +137,7 @@ class TagModel:
                         elif self.get(patched["pid"]) == None:  # not a scope
                             raise IllegalEntity(_TYPE, id,
                                                 str(EntityNotFound(_TYPE, patched["pid"])))
-                        
+
                     self._controller.patched(_TYPE, id, diff, self._items[i], patched)
                     self._items[i] = patched
                     return self._items[i]
