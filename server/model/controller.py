@@ -15,6 +15,7 @@
    limitations under the License.
 """
 from .common import *
+import model
 
 class ModelWrapper:
     def __init__(self, controller, wrapped):
@@ -52,12 +53,26 @@ class ModelWrapper:
         #self._controller.get_connection().rollback()
 
 class ModelController:
-    def __init__(self, dbname):
-        #self._connection = sqlite3.connect(dbname)
-        self._connection = None
+    def __init__(self, **kwargs):
+        """Initialize ModelController. Supported args (TBD)."""
+        self._community_model = model.CommunityModel(self)
+        self._name_model = model.NameModel(self)
+        self._tag_model = model.TagModel(self)
+        self._event_model = model.EventModel(self)
+        self._competitor_model = model.CompetitorModel(self)
 
-    def get_connection(self):
-        return self._connection
+    def get_community_model(self):
+        return ModelWrapper(self, self._community_model)
 
-    def wrap(self, model):
-        return ModelWrapper(self, model)
+    def get_name_model(self):
+        return ModelWrapper(self, self._name_model)
+
+    def get_tag_model(self):
+        return ModelWrapper(self, self._tag_model)
+
+    def get_event_model(self):
+        return ModelWrapper(self, self._event_model)
+
+    def get_competitor_model(self):
+        return ModelWrapper(self, self._competitor_model)
+    

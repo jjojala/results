@@ -19,13 +19,13 @@ def create_app(test_config=None):
         api = Api(app)
         socketio = SocketIO(app, json=json)
 
-        controller = model.ModelController("test.db")
+        controller = model.ModelController()
 
-        events = controller.wrap(model.EventModel(controller))
-        tags = controller.wrap(model.TagModel(controller))
-        communities = controller.wrap(model.CommunityModel(controller))
-        competitors = controller.wrap(model.CompetitorModel(controller))
-        names = controller.wrap(model.NameModel(controller))
+        events = controller.get_event_model()
+        tags = controller.get_tag_model()
+        communities = controller.get_community_model()
+        competitors = controller.get_competitor_model()
+        names = controller.get_name_model()
 
         notifications = rest.Notifications('/api/notifications', socketio)
         socketio.on_namespace(notifications)
