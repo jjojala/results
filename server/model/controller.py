@@ -1,6 +1,20 @@
 # -*- coding: utf-8 -*-
+"""
+   Copyright 2019 Jari ojala (jari.ojala@iki.fi)
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+"""
 from .common import *
-import sqlite3
 
 class ModelWrapper:
     def __init__(self, controller, wrapped):
@@ -47,19 +61,3 @@ class ModelController:
 
     def wrap(self, model):
         return ModelWrapper(self, model)
-        
-    def created(self, itemType, id, item):
-        print("Created {} with id {}: {}".format(itemType, id, item))
-    
-    def updated(self, itemType, id, old, new):
-        print("Updated {} with id {}:\n\told: {}\n\tnew: {}".format(
-            itemType, id, old, new))
-    
-    def removed(self, itemType, id, removedItem):
-        print("Removed {} with id {}: removed item: {}".format(
-            itemType, id, removedItem))
-    
-    def patched(self, itemType, id, diff, old, new):
-        print("Patched {} with id {}:\n\tdiff: {}\n\told: {}\n\tnew: {}".format(
-            itemType, id, diff, old, new))
-

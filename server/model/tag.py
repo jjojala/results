@@ -100,7 +100,6 @@ class TagModel:
 
         # got this far so the item must be valid
         self._items.append(tag)
-        self._controller.created(_TYPE, tag["id"], tag)
         return tag
 
     def remove(self, tag_id):

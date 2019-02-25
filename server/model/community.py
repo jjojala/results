@@ -24,13 +24,11 @@ class CommunityModel:
                 raise EntityAlreadyExists(_TYPE, item["id"])
 
         self._items.append(item)
-        self._controller.created(_TYPE, item["id"], item)
         return item
 
     def remove(self, id):
         for i in range(len(self._items)):
             if (id == self._items[i]["id"]):
-                self._controller.removed(_TYPE, id, self._items[i])
                 del self._items[i]
                 return True
         raise EntityNotFound(_TYPE, id)
@@ -40,7 +38,6 @@ class CommunityModel:
             for i in range(len(self._items)):
                 if (id == self._items[i]["id"]):
                     patched = patch(self._items[i], diff)
-                    self._controller.patched(_TYPE, id, diff, self._items[i], patched)
                     self._items[i] = patched
                     return self._items[i]
             raise EntityNotFound(_TYPE, id)
