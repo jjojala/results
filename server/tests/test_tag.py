@@ -1,4 +1,6 @@
-from .test_server import client, app
+# -*- coding: utf-8 -*-
+
+from .test_common import client, app
 import pytest
 
 def test_simple_tag(client):
