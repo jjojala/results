@@ -76,3 +76,13 @@ class ModelController:
     def get_competitor_model(self):
         return ModelWrapper(self, self._competitor_model)
     
+    def on_tag_create(self, tag):
+        print("on_tag_create(tag={})".format(tag))
+
+    def on_tag_update(self, tag_id, diff):
+        print("on_tag_update(tag_id={}, diff={})".format(tag_id, diff))
+
+    def on_tag_remove(self, tag_id):
+        print("on_tag_remove(tag_id={})".format(tag_id))
+    
+

@@ -52,27 +52,22 @@ class TagModel:
         return self._resolve_scope(tag["pid"])
 
     def _update_refs(self, removed_tag_ids):
-        """Updates tag refs according to removal of given tags.
-            Returns list of tuples (id, diff) or an empty list
-            if no matching tags were found."""
+        """Updates tag refs according to removal of given tags."""
 
-        updates = []
         for tag in self._items:
             if tag["refs"] != None:
                 updated_refs = [ ref_id for ref_id in tag["refs"]
                   if ref_id not in removed_tag_ids ]
                 if len(tag["refs"]) != len(updated_refs):
-                    original_refs = tag["refs"].copy()
+                    self._controller.on_tag_update(tag['id'], {
+                        'refs': [ tag['refs'].copy(), updated_refs ] })
                     tag["refs"] = updated_refs
-                    updates.append( { 'id': tag["id"],
-                                      'diff': { 'refs': [ original_refs,
-                                                          updated_refs ] } })
-        return updates
 
     def _remove_one(self, id):
         for i in range(len(self._items)):
             if self._items[i]["id"] == id:
                 del self._items[i]
+                self._controller.on_tag_remove(id)
                 return True
         return False
 
@@ -115,6 +110,7 @@ class TagModel:
 
         # got this far so the item must be valid
         self._items.append(tag)
+        self._controller.on_tag_create(tag)
         return tag
 
     def remove(self, tag_id):
@@ -122,12 +118,11 @@ class TagModel:
             if (tag_id == self._items[i]["id"]):
                 to_be_removed = self._resolve_descendants(tag_id) + [ tag_id ]
                 self._remove_group(to_be_removed)
-                updates = self._update_refs(to_be_removed)
+                self._update_refs(to_be_removed)                
                 return True
         raise EntityNotFound(_TYPE, id)
 
     def patch(self, id, diff):
-        # TODO: check refs, check groups
         try:
             for i in range(len(self._items)):
                 if (id == self._items[i]["id"]):
@@ -152,8 +147,8 @@ class TagModel:
                             raise IllegalEntity(_TYPE, id,
                                                 str(EntityNotFound(_TYPE, patched["pid"])))
 
-                    self._controller.patched(_TYPE, id, diff, self._items[i], patched)
                     self._items[i] = patched
+                    self._controller.on_tag_update(id, diff)
                     return self._items[i]
             raise EntityNotFound(_TYPE, id)
         except PatchConflict as ex:
