@@ -38,23 +38,27 @@ class CommunityModel:
             if (item["id"] == i["id"]):
                 raise EntityAlreadyExists(_TYPE, item["id"])
 
+        self._controller.on_community_create(item)
         self._items.append(item)
         return item
 
-    def remove(self, id):
+    def remove(self, community_id):
         for i in range(len(self._items)):
-            if (id == self._items[i]["id"]):
+            if (community_id == self._items[i]["id"]):
+                self._controller.on_community_remove(community_id)
                 del self._items[i]
                 return True
-        raise EntityNotFound(_TYPE, id)
+        raise EntityNotFound(_TYPE, community_id)
 
-    def patch(self, id, diff):
+    def patch(self, community_id, diff):
         try:
             for i in range(len(self._items)):
-                if (id == self._items[i]["id"]):
+                if (community_id == self._items[i]["id"]):
                     patched = patch(self._items[i], diff)
+                    self._controller.on_community_update(
+                        community_id, diff)
                     self._items[i] = patched
                     return self._items[i]
-            raise EntityNotFound(_TYPE, id)
+            raise EntityNotFound(_TYPE, community_id)
         except PatchConflict as ex:
-            raise EntityConstraintViolated(_TYPE, id, str(ex))
+            raise EntityConstraintViolated(_TYPE, community_id, str(ex))

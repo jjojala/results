@@ -66,8 +66,8 @@ class TagModel:
     def _remove_one(self, id):
         for i in range(len(self._items)):
             if self._items[i]["id"] == id:
-                del self._items[i]
                 self._controller.on_tag_remove(id)
+                del self._items[i]
                 return True
         return False
 
@@ -109,16 +109,16 @@ class TagModel:
                                         str(EntityNotFound(_TYPE, referred_tag)))
 
         # got this far so the item must be valid
-        self._items.append(tag)
         self._controller.on_tag_create(tag)
+        self._items.append(tag)
         return tag
 
     def remove(self, tag_id):
         for i in range(len(self._items)):
             if (tag_id == self._items[i]["id"]):
                 to_be_removed = self._resolve_descendants(tag_id) + [ tag_id ]
-                self._remove_group(to_be_removed)
                 self._update_refs(to_be_removed)                
+                self._remove_group(to_be_removed)
                 return True
         raise EntityNotFound(_TYPE, id)
 
@@ -147,8 +147,8 @@ class TagModel:
                             raise IllegalEntity(_TYPE, id,
                                                 str(EntityNotFound(_TYPE, patched["pid"])))
 
-                    self._items[i] = patched
                     self._controller.on_tag_update(id, diff)
+                    self._items[i] = patched
                     return self._items[i]
             raise EntityNotFound(_TYPE, id)
         except PatchConflict as ex:

@@ -37,23 +37,27 @@ class CompetitorModel:
         for i in self._items:
             if (item["id"] == i["id"]):
                 raise EntityAlreadyExists(_TYPE, item["id"])
+        self._controller.on_competitor_create(item)
         self._items.append(item)
         return item
 
-    def remove(self, id):
+    def remove(self, competitor_id):
         for i in range(len(self._items)):
-            if (id == self._items[i]["id"]):
+            if (competitor_id == self._items[i]["id"]):
+                self._controller.on_competitor_remove(competitor_id)
                 del self._items[i]
                 return True
-        raise EntityNotFound(_TYPE, id)
+        raise EntityNotFound(_TYPE, competitor_id)
 
-    def patch(self, id, diff):
+    def patch(self, competitor_id, diff):
         try:
             for i in range(len(self._items)):
-                if (id == self._items[i]["id"]):
+                if (competitor_id == self._items[i]["id"]):
                     patched = patch(self._items[i], diff)
+                    self._controller.on_competitor_update(
+                        competitor_id, diff)
                     self._items[i] = patched
                     return self._items[i]
-            raise EntityNotFound(_TYPE, id)
+            raise EntityNotFound(_TYPE, competitor_id)
         except PatchConflict as ex:
-            raise EntityConstraintViolated(_TYPE, id, str(ex))
+            raise EntityConstraintViolated(_TYPE, competitor_id, str(ex))

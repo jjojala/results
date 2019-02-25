@@ -84,5 +84,47 @@ class ModelController:
 
     def on_tag_remove(self, tag_id):
         print("on_tag_remove(tag_id={})".format(tag_id))
+
+    def on_name_create(self, name):
+        print("on_name_create(name={})".format(name))
+
+    def on_name_update(self, name_id, diff):
+        print("on_name_update(name_id={}, diff={})".format(name_id, diff))
+
+    def on_name_remove(self, name_id):
+        print("on_name_remove(name_id={})".format(name_id))
+
+    def on_event_create(self, event):
+        print("on_event_create(event={})".format(event))
+
+    def on_event_update(self, event_id, diff):
+        print("on_event_update(event_id={}, diff={})".format(event_id, diff))
+
+    def on_event_remove(self, event_id):
+        print("on_event_remove(event_id={})".format(event_id))
+
+    def on_competitor_create(self, competitor):
+        print("on_competitor_create(competitor={})".format(competitor))
+
+    def on_competitor_update(self, competitor_id, diff):
+        print("on_competitor_update(competitor_id={}, diff={})".format(
+            competitor_id, diff))
+
+    def on_competitor_remove(self, competitor_id):
+        print("on_competitor_remove(competitor_id={})".format(competitor_id))
+
+    def on_community_create(self, community):
+        print("on_community_create(community)".format(community))
+
+    def on_community_update(self, community_id, diff):
+        print("on_community_update(community_id={}, diff={})".format(
+            community_id, diff))
+
+    def on_community_remove(self, community_id):
+        print("on_community_remove(community_id={})".format(community_id))
+
+    
+
+    
     
 

@@ -37,23 +37,26 @@ class NameModel:
         for i in self._items:
             if (item["id"] == i["id"]):
                 raise EntityAlreadyExists(_TYPE, item["id"])
+        self._controller.on_name_create(item)
         self._items.append(item)
         return item
 
-    def remove(self, id):
+    def remove(self, name_id):
         for i in range(len(self._items)):
-            if (id == self._items[i]["id"]):
+            if (name_id == self._items[i]["id"]):
+                self._controller.on_name_remove(name_id)
                 del self._items[i]
                 return True
-        raise EntityNotFound(_TYPE, id)
+        raise EntityNotFound(_TYPE, name_id)
 
-    def patch(self, id, diff):
+    def patch(self, name_id, diff):
         try:
             for i in range(len(self._items)):
-                if (id == self._items[i]["id"]):
+                if (name_id == self._items[i]["id"]):
                     patched = patch(self._items[i], diff)
+                    self._controller.on_name_update(name_id, diff)
                     self._items[i] = patched
                     return self._items[i]
-            raise EntityNotFound(_TYPE, id)
+            raise EntityNotFound(_TYPE, name_id)
         except PatchConflict as ex:
             raise EntityConstraintViolated(_TYPE, id, str(ex))
