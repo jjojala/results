@@ -84,6 +84,8 @@ class ModelController:
 
     def on_tag_remove(self, tag_id):
         print("on_tag_remove(tag_id={})".format(tag_id))
+        referring_events = self._event_model.list(tag_id)
+        print("\treferring_events={}".format(referring_events))
 
     def on_name_create(self, name):
         print("on_name_create(name={})".format(name))

@@ -78,7 +78,9 @@ class TagModel:
                 count = count + 1
         return count
 
-    def list(self):
+    def list(self, root_id=None):
+        if root_id:
+            return self._resolve_descendants(root_id) + [ root_id ]
         return self._items
 
     def get(self, id):

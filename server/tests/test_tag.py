@@ -17,6 +17,49 @@
 from .test_common import client, app
 import pytest
 
+def test_tags_with_root_id(client):
+    client.post('/api/tag/scope-1', json={
+        'id':'scope-1',
+        'tag':'',
+        'desc':'',
+        'grp':True
+        })
+    client.post('/api/tag/tag-1-1', json={
+        'id':'tag-1-1',
+        'pid':'scope-1',
+        'tag':'',
+        'desc':'',
+        'grp':True
+        })
+    client.post('/api/tag/tag-1-1-1', json={
+        'id':'tag-1-1-1',
+        'pid':'tag-1-1',
+        'tag':'',
+        'desc':''
+        })
+    client.post('/api/tag/tag-1-2', json={
+        'id':'tag-1-2',
+        'pid':'scope-1',
+        'tag':'',
+        'desc':''
+        })
+    client.post('/api/tag/scope-2', json={
+        'id':'scope-2',
+        'tag':'',
+        'desc':'',
+        'grp':True
+        })
+
+    r = client.get('/api/tag/?root_id=scope-1')
+    d = r.get_json()
+    assert 200 == r.status_code
+    assert 4 == len(d)
+
+    r = client.get('/api/tag/?root_id=scope-2')
+    d = r.get_json()
+    assert 200 == r.status_code
+    assert 1 == len(d)
+
 def test_simple_tag(client):
     """Get all Tags, while there're none yet."""
     

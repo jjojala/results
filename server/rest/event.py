@@ -46,6 +46,8 @@ class Events(Resource):
 
         @timeservice.time_service
         def get(self):
+                if 'tag_scope' in request.args:
+                        return self._model.list(request.args['tag_scope']), 200
                 return self._model.list(), 200
 
 class Event(Resource):

@@ -24,7 +24,10 @@ class EventModel:
         self._items = []
         self._controller = controller
 
-    def list(self):
+    def list(self, tag_scope_id=None):
+        if tag_scope_id:
+            return [ e for e in self._items
+                     if tag_scope_id == e['tag_scope'] ]
         return self._items
 
     def get(self, id):
