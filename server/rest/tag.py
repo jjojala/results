@@ -52,7 +52,10 @@ class Tags(Resource):
 
         @timeservice.time_service
         def get(self):
-                return self._model.list(**request.args.to_dict()), 200
+                try:
+                        return self._model.list(**request.args.to_dict()), 200
+                except ValueError as ex:
+                        return model.jsonify(ex), 400
 
 class Tag(Resource):
         def make_args(notifications, api, model):

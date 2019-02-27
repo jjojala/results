@@ -24,10 +24,23 @@ class EventModel:
         self._items = []
         self._controller = controller
 
+    def _create_filter(self, **kwargs):
+        f = accept_filter # fallback, if nothing else
+        for key, value in kwargs.items():
+            if 'name' == key:
+                f = create_case_insensitive_substring_filter('name', value, f)
+            elif 'ts_id' == key:
+                f = create_equality_filter('ts_id', value, f)
+            else:
+                raise ValueError("Unknown filter {}.".format(key))
+
+            # TODO: 'date', new filter factory in model?
+
+        return f
+
     def list(self, **kwargs):
-        if 'ts_id' in kwargs:
-            return [ e for e in self._items if kwargs['ts_id'] == e['ts_id'] ]
-        return self._items
+        f = self._create_filter(**kwargs)
+        return [ e for e in self._items if f(e) ]
 
     def get(self, id):
         for i in self._items:

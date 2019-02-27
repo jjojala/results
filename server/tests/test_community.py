@@ -17,6 +17,10 @@
 from .test_common import client, app
 import pytest
 
+def test_get_communities_400(client):
+    r = client.get('/api/community/?foo=bar')
+    assert 400 == r.status_code
+
 def test_get_communities(client):
     """Get all Communities."""
 

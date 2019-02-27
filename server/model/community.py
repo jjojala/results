@@ -24,8 +24,22 @@ class CommunityModel:
         self._items = []
         self._controller = controller
 
+    def _create_filter(self, **kwargs):
+        f = accept_filter
+        for key, value in kwargs.items():
+            if 'name' == key:
+                f = create_case_insensitive_substring_filter(
+                    'name', value, f)
+            elif 'abbr' == key:
+                f = create_case_insensitive_substring_filter(
+                    'abbr', value, f)
+            else:
+                raise ValueError("Unknown filter {}.".format(key))
+        return f
+
     def list(self, **kwargs):
-        return self._items
+        f = self._create_filter(**kwargs)
+        return [ c for c in self._items if f(c) ]
 
     def get(self, id):
         for i in self._items:

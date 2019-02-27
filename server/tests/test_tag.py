@@ -17,6 +17,10 @@
 from .test_common import client, app
 import pytest
 
+def test_illegal_query_param(client):
+    r = client.get('/api/tag/?foo=bar')
+    assert 400 == r.status_code
+
 def test_tags_with_root_id(client):
     scope_1 = [
         {

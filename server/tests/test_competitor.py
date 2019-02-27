@@ -17,6 +17,10 @@
 from .test_common import client, app
 import pytest
 
+def test_illegal_query_param(client):
+    r = client.get('/api/competitor/?foo=bar')
+    assert 400 == r.status_code
+
 def test_get_competitors(client):
     """Get all competitors."""
 

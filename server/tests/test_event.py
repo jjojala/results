@@ -17,6 +17,10 @@
 from .test_common import client, app
 import pytest
 
+def test_illegal_query_param(client):
+    r = client.get('/api/event/?foo=bar')
+    assert 400 == r.status_code
+
 def test_get_events_by_tag_scope_id(client):
     client.post('/api/event/1', json={
         'id':'1',

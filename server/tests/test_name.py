@@ -17,6 +17,10 @@
 from .test_common import client, app
 import pytest
 
+def test_get_names_400(client):
+    r = client.get('/api/name/?foo=bar')
+    assert 400 == r.status_code
+
 def test_get_names(client):
     """Get all names."""
 

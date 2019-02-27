@@ -80,31 +80,28 @@ class TagModel:
 
     def _create_filter(self, **kwargs):
         f = accept_filter # fallback, if nothing else
-        if 'ts_id' in kwargs:
-            ts_id = kwargs['ts_id']
-            f = create_in_filter('id',
-                self._resolve_descendants(ts_id)+ [ ts_id ], f)
-        if 'pid' in kwargs:
-            f = create_equality_filter('pid', kwargs['pid'], f)
+        for key, value in kwargs.items():            
+            if 'ts_id' == key:
+                f = create_in_filter('id',
+                    self._resolve_descendants(value)+ [ value ], f)
+            elif 'pid' == key:
+                f = create_equality_filter('pid', value, f)
+            elif 'tag' == key:
+                f = create_case_insensitive_substring_filter(
+                    'tag', value, f)
+            elif 'desc' == key:
+                f = create_case_insensitive_substring_filter(
+                    'desc', value, f)
+            elif 'grp' == key:
+                f = create_equality_filter('grp', bool(value), f)
+            elif 'excl' == key:
+                f = create_equality_filter('excl', bool(value), f)
+            elif 'req' == key:
+                f = create_equality_filter('req', bool(value), f)
+            else:
+                raise ValueError("Unknown filter {}".format(key))
 
-        if 'tag' in kwargs:
-            f = create_case_insensitive_substring_filter(
-                'tag', kwargs['tag'], f)
-
-        if 'desc' in kwargs:
-            f = create_case_insensitive_substring_filter(
-                'desc', kwargs['desc'], f)
-
-        if 'grp' in kwargs:
-            f = create_equality_filter('grp', bool(kwargs['grp']), f)
-
-        if 'excl' in kwargs:
-            f = create_equality_filter('excl', bool(kwargs['excl']), f)
-
-        if 'req' in kwargs:
-            f = create_equality_filter('req', bool(kwargs['req']), f)
-
-        # TODO: 'refs'?
+            # TODO: 'refs'?
 
         return f
     

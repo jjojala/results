@@ -24,8 +24,29 @@ class CompetitorModel:
         self._items = []
         self._controller = controller
 
+    def _create_filter(self, **kwargs):
+        f = accept_filter # fallbac, if nothing else
+        for key, value in kwargs.items():
+            if 'eid' == key:
+                f = create_equality_filter('eid', value, f)
+            elif 'nid' == key:
+                f = create_equality_filter('nid', value, f)
+            elif 'cid' == key:
+                f = create_equality_filter('cid', value, f)
+            elif 'tags' == key:
+                # TODO: support for multivalue arguments!
+                f = create_in_filter('tags', value, f)
+            elif 'status' == key:
+                f = create_equality_filter('status', value, f)
+            else:
+                raise ValueError("Unknown filter {}.".format(key))
+
+            # TODO: 'start', 'finish'?!
+        return f
+        
     def list(self, **kwargs):
-        return self._items
+        f = self._create_filter(**kwargs)
+        return [ c for c in self._items if f(c) ]
 
     def get(self, id):
         for i in self._items:

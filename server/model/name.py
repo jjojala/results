@@ -24,8 +24,24 @@ class NameModel:
         self._items = []
         self._controller = controller
 
+    def _create_filter(self, **kwargs):
+        f = accept_filter # fallback, if nothing else
+
+        for key, value in kwargs.items():
+            if 'gn' == key:
+                f = create_case_insensitive_substring_filter('gn', value, f)
+            elif 'fn' == key:
+                f = create_case_insensitive_substring_filter('fn', value, f)
+            elif 'rc' == key:
+                f = create_equality_filter('rc', value, f)
+            else:
+                raise ValueError("Unknown filter {}.".format(key))
+
+        return f
+    
     def list(self, **kwargs):
-        return self._items
+        f = self._create_filter(**kwargs)
+        return [ n for n in self._items if f(n) ]
 
     def get(self, id):
         for i in self._items:
