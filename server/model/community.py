@@ -24,7 +24,7 @@ class CommunityModel:
         self._items = []
         self._controller = controller
 
-    def list(self):
+    def list(self, **kwargs):
         return self._items
 
     def get(self, id):

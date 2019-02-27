@@ -22,24 +22,24 @@ def test_get_events_by_tag_scope_id(client):
         'id':'1',
         'date':'2019-02-26T23:21:00.000+03:00',
         'name':'',
-        'tag_scope':'scope-1'})
+        'ts_id':'scope-1'})
     client.post('/api/event/2', json={
         'id':'2',
         'date':'2019-02-26T23:21:00.000+03:00',
         'name':'',
-        'tag_scope':'scope-1'})
+        'ts_id':'scope-1'})
     client.post('/api/event/3', json={
         'id':'3',
         'date':'2019-02-26T23:21:00.000+03:00',
         'name':'',
-        'tag_scope':'scope-2'})
+        'ts_id':'scope-2'})
 
-    r = client.get('/api/event/?tag_scope=scope-1')
+    r = client.get('/api/event/?ts_id=scope-1')
     d = r.get_json()
     assert 200 == r.status_code
     assert 2 == len(d)
 
-    r = client.get('/api/event/?tag_scope=scope-2')
+    r = client.get('/api/event/?ts_id=scope-2')
     d = r.get_json()
     assert 200 == r.status_code
     assert 1 == len(d)

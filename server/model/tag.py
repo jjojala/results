@@ -80,8 +80,8 @@ class TagModel:
           
     def list(self, **kwargs):
         scope = self._items
-        if 'scope_tag_id' in kwargs:
-            root_id = kwargs['scope_tag_id']
+        if 'ts_id' in kwargs:
+            root_id = kwargs['ts_id']
             scope = self._resolve_descendants(root_id) + [ root_id ]
             return [ tag for tag in self._items if tag['id'] in scope ]
         return scope

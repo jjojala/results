@@ -30,7 +30,7 @@ _parser = reqparse.RequestParser()
 _parser.add_argument('id', type=str, required=True)
 _parser.add_argument('date', type=str, required=True)
 _parser.add_argument('name', type=str, required=True)
-_parser.add_argument('tag_scope', type=str, required=False)
+_parser.add_argument('ts_id', type=str, required=False)
 
 class Events(Resource):
         def make_args(notifications, api, model):
@@ -46,9 +46,7 @@ class Events(Resource):
 
         @timeservice.time_service
         def get(self):
-                if 'tag_scope' in request.args:
-                        return self._model.list(request.args['tag_scope']), 200
-                return self._model.list(), 200
+                return self._model.list(**request.args.to_dict()), 200
 
 class Event(Resource):
         def make_args(notifications, api, model):

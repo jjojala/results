@@ -45,7 +45,7 @@ class Names(Resource):
 
         @timeservice.time_service
         def get(self):
-                return self._model.list(), 200
+                return self._model.list(**request.args.to_dict()), 200
 
 class Name(Resource):
         def make_args(notifications, api, model):

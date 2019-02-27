@@ -57,7 +57,7 @@ def test_tags_with_root_id(client):
         'grp':True
         })
 
-    r = client.get('/api/tag/?scope_tag_id=scope-1')
+    r = client.get('/api/tag/?ts_id=scope-1')
     d = r.get_json()
     assert 200 == r.status_code
     assert 4 == len(d)
@@ -65,7 +65,7 @@ def test_tags_with_root_id(client):
         assert tag['id'] in (t['id'] for t in scope_1)
         
 
-    r = client.get('/api/tag/?scope_tag_id=scope-2')
+    r = client.get('/api/tag/?ts_id=scope-2')
     d = r.get_json()
     assert 200 == r.status_code
     assert 1 == len(d)
