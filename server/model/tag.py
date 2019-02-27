@@ -77,14 +77,40 @@ class TagModel:
             if self._remove_one(i):
                 count = count + 1
         return count
-          
-    def list(self, **kwargs):
-        scope = self._items
+
+    def _create_filter(self, **kwargs):
+        f = accept_filter # fallback, if nothing else
         if 'ts_id' in kwargs:
-            root_id = kwargs['ts_id']
-            scope = self._resolve_descendants(root_id) + [ root_id ]
-            return [ tag for tag in self._items if tag['id'] in scope ]
-        return scope
+            ts_id = kwargs['ts_id']
+            f = create_in_filter('id',
+                self._resolve_descendants(ts_id)+ [ ts_id ], f)
+        if 'pid' in kwargs:
+            f = create_equality_filter('pid', kwargs['pid'], f)
+
+        if 'tag' in kwargs:
+            f = create_case_insensitive_substring_filter(
+                'tag', kwargs['tag'], f)
+
+        if 'desc' in kwargs:
+            f = create_case_insensitive_substring_filter(
+                'desc', kwargs['desc'], f)
+
+        if 'grp' in kwargs:
+            f = create_equality_filter('grp', bool(kwargs['grp']), f)
+
+        if 'excl' in kwargs:
+            f = create_equality_filter('excl', bool(kwargs['excl']), f)
+
+        if 'req' in kwargs:
+            f = create_equality_filter('req', bool(kwargs['req']), f)
+
+        # TODO: 'refs'?
+
+        return f
+    
+    def list(self, **kwargs):
+        f = self._create_filter(**kwargs)
+        return [ t for t in self._items if f(t) ]
 
     def get(self, id):
         for i in self._items:

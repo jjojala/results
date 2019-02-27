@@ -52,8 +52,8 @@ def test_tags_with_root_id(client):
 
     client.post('/api/tag/scope-2', json={
         'id':'scope-2',
-        'tag':'',
-        'desc':'',
+        'tag':'tag-scope-2',
+        'desc':'desc-scope-2',
         'grp':True
         })
 
@@ -63,12 +63,34 @@ def test_tags_with_root_id(client):
     assert 4 == len(d)
     for tag in d:
         assert tag['id'] in (t['id'] for t in scope_1)
-        
 
     r = client.get('/api/tag/?ts_id=scope-2')
     d = r.get_json()
     assert 200 == r.status_code
     assert 1 == len(d)
+
+    r = client.get('/api/tag/?pid=tag-1-1')
+    d = r.get_json()
+    assert 200 == r.status_code
+    assert 1 == len(d)
+    assert 'tag-1-1-1' == d[0]['id']
+
+    r = client.get('/api/tag/?tag=-1-2')
+    d = r.get_json()
+    assert 200 == r.status_code
+    assert 1 == len(d)
+    assert 'tag-tag-1-2' == d[0]['tag']
+
+    r = client.get('/api/tag/?grp=true')
+    d = r.get_json()
+    assert 200 == r.status_code
+    assert 3 == len(d)
+
+    r = client.get('/api/tag/?grp=true&tag=scope-2')
+    d = r.get_json()
+    assert 200 == r.status_code
+    assert 1 == len(d)
+    assert 'tag-scope-2' == d[0]['tag']
 
 def test_simple_tag(client):
     """Get all Tags, while there're none yet."""

@@ -14,9 +14,71 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 """
+import re
 
 def jsonify(entityException):
     return { "message": str(entityException) }
+
+def accept_filter(entity):
+    """A concrete filter accepting every entity given (returns always True).
+        See e.g. create_equality_filter() to get grasp of filters."""
+    return True
+
+def create_equality_filter(field_name, accepted_value, next_filter):
+    """Returns a filter, that accepts the given entity (ie. returns True)
+    if the given entity have field 'field_name' with value equal to
+    'accepted_value'. If not accepted, False is returned. In case of
+    accept, potential changed filter 'next_filter' will be invoked."""
+    def f(entity):
+        if accepted_value == entity[field_name]:
+            if next_filter:
+                return next_filter(entity)
+            return True
+        return False
+    return f
+
+def create_in_filter(field_name, accepted_values, next_filter):
+    """Returns a filter that accepts the given entity in case the entity
+    contains the field 'field_name' with a value available in the iterable
+    'accepted_values'. For more about filters, refer to
+    create_equality_filter()."""
+    def f(entity):
+        if field_name in entity and entity[field_name] in accepted_values:
+            if next_filter:
+                return next_filter(entity)
+            return True
+        return False
+    return f
+
+def create_case_insensitive_equality_filter(field_name, accepted_string,
+                                            next_filter):
+    """Returns a filter that accepts the given entity in case the entity
+    contains the field 'field_name' with the value case-insensitively
+    equal to 'accepted_string'. For case sensitive equality, use
+    create_equality_filter()."""
+    def f(entity):
+        if (accepted_string and field_name in entity
+            and accepted_string.lower() == entity[field_name].lower()):
+            if next_filter:
+                return next_filter(entity)
+            return True
+        return False
+    return f
+
+def create_case_insensitive_substring_filter(field_name, accepted_substring,
+                                             next_filter):
+    """Returns a filter that accepts the given entity in case the entity
+    contains the field 'field_name' with a value contained by
+    'accepted_substring' when comparing in case-insensitive manner. For
+    case sensitive filter, use create_in_filter()."""
+    def f(entity):
+        if (accepted_substring and field_name in entity
+            and accepted_substring.lower() in entity[field_name].lower()):
+            if next_filter:
+                return next_filter(entity)
+            return True
+        return False
+    return f
 
 class EntityException(Exception):
     pass
