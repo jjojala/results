@@ -44,8 +44,7 @@ def test_get_competitions_by_multipe_tags(client):
     t_lists = [ c['tags'] for c in d ]
     assert 200 == r.status_code
     assert 2 == len(t_lists)
-
-    
+ 
 def test_get_competitors(client):
     """Get all competitors."""
 
