@@ -17,9 +17,9 @@
 from .common import *
 from util.patch import patch, PatchConflict
 
-_TYPE = "Competitor"
-
 class CompetitorModel:
+    TYPE = "Competitor"
+    
     def __init__(self, controller):
         self._items = []
         self._controller = controller
@@ -58,7 +58,7 @@ class CompetitorModel:
     def create(self, item):
         for i in self._items:
             if (item["id"] == i["id"]):
-                raise EntityAlreadyExists(_TYPE, item["id"])
+                raise EntityAlreadyExists(TYPE, item["id"])
         self._controller.on_competitor_create(item)
         self._items.append(item)
         return item
@@ -69,7 +69,7 @@ class CompetitorModel:
                 self._controller.on_competitor_remove(competitor_id)
                 del self._items[i]
                 return True
-        raise EntityNotFound(_TYPE, competitor_id)
+        raise EntityNotFound(TYPE, competitor_id)
 
     def patch(self, competitor_id, diff):
         try:
@@ -80,6 +80,6 @@ class CompetitorModel:
                         competitor_id, diff)
                     self._items[i] = patched
                     return self._items[i]
-            raise EntityNotFound(_TYPE, competitor_id)
+            raise EntityNotFound(TYPE, competitor_id)
         except PatchConflict as ex:
-            raise EntityConstraintViolated(_TYPE, competitor_id, str(ex))
+            raise EntityConstraintViolated(TYPE, competitor_id, str(ex))

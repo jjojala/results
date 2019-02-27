@@ -17,9 +17,9 @@
 from .common import *
 from util.patch import patch, PatchConflict
 
-_TYPE = "Event"
-
 class EventModel:
+    TYPE = "Event"
+
     def __init__(self, controller):
         self._items = []
         self._controller = controller
@@ -51,7 +51,7 @@ class EventModel:
     def create(self, item):
         for i in self._items:
             if (item["id"] == i["id"]):
-                raise EntityAlreadyExists(_TYPE, item["id"])
+                raise EntityAlreadyExists(TYPE, item["id"])
         self._controller.on_event_create(item)
         self._items.append(item)
         return item
@@ -62,7 +62,7 @@ class EventModel:
                 self._controller.on_event_remove(event_id)
                 del self._items[i]
                 return True
-        raise EntityNotFound(_TYPE, event_id)
+        raise EntityNotFound(TYPE, event_id)
 
     def patch(self, event_id, diff):
         try:
@@ -72,6 +72,6 @@ class EventModel:
                     self._controller.on_event_update(event_id, diff)
                     self._items[i] = patched
                     return self._items[i]
-            raise EntityNotFound(_TYPE, event_id)
+            raise EntityNotFound(TYPE, event_id)
         except PatchConflict as ex:
-            raise EntityConstraintViolated(_TYPE, event_id, str(ex))
+            raise EntityConstraintViolated(TYPE, event_id, str(ex))

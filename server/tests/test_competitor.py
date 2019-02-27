@@ -22,6 +22,24 @@ def test_illegal_query_param(client):
     assert 400 == r.status_code
 
 def test_get_competitions_by_multipe_tags(client):
+    tags = [
+        { 'id':'scope-1', 'tag':'tag-scope-1', 'desc':'desc-scope-1', 'grp':True },
+        { 'id':'t-1', 'pid':'scope-1', 'tag':'tag-t-1', 'desc':'desc-t-1' },
+        { 'id':'t-2', 'pid':'scope-1', 'tag':'tag-t-2', 'desc':'desc-t-2' },
+        { 'id':'t-3', 'pid':'scope-1', 'tag':'tag-t-3', 'desc':'desc-t-3' }
+    ]
+
+    for t in tags:
+        assert 201 == client.post('/api/tag/' + t['id'], json=t).status_code
+    
+    events = [
+        { 'id':'e-1', 'date':'2019-02-26T23:21:00.000+03:00', 'name':'name-e-1', 'ts_id':'scope-1'},
+        { 'id':'e-2', 'date':'2019-02-26T23:21:00.000+03:00', 'name':'name-e-2', 'ts_id':'scope-1'}
+    ]
+
+    for e in events:
+        assert 201 == client.post('/api/event/' + e['id'], json=e).status_code
+
     competitors = [
         { 'id':'c-1', 'eid':'e-1', 'nid':'n-1', 'tags': [ 't-1', 't-2', 't-3' ] },
         { 'id':'c-2', 'eid':'e-1', 'nid':'n-2', 'tags': [ 't-1', 't-2' ] },
@@ -52,6 +70,12 @@ def test_get_competitors(client):
     assert 200 == result.status_code
     assert [] == result.get_json()
 
+    events = [
+        { 'id':'2', 'date':'2019-02-26T23:21:00.000+03:00', 'name':'name-e-2'}
+    ]
+    for e in events:
+        assert 201 == client.post('/api/event/' + e['id'], json=e).status_code
+        
     result = client.post("/api/competitor/1", json={
         'id':'1',
         'eid':'2',

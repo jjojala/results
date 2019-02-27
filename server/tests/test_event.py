@@ -22,26 +22,29 @@ def test_illegal_query_param(client):
     assert 400 == r.status_code
 
 def test_get_events_by_tag_scope_id(client):
-    client.post('/api/event/1', json={
-        'id':'1',
-        'date':'2019-02-26T23:21:00.000+03:00',
-        'name':'',
-        'ts_id':'scope-1'})
-    client.post('/api/event/2', json={
-        'id':'2',
-        'date':'2019-02-26T23:21:00.000+03:00',
-        'name':'',
-        'ts_id':'scope-1'})
-    client.post('/api/event/3', json={
-        'id':'3',
-        'date':'2019-02-26T23:21:00.000+03:00',
-        'name':'',
-        'ts_id':'scope-2'})
+    scopes = [
+        { 'id':'scope-1', 'tag':'tag-scope-1', 'desc':'desc-scope-1', 'grp':True },
+        { 'id':'scope-2', 'tag':'tag-scope-2', 'desc':'desc-scope-2', 'grp':True }
+    ]
+
+    for s in scopes:
+        r = client.post('/api/tag/' + s['id'], json=s)
+        assert 201 == r.status_code
+
+    events = [
+        { 'id':'1', 'date':'2019-02-26T23:21:00.000+03:00', 'name':'', 'ts_id':'scope-1'},
+        { 'id':'2', 'date':'2019-02-26T23:21:00.000+03:00', 'name':'', 'ts_id':'non-existing'},
+        { 'id':'3', 'date':'2019-02-26T23:21:00.000+03:00', 'name':'', 'ts_id':'scope-2'}
+    ]
+
+    assert 201 == client.post('/api/event/1', json=events[0]).status_code
+    assert 422 == client.post('/api/event/2', json=events[1]).status_code
+    assert 201 == client.post('/api/event/3', json=events[2]).status_code
 
     r = client.get('/api/event/?ts_id=scope-1')
     d = r.get_json()
     assert 200 == r.status_code
-    assert 2 == len(d)
+    assert 1 == len(d)
 
     r = client.get('/api/event/?ts_id=scope-2')
     d = r.get_json()

@@ -17,9 +17,9 @@
 from .common import *
 from util.patch import patch, PatchConflict
 
-_TYPE = "Tag"
-
 class TagModel:
+    TYPE = "Tag"
+
     def __init__(self, controller):
         self._items = []
         self._controller = controller
@@ -44,7 +44,7 @@ class TagModel:
 
         tag = self.get(tag_id)
         if tag == None:
-            raise EntityNotFound(_TYPE, tag_id)
+            raise EntityNotFound(TYPE, tag_id)
 
         if tag["pid"] == None:
             return tag_id       # this is it!
@@ -117,24 +117,24 @@ class TagModel:
 
     def create(self, tag):
         if self.get(tag["id"]) != None:
-            raise EntityAlreadyExists(_TYPE, tag["id"])
+            raise EntityAlreadyExists(TYPE, tag["id"])
 
         if tag["pid"] == None: # this is a scope tag
             if tag["refs"] != None:  # not allowed for scopes
-                raise IllegalEntity(_TYPE, tag["id"],
+                raise IllegalEntity(TagModel.TYPE, tag["id"],
                                     "Refs not allowed for scope tags.")
 
         elif self.get(tag["pid"]) == None:  # not a scope
-            raise IllegalEntity(_TYPE, tag["id"],
-                                str(EntityNotFound(_TYPE, tag["pid"])))
+            raise IllegalEntity(TYPE, tag["id"],
+                                str(EntityNotFound(TYPE, tag["pid"])))
 
         if tag["refs"] != None: # check refs
             scope_tag_ids = self._resolve_descendants(
                 self._resolve_scope(tag["pid"]))
             for referred_tag_id in tag["refs"]:
                 if referred_tag_id not in scope_tag_ids:
-                    raise IllegalEntity(_TYPE, tag["id"],
-                                        str(EntityNotFound(_TYPE, referred_tag)))
+                    raise IllegalEntity(TYPE, tag["id"],
+                                        str(EntityNotFound(TYPE, referred_tag)))
 
         # got this far so the item must be valid
         self._controller.on_tag_create(tag)
@@ -148,7 +148,7 @@ class TagModel:
                 self._update_refs(to_be_removed)                
                 self._remove_group(to_be_removed)
                 return True
-        raise EntityNotFound(_TYPE, id)
+        raise EntityNotFound(TYPE, id)
 
     def patch(self, id, diff):
         try:
@@ -162,22 +162,22 @@ class TagModel:
                             self._resolve_scope(id))
                         for ref_id in new_refs:
                             if ref_id not in scope_tag_ids:
-                                raise IllegalEntity(_TYPE, id,
-                                                    str(EntityNotFound(_TYPE, ref_id)))
+                                raise IllegalEntity(TYPE, id,
+                                                    str(EntityNotFound(TYPE, ref_id)))
 
                     if patched["pid"] != self._items[i]["pid"]:
                         if patched["pid"] == None: # this is a scope tag
                             if patched["refs"] != None:  # .. then refs not allowed
-                                raise IllegalEntity(_TYPE, patched["id"],
+                                raise IllegalEntity(TYPE, patched["id"],
                                                     "Refs not allowed for scope tags.")
 
                         elif self.get(patched["pid"]) == None:  # not a scope
-                            raise IllegalEntity(_TYPE, id,
-                                                str(EntityNotFound(_TYPE, patched["pid"])))
+                            raise IllegalEntity(TYPE, id,
+                                                str(EntityNotFound(TYPE, patched["pid"])))
 
                     self._controller.on_tag_update(id, diff)
                     self._items[i] = patched
                     return self._items[i]
-            raise EntityNotFound(_TYPE, id)
+            raise EntityNotFound(TYPE, id)
         except PatchConflict as ex:
-            raise EntityConstraintViolated(_TYPE, id, str(ex))
+            raise EntityConstraintViolated(TYPE, id, str(ex))
