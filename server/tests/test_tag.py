@@ -18,31 +18,38 @@ from .test_common import client, app
 import pytest
 
 def test_tags_with_root_id(client):
-    client.post('/api/tag/scope-1', json={
-        'id':'scope-1',
-        'tag':'',
-        'desc':'',
-        'grp':True
-        })
-    client.post('/api/tag/tag-1-1', json={
-        'id':'tag-1-1',
-        'pid':'scope-1',
-        'tag':'',
-        'desc':'',
-        'grp':True
-        })
-    client.post('/api/tag/tag-1-1-1', json={
-        'id':'tag-1-1-1',
-        'pid':'tag-1-1',
-        'tag':'',
-        'desc':''
-        })
-    client.post('/api/tag/tag-1-2', json={
-        'id':'tag-1-2',
-        'pid':'scope-1',
-        'tag':'',
-        'desc':''
-        })
+    scope_1 = [
+        {
+            'id':'scope-1',
+            'tag':'tag-scope-1',
+            'desc':'desc-tag-1',
+            'grp':True
+        },
+        {
+            'id':'tag-1-1',
+            'pid':'scope-1',
+            'tag':'tag-tag-1-1',
+            'desc':'desc-tag-1-1',
+            'grp':True
+        },
+        {
+            'id':'tag-1-1-1',
+            'pid':'tag-1-1',
+            'tag':'tag-tag-1-1-1',
+            'desc':'desc-tag-1-1-1'
+        },
+        {
+            'id':'tag-1-2',
+            'pid':'scope-1',
+            'tag':'tag-tag-1-2',
+            'desc':'desc-tag-1-2'
+        }
+    ]
+
+    for tag in scope_1:
+        r = client.post('/api/tag/' + tag['id'], json=tag)
+        assert 201 == r.status_code
+
     client.post('/api/tag/scope-2', json={
         'id':'scope-2',
         'tag':'',
@@ -50,12 +57,15 @@ def test_tags_with_root_id(client):
         'grp':True
         })
 
-    r = client.get('/api/tag/?root_id=scope-1')
+    r = client.get('/api/tag/?scope_tag_id=scope-1')
     d = r.get_json()
     assert 200 == r.status_code
     assert 4 == len(d)
+    for tag in d:
+        assert tag['id'] in (t['id'] for t in scope_1)
+        
 
-    r = client.get('/api/tag/?root_id=scope-2')
+    r = client.get('/api/tag/?scope_tag_id=scope-2')
     d = r.get_json()
     assert 200 == r.status_code
     assert 1 == len(d)

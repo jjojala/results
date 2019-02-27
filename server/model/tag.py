@@ -77,11 +77,14 @@ class TagModel:
             if self._remove_one(i):
                 count = count + 1
         return count
-
-    def list(self, root_id=None):
-        if root_id:
-            return self._resolve_descendants(root_id) + [ root_id ]
-        return self._items
+          
+    def list(self, **kwargs):
+        scope = self._items
+        if 'scope_tag_id' in kwargs:
+            root_id = kwargs['scope_tag_id']
+            scope = self._resolve_descendants(root_id) + [ root_id ]
+            return [ tag for tag in self._items if tag['id'] in scope ]
+        return scope
 
     def get(self, id):
         for i in self._items:

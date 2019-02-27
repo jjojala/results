@@ -52,9 +52,7 @@ class Tags(Resource):
 
         @timeservice.time_service
         def get(self):
-                if 'root_id' in request.args:
-                        return self._model.list(request.args['root_id']), 200
-                return self._model.list(), 200
+                return self._model.list(**request.args.to_dict()), 200
 
 class Tag(Resource):
         def make_args(notifications, api, model):
