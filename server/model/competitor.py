@@ -34,8 +34,9 @@ class CompetitorModel:
             elif 'cid' == key:
                 f = create_equality_filter('cid', value, f)
             elif 'tags' == key:
-                # TODO: support for multivalue arguments!
-                f = create_in_filter('tags', value, f)
+                # support for multi-value parameter, e.g. tags=t-1,t-2
+                for v in value.split(','):
+                    f = create_intersection_filter('tags', v, f)
             elif 'status' == key:
                 f = create_equality_filter('status', value, f)
             else:

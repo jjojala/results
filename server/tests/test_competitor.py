@@ -21,6 +21,31 @@ def test_illegal_query_param(client):
     r = client.get('/api/competitor/?foo=bar')
     assert 400 == r.status_code
 
+def test_get_competitions_by_multipe_tags(client):
+    competitors = [
+        { 'id':'c-1', 'eid':'e-1', 'nid':'n-1', 'tags': [ 't-1', 't-2', 't-3' ] },
+        { 'id':'c-2', 'eid':'e-1', 'nid':'n-2', 'tags': [ 't-1', 't-2' ] },
+        { 'id':'c-3', 'eid':'e-2', 'nid':'n-1', 'tags': [ 't-1' ] },
+        { 'id':'c-4', 'eid':'e-2', 'nid':'n-2', 'tags': [ 't-2', 't-3' ] },
+        { 'id':'c-5', 'eid':'e-1', 'nid':'n-3', 'tags': [ 't-3' ] }
+        ]
+
+    for c in competitors:
+        r = client.post('/api/competitor/' + c['id'], json=c)
+        assert 201 == r.status_code
+
+    r = client.get('/api/competitor/?tags=t-1')
+    d = r.get_json()
+    assert 200 == r.status_code
+    assert 3 == len(d)
+
+    r = client.get('/api/competitor/?tags=t-1,t-2')
+    d = r.get_json()
+    t_lists = [ c['tags'] for c in d ]
+    assert 200 == r.status_code
+    assert 2 == len(t_lists)
+
+    
 def test_get_competitors(client):
     """Get all competitors."""
 

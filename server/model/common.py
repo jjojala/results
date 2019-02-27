@@ -37,10 +37,22 @@ def create_equality_filter(field_name, accepted_value, next_filter):
         return False
     return f
 
+def create_intersection_filter(field_name, accepted_value, next_filter):
+    """Returns a filter that accepts the given entity in case the
+    field 'field_name' contains a value equal to 'accepted_value'."""
+    def f(entity):
+        if (field_name in entity
+            and accepted_value in entity[field_name]):
+            if next_filter:
+                return next_filter(entity)
+            return True
+        return False
+    return f
+
 def create_in_filter(field_name, accepted_values, next_filter):
-    """Returns a filter that accepts the given entity in case the entity
-    contains the field 'field_name' with a value available in the iterable
-    'accepted_values'. For more about filters, refer to
+    """Returns a filter that accepts the given entity in case the
+    'accepted_value' is contained in iterable field 'field_name' of
+    given entity. For more about filters, refer to
     create_equality_filter()."""
     def f(entity):
         if field_name in entity and entity[field_name] in accepted_values:
