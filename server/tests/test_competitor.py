@@ -40,6 +40,15 @@ def test_get_competitions_by_multipe_tags(client):
     for e in events:
         assert 201 == client.post('/api/event/' + e['id'], json=e).status_code
 
+    names = [
+        { 'id':'n-1', 'gn':'Jari', 'fn':'Ojala' },
+        { 'id':'n-2', 'gn':'Jenny', 'fn':'Ojala' },
+        { 'id':'n-3', 'gn':'Aleksi', 'fn':'Ojala' }
+    ]
+
+    for n in names:
+        assert 201 == client.post('/api/name/' + n['id'], json=n).status_code
+
     competitors = [
         { 'id':'c-1', 'eid':'e-1', 'nid':'n-1', 'tags': [ 't-1', 't-2', 't-3' ] },
         { 'id':'c-2', 'eid':'e-1', 'nid':'n-2', 'tags': [ 't-1', 't-2' ] },
@@ -75,7 +84,14 @@ def test_get_competitors(client):
     ]
     for e in events:
         assert 201 == client.post('/api/event/' + e['id'], json=e).status_code
-        
+
+    names = [
+        { 'id':'3', 'gn':'Donald', 'fn':'Duck' }
+    ]
+
+    for n in names:
+        assert 201 == client.post('/api/name/' + n['id'], json=n).status_code
+
     result = client.post("/api/competitor/1", json={
         'id':'1',
         'eid':'2',

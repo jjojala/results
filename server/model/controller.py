@@ -16,6 +16,7 @@
 """
 from .common import *
 import model
+from util.patch import diff
 
 class ModelWrapper:
     def __init__(self, controller, wrapped):
@@ -89,6 +90,11 @@ class ModelController:
 
     def on_name_create(self, name):
         print("on_name_create(name={})".format(name))
+        try:
+            self._check_community(name['rc'])
+        except Exception as ex:
+            raise IllegalEntity(model.NameModel.TYPE, name['id'],
+                                str(ex))
 
     def on_name_update(self, name_id, diff):
         print("on_name_update(name_id={}, diff={})".format(name_id, diff))
@@ -97,54 +103,78 @@ class ModelController:
         print("on_name_remove(name_id={})".format(name_id))
 
     def on_event_create(self, event):
-        print("on_event_create(event={})".format(event))        
-        if event['ts_id']:
-            print("\tts_id={}".format(event['ts_id']))
-            ts = self._tag_model.get(event['ts_id'])
-            if ts == None:
-                print("\tERROR: tag with id {} not found!".format(event['ts_id']))
-                raise IllegalEntity(model.EventModel.TYPE, event['id'],
-                                    str(EntityNotFound(model.TagModel.TYPE,
-                                                       event['ts_id'])))
-            if ts['pid'] and ts['pid'] != None:
-                raise IllegalEntity(model.EventModel.TYPE, event['id'],
-                                    "Referred tag {} is not a scope.".format(
-                                        event['ts_id']))
-            
+        print("on_event_create(event={})".format(event))
+        try:
+            self._check_tag_scope_id(event['ts_id'])
+        except Exception as ex:
+            raise IllegalEntity(model.EventModel.TYPE, event['id'],
+                                str(ex))
+    
     def on_event_update(self, event_id, diff):
         print("on_event_update(event_id={}, diff={})".format(event_id, diff))
 
     def on_event_remove(self, event_id):
         print("on_event_remove(event_id={})".format(event_id))
 
+    def _check_tag_scope_id(self, ts_id):
+        if ts_id != None:
+            tag_scope = self._tag_model.get(ts_id)
+            if tag_scope == None:
+                raise EntityNotFound(model.TagModel.TYPE, ts_id)
+
+            if tag_scope['pid'] != None:
+                raise IllegalEntity(model.TagModel.TYPE, ts_id,
+                                    "Tag scope shall not have pid.")
+
+            if tag_scope['grp'] == None or tag_scope['grp'] == False:
+                raise IllegalEntity(model.TagModel.TYPE, ts_id,
+                                    "Tag scope shall be a group.")
+
+    def _get_event(self, event_id):
+        if event_id == None:
+            raise ValueError("Reference to Event undefined!")
+
+        event = self._event_model.get(event_id)
+        if event == None:
+            raise EntityNotFound(model.EventModel.TYPE, event_id)
+
+        return event
+
+    def _get_scope_tag_ids(self, event):
+        if event['ts_id'] != None:
+            return [ t['id'] for t
+                     in self._tag_model.list(ts_id=event['ts_id']) ]
+        
+    def _check_tags_in_scope(self, tag_ids, scope_ids):
+        if tag_ids != None:
+            for tag_ref in tag_ids:
+                if tag_ref not in scope_ids:
+                    raise ValueError('Reference to Tag {} is stale.'.format(
+                        tag_ref))
+
+    def _check_name(self, name_id):
+        if name_id == None:
+            raise ValueError("Reference to Name is undefined.")
+
+        if self._name_model.get(name_id) == None:
+            raise EntityNotFound(model.NameModel.TYPE, name_id)
+
+    def _check_community(self, community_id):
+        if community_id != None:
+            if self._community_model.get(community_id) == None:
+                raise EntityNotFound(model.CommunityModel.TYPE, community_id)
+
     def on_competitor_create(self, competitor):
         print("on_competitor_create(competitor={})".format(competitor))
-        eid = competitor['eid']
-        if eid == None:
-            print("\tERROR: event not defined!")
+        try:
+            self._check_tags_in_scope(competitor['tags'],
+                                      self._get_scope_tag_ids(
+                                          self._get_event(competitor['eid'])))
+            self._check_name(competitor['nid'])
+            self._check_community(competitor['cid'])
+        except Exception as ex:
             raise IllegalEntity(model.CompetitorModel.TYPE, competitor['id'],
-                                "{} have no {} set!".format(
-                                    model.CompetitorModel.TYPE,
-                                    model.EventModel.TYPE))
-        event = self._event_model.get(eid)
-        if event == None:
-            print("\tERROR: event not found!")
-            raise IllegalEntity(model.CompetitorModel.TYPE, competitor['id'],
-                                str(EntityNotFound(model.EventModel.TYPE, eid)))
-
-        if competitor['tags'] != None and len(competitor['tags']) > 0:
-            print("\tTags defined: {}".format(competitor['tags']))
-            tag_scope_ids = [ t['id'] for t
-                              in self._tag_model.list(ts_id=event['ts_id'])]
-            print("\tTags existed (for the Event): {}".format(tag_scope_ids))
-            for ref in competitor['tags']:
-                if ref not in tag_scope_ids:
-                    print("\tERROR: Referred tag not found in scope!")
-                    raise IllegalEntity(model.CompetitorModel.TYPE,
-                                        competitor['id'],
-                                        str(EntityNotFound(model.TagModel.TYPE, ref)))
-
-        # TODO: Check names, check community
+                                str(ex))
 
     def on_competitor_update(self, competitor_id, diff):
         print("on_competitor_update(competitor_id={}, diff={})".format(
@@ -162,9 +192,12 @@ class ModelController:
 
     def on_community_remove(self, community_id):
         print("on_community_remove(community_id={})".format(community_id))
-
-    
-
-    
-    
-
+        if len(self._competitor_model.list(cid=community_id)) > 0:
+            raise EntityConstraintViolated(model.CommunityModel.TYPE,
+                                           community_id,
+                                           "Removal denied as Community is referred by at least one Competitor")
+        
+        for n in self._name_model.list(rc=community_id):
+            updated = n.copy()
+            updated['rc'] = None            
+            self._name_model.patch(n['id'], diff(n, updated))

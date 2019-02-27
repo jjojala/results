@@ -17,9 +17,9 @@
 from .common import *
 from util.patch import patch, PatchConflict
 
-_TYPE = "Name"
-
 class NameModel:
+    TYPE = "Name"
+    
     def __init__(self, controller):
         self._items = []
         self._controller = controller
@@ -52,7 +52,7 @@ class NameModel:
     def create(self, item):
         for i in self._items:
             if (item["id"] == i["id"]):
-                raise EntityAlreadyExists(_TYPE, item["id"])
+                raise EntityAlreadyExists(TYPE, item["id"])
         self._controller.on_name_create(item)
         self._items.append(item)
         return item
@@ -63,7 +63,7 @@ class NameModel:
                 self._controller.on_name_remove(name_id)
                 del self._items[i]
                 return True
-        raise EntityNotFound(_TYPE, name_id)
+        raise EntityNotFound(TYPE, name_id)
 
     def patch(self, name_id, diff):
         try:
@@ -73,6 +73,6 @@ class NameModel:
                     self._controller.on_name_update(name_id, diff)
                     self._items[i] = patched
                     return self._items[i]
-            raise EntityNotFound(_TYPE, name_id)
+            raise EntityNotFound(TYPE, name_id)
         except PatchConflict as ex:
-            raise EntityConstraintViolated(_TYPE, id, str(ex))
+            raise EntityConstraintViolated(TYPE, id, str(ex))

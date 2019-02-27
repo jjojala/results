@@ -17,9 +17,9 @@
 from .common import *
 from util.patch import patch, PatchConflict
 
-_TYPE = "Tag"
-
 class CommunityModel:
+    TYPE = "Community"
+    
     def __init__(self, controller):
         self._items = []
         self._controller = controller
@@ -50,7 +50,7 @@ class CommunityModel:
     def create(self, item):
         for i in self._items:
             if (item["id"] == i["id"]):
-                raise EntityAlreadyExists(_TYPE, item["id"])
+                raise EntityAlreadyExists(TYPE, item["id"])
 
         self._controller.on_community_create(item)
         self._items.append(item)
@@ -73,6 +73,6 @@ class CommunityModel:
                         community_id, diff)
                     self._items[i] = patched
                     return self._items[i]
-            raise EntityNotFound(_TYPE, community_id)
+            raise EntityNotFound(TYPE, community_id)
         except PatchConflict as ex:
-            raise EntityConstraintViolated(_TYPE, community_id, str(ex))
+            raise EntityConstraintViolated(TYPE, community_id, str(ex))
