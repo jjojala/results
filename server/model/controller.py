@@ -79,15 +79,21 @@ class ModelController:
     
     def on_tag_create(self, tag):
         print("on_tag_create(tag={})".format(tag))
+        # no need to hook stuff here
 
     def on_tag_update(self, tag_id, diff):
         print("on_tag_update(tag_id={}, diff={})".format(tag_id, diff))
+        # no need to hook anything here    
 
     def on_tag_remove(self, tag_id):
         print("on_tag_remove(tag_id={})".format(tag_id))
-        referring_events = self._event_model.list(ts_id=tag_id)
-        print("\treferring_events={}".format(referring_events))
+        for e in self._event_model.list(ts_id=tag_id):
+            self._event_model.patch(e['id'], { 'ts_id': [ e['ts_id'], None ] })
 
+        for c in self._competitor_model.list(tags=tag_id):
+            self._competitor_model.patch(c['id'], { 'tags': [
+                c['tags'], [ t for t in c['tags'] if t != tag_id ] ] })
+            
     def on_name_create(self, name):
         print("on_name_create(name={})".format(name))
         try:
@@ -98,9 +104,18 @@ class ModelController:
 
     def on_name_update(self, name_id, diff):
         print("on_name_update(name_id={}, diff={})".format(name_id, diff))
+        try:
+            if diff['rc']:
+                self._check_community(diff['rc'][1])
+        except Exception as ex:
+            raise IllegalEntity(model.NameModel.TYPE, name_id, str(ex))
 
     def on_name_remove(self, name_id):
         print("on_name_remove(name_id={})".format(name_id))
+        if len(self._competitor_model.list(nid=name_id)) > 0:
+            raise EntityConstraintViolated(model.NameModel.TYPE,
+                                           name_id,
+                                           "Removal denied as Name is referred by at least one Competitor")
 
     def on_event_create(self, event):
         print("on_event_create(event={})".format(event))
@@ -179,16 +194,33 @@ class ModelController:
     def on_competitor_update(self, competitor_id, diff):
         print("on_competitor_update(competitor_id={}, diff={})".format(
             competitor_id, diff))
+        try:
+            """
+            if diff['tags']:
+                competitor = self._competitor_model.get(competitor_id)
+                self._check_tags_in_scope(diff['tags'][1],
+                                          self._get_scope_tag_ids(
+                                              self._get_event(competitor['eid'])))
+            if diff['nid']:
+                self._check_name(diff['nid'][1])
+            if diff['cid']:
+                self._check_community(diff['cid'][1])
+            """
+        except Exception as ex:
+            raise IllegalEntity(model.CompetitorModel.TYPE, competitor_id,
+                                str(ex))
 
     def on_competitor_remove(self, competitor_id):
         print("on_competitor_remove(competitor_id={})".format(competitor_id))
 
     def on_community_create(self, community):
         print("on_community_create(community)".format(community))
+        # no need to have anything hooked here
 
     def on_community_update(self, community_id, diff):
         print("on_community_update(community_id={}, diff={})".format(
             community_id, diff))
+        # no need to have anything hooked here
 
     def on_community_remove(self, community_id):
         print("on_community_remove(community_id={})".format(community_id))

@@ -95,4 +95,21 @@ def test_get_communities(client):
     result = client.get("/api/community/")
     assert 200 == result.status_code
     assert [] == result.get_json()
+
+def test_update_communities(client):
+    communities = [
+        { 'id':'c-1', 'name':'name-c-1' }
+    ]
+    for c in communities:
+        assert 201 == client.post('/api/community/' + c['id'], json=c).status_code
+
+    assert 200 == client.patch('/api/community/c-1',
+                               json={
+                                   'abbr': [ None, 'abbr-c-1' ],
+                                   'name': [ 'name-c-1', 'name-c-1-updated' ] }).status_code
+    r = client.get('/api/community/c-1')
+    d = r.get_json()
+    assert 200 == r.status_code
+    assert 'abbr-c-1' == d['abbr']
+    assert 'name-c-1-updated' == d['name']
     
