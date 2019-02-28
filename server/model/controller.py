@@ -195,7 +195,7 @@ class ModelController:
         print("on_competitor_update(competitor_id={}, diff={})".format(
             competitor_id, diff))
         try:
-            """
+            """ TODO: Do not work when initially triggered by tag removal
             if diff['tags']:
                 competitor = self._competitor_model.get(competitor_id)
                 self._check_tags_in_scope(diff['tags'][1],
