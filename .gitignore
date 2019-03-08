@@ -2,10 +2,10 @@
 **/dist/
 **/build/
 
-# Node/npm/npx/webpack
+# javascript
 **/node_modules/
 
-# Python/pip/setuptools
+# Python ...
 **/__pycache__/
 **/*.py[cod]
 **/develop-eggs/
@@ -15,3 +15,5 @@
 **/*.egg-info/
 **/.installed.cfg
 **/*.egg
+**/.coverage
+**/cov_report/

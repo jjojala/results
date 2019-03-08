@@ -195,17 +195,15 @@ class ModelController:
         print("on_competitor_update(competitor_id={}, diff={})".format(
             competitor_id, diff))
         try:
-            """ TODO: Do not work when initially triggered by tag removal
-            if diff['tags']:
+            if 'tags' in diff:
                 competitor = self._competitor_model.get(competitor_id)
                 self._check_tags_in_scope(diff['tags'][1],
                                           self._get_scope_tag_ids(
                                               self._get_event(competitor['eid'])))
-            if diff['nid']:
+            if 'nid' in diff:
                 self._check_name(diff['nid'][1])
-            if diff['cid']:
+            if 'cid' in diff:
                 self._check_community(diff['cid'][1])
-            """
         except Exception as ex:
             raise IllegalEntity(model.CompetitorModel.TYPE, competitor_id,
                                 str(ex))

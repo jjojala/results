@@ -80,8 +80,13 @@ Then navigate to address `http://localhost:5000`
 
 ## Testing the backend
 
+Test the code and have a coverage report (in directory `cov_report`):
+
 ```
 cd server
-FLASK_APP=app/server.py python -m pytest
+FLASK_APP=app/server.py python -m pytest --cov=. --cov-report html:cov_report tests/
 ```
+
+(No need to have coverage? Just skip the `--cov=. tests/` -part).
+
 
