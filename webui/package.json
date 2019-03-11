@@ -2,8 +2,9 @@
   "name": "react-ui",
   "version": "1.0.0",
   "description": "Results UI",
-  "main": "index.js",
+  "main": "app/App.js",
   "scripts": {
+    "dev": "webpack --mode development",
     "build": "webpack --mode production"
   },
   "author": "",
@@ -14,7 +15,9 @@
     "@babel/preset-react": "^7.0.0",
     "acorn": "^6.0.7",
     "babel-loader": "^8.0.5",
+    "css-loader": "^2.1.1",
     "file-loader": "^3.0.1",
+    "style-loader": "^0.23.1",
     "webpack": "^4.29.2",
     "webpack-cli": "^3.2.3"
   },

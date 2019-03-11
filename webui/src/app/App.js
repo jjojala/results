@@ -1,3 +1,4 @@
+import './App.css'
 import React, { Component } from "react";
 import { render } from "react-dom";
 import { BrowserRouter as Router, Route } from "react-router-dom";
@@ -5,9 +6,9 @@ import flyd from "flyd";
 import { P } from "patchinko/explicit";
 import io from "socket.io-client";
 
-import { EventListView } from "./event/EventListView.js";
-import { EventDetailsView } from "./event/EventDetailsView.js";
-import { communities, CommunityListView } from "./community/CommunityListView.js"
+import { EventListView } from "event/EventListView.js";
+import { EventDetailsView } from "event/EventDetailsView.js";
+import { communities, CommunityListView } from "community/CommunityListView.js"
 
 const app = {
     state: {

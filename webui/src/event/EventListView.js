@@ -37,7 +37,7 @@ class EventListContent extends Component {
                         </button>
                     </span>
                     <span style={{width: "70px"}}>
-                        <Link to={"/event/" + e.id}>Hee</Link>
+                        <Link to={"/event/" + e.id}>Hae</Link>
                     </span>
                 </div>
             );
@@ -47,7 +47,7 @@ class EventListContent extends Component {
             <div style={{display: "flex", flexDirection: "column"}}>
                 <div style={{display: "flex", flexDirection: "row", backgroundColor: "lightgray", marginBottom: "16px", fontWeight: "bold"}}>
                     <span style={{width: "200px"}}>
-                        P&auml;iv&auml; ja kellonaika
+                        Päivä ja aika
                     </span>
                     <span style={{flexGrow: "1"}}>
                         Tapahtuman nimi
@@ -56,7 +56,7 @@ class EventListContent extends Component {
                         <button onClick={() => actions.createEvent({ 
                             id: id, date: "2019-02-05T10:42:14.000+03:00",
                             name: "Name (id=" + id + ")"})}>
-                            Lis&auml;&auml;
+                            Lisää
                         </button>
                     </span>
                 </div>
