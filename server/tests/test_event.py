@@ -86,3 +86,33 @@ def test_get_events(client):
     result = client.get("/api/name/")
     assert 200 == result.status_code
     assert [] == result.get_json()
+
+def test_remove_event(client):
+
+    tags = [
+        { 'id':'t-1', 'tag':'tag-t-1', 'desc':'desc-t-1', 'grp':True }
+    ]
+    for t in tags:
+        assert 201 == client.post('/api/tag/' + t['id'], json=t).status_code
+
+    events = [
+        { 'id':'e-1', 'date':'2019-03-01T23:15:00.000+03:00', 'name':'name-e-1', 'ts_id':'t-1' }
+    ]
+    for e in events:
+        assert 201 == client.post('/api/event/' + e['id'], json=e).status_code
+
+    names = [
+        { 'id':'n-1', 'gn':'gn-n-1', 'fn':'fn-n-1' }
+    ]
+    for n in names:
+        assert 201 == client.post('/api/name/' + n['id'], json=n).status_code
+
+    competitors = [
+        { 'id':'c-1', 'eid':'e-1', 'nid':'n-1', 'tags': [ 't-1' ] }
+    ]
+    for c in competitors:
+        assert 201 == client.post('/api/competitor/' + c['id'], json=c).status_code
+
+    assert 200 == client.delete('/api/event/e-1').status_code
+    assert 404 == client.get('/api/tag/t-1').status_code
+    assert 404 == client.get('/api/competitor/c-1').status_code

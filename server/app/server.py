@@ -81,8 +81,6 @@ def create_app(test_config=None):
 
         @app.route('/')
         def root():
-                if not app.debug:
-                        abort(404)
                 try:
                         f = open('dist/index.html')
                 except IOError:
@@ -92,8 +90,6 @@ def create_app(test_config=None):
 
         @app.route('/<path:path>')
         def catch_all(path):
-                if not app.debug:
-                        abort(404)
                 try:
                         f = open("dist/" + path)
                 except IOError:

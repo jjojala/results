@@ -148,7 +148,7 @@ class TagModel:
                 self._update_refs(to_be_removed)                
                 self._remove_group(to_be_removed)
                 return True
-        raise EntityNotFound(TYPE, id)
+        raise EntityNotFound(TYPE, tag_id)
 
     def patch(self, id, diff):
         try:

@@ -127,9 +127,30 @@ class ModelController:
     
     def on_event_update(self, event_id, diff):
         print("on_event_update(event_id={}, diff={})".format(event_id, diff))
+        try:
+            if 'ts_id' in diff:
+                if diff['ts_id'][0]:
+                    if len(self._event_model.list(ts_id=diff['ts_id'][0])) < 2:
+                        self._tag_model.remove(diff['ts_id'][0])
+                if diff['ts_id'][1]:
+                    self._check_tag_scope_id(diff['ts_id'][1])
+        except Exception as ex:
+            print(str(ex))
+            raise IllegalEntity(model.EventModel.TYPE, event_id, str(ex))
 
     def on_event_remove(self, event_id):
         print("on_event_remove(event_id={})".format(event_id))
+        try:
+            for c in self._competitor_model.list(eid=event_id):
+                self._competitor_model.remove(c['id'])
+            event = self._event_model.get(event_id)
+            if 'ts_id' in event and event['ts_id']:
+                if len(self._event_model.list(ts_id=event['ts_id'])) < 2:
+                    self._tag_model.remove(event['ts_id'])
+        except Exception as ex:
+            print(str(ex))
+            raise EntityConstraintViolated(model.EventModel.TYPE, event_id,
+                                           str(ex))
 
     def _check_tag_scope_id(self, ts_id):
         if ts_id != None:
@@ -195,23 +216,22 @@ class ModelController:
         print("on_competitor_update(competitor_id={}, diff={})".format(
             competitor_id, diff))
         try:
-            """ TODO: Do not work when initially triggered by tag removal
-            if diff['tags']:
+            if 'tags' in diff:
                 competitor = self._competitor_model.get(competitor_id)
                 self._check_tags_in_scope(diff['tags'][1],
                                           self._get_scope_tag_ids(
                                               self._get_event(competitor['eid'])))
-            if diff['nid']:
+            if 'nid' in diff:
                 self._check_name(diff['nid'][1])
-            if diff['cid']:
+            if 'cid' in diff:
                 self._check_community(diff['cid'][1])
-            """
         except Exception as ex:
             raise IllegalEntity(model.CompetitorModel.TYPE, competitor_id,
                                 str(ex))
 
     def on_competitor_remove(self, competitor_id):
         print("on_competitor_remove(competitor_id={})".format(competitor_id))
+        # no need to have anything hooked here
 
     def on_community_create(self, community):
         print("on_community_create(community)".format(community))
