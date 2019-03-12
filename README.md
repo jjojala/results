@@ -16,8 +16,8 @@ Of course the app has lot more dependencies, but they're all included in the [pa
 
 
 ```
-cd webui
-npm run dev
+# cd webui
+# npm run dev
 ```
 
 ## About the data model
@@ -72,8 +72,8 @@ to represent different *Communities*.
 Once compiled, type:
 
 ```
-cd webui
-FLASK_APP=../server/app/server.py python -m flask run
+# cd webui
+# FLASK_APP=../server/app/server.py python -m flask run
 ```
 
 Then navigate to address `http://localhost:5000`
@@ -81,7 +81,7 @@ Then navigate to address `http://localhost:5000`
 ## Testing the backend
 
 ```
-cd server
-FLASK_APP=app/server.py python -m pytest
+# cd server
+# FLASK_APP=app/server.py python -m pytest
 ```
 
