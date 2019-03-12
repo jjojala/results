@@ -17,7 +17,7 @@ Of course the app has lot more dependencies, but they're all included in the [pa
 
 ```
 cd webui
-npx webpack --mode production
+npm run dev
 ```
 
 ## About the data model
@@ -73,7 +73,7 @@ Once compiled, type:
 
 ```
 cd webui
-FLASK_APP=../server/app/server.py flask run
+FLASK_APP=../server/app/server.py python -m flask run
 ```
 
 Then navigate to address `http://localhost:5000`

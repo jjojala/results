@@ -10,6 +10,33 @@ import { EventListView } from "event/EventListView.js";
 import { EventDetailsView } from "event/EventDetailsView.js";
 import { communities, CommunityListView } from "community/CommunityListView.js"
 
+class App extends Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        return (
+            <Router>
+                <div className="app">
+                    <Route exact path="/" render={() => 
+                        <EventListView  states={this.props.states}
+                                        actions={this.props.actions}/>} />
+                    <Route exact path="/event/" render={() => 
+                        <EventListView  states={this.props.states}
+                                        actions={this.props.actions}/>} />
+                    <Route path="/event/:id" render={(props) =>
+                        <EventDetailsView id={props.match.params.id}
+                                        states={this.props.states} actions={this.props.actions}/>} />
+                    <Route exact path="/community/" render={() =>
+                        <CommunityListView states={this.props.states}
+                                            actions={this.props.actions} />} />
+                </div>
+            </Router>
+        );
+    }
+}
+
 const app = {
     state: {
         events: [],
@@ -91,34 +118,6 @@ const app = {
         };
     }
 };
-
-class App extends Component {
-    constructor(props) {
-        super(props);
-    }
-
-    render() {
-        return (
-            <Router>
-                <div style={{height: "100%"}}>
-                    <Route exact path="/" render={() => 
-                        <EventListView  states={this.props.states}
-                                        actions={this.props.actions}/>} />
-                    <Route exact path="/event/" render={() => 
-                        <EventListView  states={this.props.states}
-                                        actions={this.props.actions}/>} />
-                    <Route path="/event/:id" render={(props) =>
-                        <EventDetailsView id={props.match.params.id}
-                                        states={this.props.states} actions={this.props.actions}/>} />
-                    <Route exact path="/community/" render={() =>
-                        <CommunityListView states={this.props.states}
-                                            actions={this.props.actions} />} />
-                </div>
-            </Router>
-        );
-    }
-}
-
 
 const update = flyd.stream();
 const states = flyd.scan(P, app.state, update);

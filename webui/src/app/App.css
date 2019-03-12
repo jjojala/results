@@ -23,7 +23,7 @@
 .complement-3 { background-color: #550E52 }
 .complement-4 { background-color: #390036 }
 
-div#app {
+#app {
 	margin: 0 0 0 0;
 	height: 100%;
 }			
@@ -36,4 +36,8 @@ html {
 body {
 	margin: 0 0 0 0;
 	height: 100%
+}
+
+.app {
+	height: 100% ;
 }
