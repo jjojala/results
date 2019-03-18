@@ -133,21 +133,28 @@ var socket = io.connect(
 socket.on('connect', () => { console.log('connected!'); });
 socket.on('notification', (msg) => {
     if (msg.event) {
-        const parts = msg.event.split(/\s+/);
+        console.log(msg.event + '\n\t' + msg.data);
 
-        if (parts[0] === 'CREATED' && parts[1] === 'Event') {
-            console.log(msg.data);
+        const parts = msg.event.split(/\s+/);
+        const eventType = parts[0]
+        const entityType = parts[1]
+        const entityId = parts[2]
+        const data = parts[3]
+
+        if (eventType === 'CREATED' && entityType === 'Event') {
             actions.onEventCreated(msg.data);
         }
 
-        if (parts[0] === 'UPDATED' && parts[1] === 'Event') {
-            console.log(msg.data);
+        if (eventType === 'UPDATED' && entityType === 'Event') {
             actions.onEventUpdated(msg.data);
         }
 
-        if (parts[0] == 'REMOVED' && parts[1] === 'Event') {
-            console.log(msg.data);
-            actions.onEventRemoved(msg.data);
+        if (eventType == 'REMOVED' && entityType === 'Event') {
+            actions.onEventRemoved(entityId);
+        }
+
+        if (eventType == 'PATCHED' && entityType === 'Event') {
+            
         }
     }
 });

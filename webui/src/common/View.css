@@ -44,6 +44,7 @@
     padding: 4px 0 0 0 ;
     width: 64px ;
     left: 0 ;
+    margin-right: 8px ;
 }
 
 .view-body-menu__item {
@@ -55,6 +56,11 @@
 
 .view-body-menu__item:active {
     filter: invert(100%) ;
+}
+
+.view-body-menu__item-image {
+    display: block ;
+    margin: 0 auto ;
 }
 
 .view-body-items {

@@ -25,19 +25,19 @@ export class View extends Component {
                             <div className="view-body-menu__item">
                                 <Link to="/event/">
                                     <EventsImg
-                                        height={48} width={48}/>
+                                        height={64} width={64}/>
                                 </Link>
                             </div>
                             <div className="view-body-menu__item">
                                 <Link to="/community/">
                                     <CommunityImg
-                                        height={48} width={48}/>
+                                        height={64} width={64}/>
                                 </Link>
                             </div>
                             <div className="view-body-menu__item">
                                 <Link to="/name/">
                                     <NamesImg
-                                        height={48} width={48} />
+                                        height={64} width={64} />
                                 </Link>
                             </div>
                         </div>

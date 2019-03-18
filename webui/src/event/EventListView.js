@@ -1,3 +1,7 @@
+import './EventListView.css'
+import NewImg from 'images/svg/003-more.svg'
+import DelImg from 'images/svg/006-rounded-delete-button-with-minus.svg'
+import NextImg from 'images/svg/016-next-page.svg'
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { randomUUID } from "../util";
@@ -31,20 +35,24 @@ class EventListContent extends Component {
                     <span style={{flexGrow: "1"}}>
                         {e.name}
                     </span>
-                    <span style={{right: "0", width: "70px"}}>
+                    <span>
                         <button onClick={() => actions.removeEvent(e.id)}>
-                            Poista
+                            <DelImg height={32} width={32}/>
                         </button>
                     </span>
-                    <span style={{width: "70px"}}>
-                        <Link to={"/event/" + e.id}>Hae</Link>
+                    <span>
+                        <Link to={"/event/" + e.id}>
+                            <button>
+                                <NextImg height={32} width={32}/>
+                            </button>
+                        </Link>
                     </span>
                 </div>
             );
         });
         
         return(
-            <div style={{display: "flex", flexDirection: "column"}}>
+            <div style={{display: "flex", flexDirection: "column", height: "100%"}}>
                 <div style={{display: "flex", flexDirection: "row", backgroundColor: "lightgray", marginBottom: "16px", fontWeight: "bold"}}>
                     <span style={{width: "200px"}}>
                         Päivä ja aika
@@ -52,15 +60,17 @@ class EventListContent extends Component {
                     <span style={{flexGrow: "1"}}>
                         Tapahtuman nimi
                     </span>
-                    <span style={{right: "0", width: "70px"}}>
+                    <span>
                         <button onClick={() => actions.createEvent({ 
                             id: id, date: "2019-02-05T10:42:14.000+03:00",
                             name: "Name (id=" + id + ")"})}>
-                            Lisää
+                            <NewImg height={32} width={32}/>
                         </button>
                     </span>
                 </div>
-                {items}
+                <div style={{flexGrow: "1", overflowY: "scroll", minHeight: "0", maxHeight: "100vh"}}>
+                    {items}
+                </div>
             </div>
         );
     }

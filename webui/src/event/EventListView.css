@@ -1,0 +1,14 @@
+.event-list__list-heading {
+    display: flex ;
+    flex-direction: row ;
+}
+
+.event-list__list-data {
+    flex: 1 ;
+    overflow-y: scroll ;
+}
+
+.event-list__list-item {
+    display: flex ;
+    flex-direction: row ;
+}
