@@ -40,7 +40,7 @@ class EventListContent extends Component {
                             <DelImg height={32} width={32}/>
                         </button>
                     </span>
-                    <span>
+                    <span style={{width: "70px"}}>
                         <Link to={"/event/" + e.id}>
                             <button>
                                 <NextImg height={32} width={32}/>
@@ -68,7 +68,7 @@ class EventListContent extends Component {
                         </button>
                     </span>
                 </div>
-                <div style={{flexGrow: "1", overflowY: "scroll", minHeight: "0", maxHeight: "100vh"}}>
+                <div style={{flexGrow: "1", overflowY: "scroll", height: "0px"}}>
                     {items}
                 </div>
             </div>
