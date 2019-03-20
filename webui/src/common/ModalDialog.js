@@ -22,7 +22,6 @@ export class ModalDialog extends Component {
             backgroundColor: '#fff',
             borderRadius: 5,
             maxWidth: 500,
-            minHeight: 300,
             margin: '0 auto',
             padding: 30
         };
@@ -32,8 +31,8 @@ export class ModalDialog extends Component {
         }
 
         return (
-            <div className="backdrop" style={{backdropStyle}}>
-                <div className="modal" style={{modalStyle}}>
+            <div style={backdropStyle}>
+                <div style={modalStyle}>
                     {this.props.children}
                 </div>
             </div>

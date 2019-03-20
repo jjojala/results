@@ -9,23 +9,99 @@ import { Link } from "react-router-dom";
 import { randomUUID } from "../util";
 import { View } from "../common/View.js";
 import { ModalDialog } from '../common/ModalDialog.js';
-import { throws } from 'assert';
 
 class NewEventDialog extends Component {
     constructor(props) {
         super(props);
+        this.onDateChange = this.onDateChange.bind(this);
+        this.onNameChange = this.onNameChange.bind(this);
+    }
+
+    onDateChange(e) {
+        this.setState( { date: e.target.value });
+    }
+
+    onNameChange(e) {
+        this.setState( { name: e.target.value });
     }
 
     render() {
+        const containerStyle = { 
+            display: "flex",
+            flexDirection: "column"
+        };
+
+        const headerStyle = {
+            backgroundColor: "goldenrod",
+            height: "64px",
+            top: "0",
+            fontVariant: "small-caps",
+            fontSize: "36px",
+            lineHeight: "64px",
+            textAlign: "center"
+        };
+
+        const formStyle = {
+            padding: "32px 8px 32px 8px",
+            flexGrow: "1"
+        }
+
+        const footerStyle = {
+            backgroundColor: "goldenrod",
+            height: "64px",
+            bottom: "0",
+            display: "flex",
+            flexDirection: "row-reverse"
+        }
+
+        const labelStyle = {
+            fontSize: "24px",
+            fontVariant: "bold",
+            width: "128px"
+        }
+
+        const inputStyle = {
+            width: "256px",
+            right: "0"
+        }
+
         return (
             <ModalDialog show={this.props.show}>
-                <h1>Uusi tapahtuma</h1>
-                <button onClick={() => this.props.onClose()}>
-                    <CancelImg height={32} width={32}/>
-                </button>
-                <button onClick={() => this.props.onCreate()}>
-                    <OkImg height={32} width={32}/>
-                </button>
+                <div style={containerStyle}>
+                    <div style={headerStyle}>
+                        Uusi tapahtuma
+                    </div>
+                    <div style={formStyle}>
+                        <form>
+                            <div>
+                                <label style={labelStyle}>
+                                    Päivä ja aika
+                                    <input style={inputStyle} type="datetime-local"
+                                        name="date" id="date"
+                                        onChange={this.onDateChange}
+                                        required/>
+                                </label>
+                            </div>
+                            <div>
+                                <label style={labelStyle}>
+                                    Tapahtuman nimi
+                                    <input style={inputStyle} type="text"
+                                        name="name" id="name"
+                                        onChange={this.onNameChange}
+                                        required/>
+                                </label>
+                            </div>
+                        </form>
+                    </div>
+                    <div style={footerStyle}>
+                        <button onClick={() => this.props.onClose()}>
+                            <CancelImg height={32} width={32}/>
+                        </button>
+                        <button onClick={() => this.props.onCreate(this.state)}>
+                            <OkImg height={32} width={32}/>
+                        </button>
+                    </div>
+                </div>
             </ModalDialog>
         )
     }
@@ -63,12 +139,9 @@ class EventListContent extends Component {
     }
 
     createNewEvent(e) {
-        console.log('createNewEvent()')
-        const eid = randomUUID();
-        this.props.actions.createEvent({
-            id: eid, date: "2019-02-05T10:42:14.000+03:00",
-            name: "Name (id: " + eid + ")"});
-        
+        console.log('createNewEvent(<event>)')
+        e.id = randomUUID();
+        this.props.actions.createEvent(e);        
         this.setState({ isNewEventDialogOpen: false });
     }
 
